@@ -113,5 +113,28 @@ namespace FindAndReplace.Tests
 
 			Assert.AreEqual(0, machedResult.Count, "Must be 0 mached file");
 		}
+
+		[Test]
+		public void Find_WhenSearchMaskIsTest1_FindsTextInOne()
+		{
+			Finder finder = new Finder();
+
+			finder.Dir = _tempDir;
+			finder.FileMask = "test1.*";
+			finder.FindText = "ee";
+
+			var resultItems = finder.Find();
+
+			if (resultItems == null || resultItems.Count == 0)
+				Assert.Fail("Cant find test files");
+
+			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+
+			Assert.AreEqual(1, machedResult.Count, "Must be 1 mached file");
+
+			Assert.AreEqual(5, machedResult[0].NumMatches, "Must be 5 maches in test1.test");
+
+			Assert.AreEqual("test1.test", machedResult[0].FileName, "mached filename must be test1.test");
+		}
 	}
 }
