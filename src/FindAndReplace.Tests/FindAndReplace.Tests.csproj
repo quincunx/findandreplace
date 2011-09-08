@@ -51,9 +51,16 @@
   <ItemGroup>
     <Compile Include="FinderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SetUpFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FindAndReplace\FindAndReplace.csproj">
+      <Project>{FE2E3014-C4CE-457A-8F25-CFA7274C1D49}</Project>
+      <Name>FindAndReplace</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
