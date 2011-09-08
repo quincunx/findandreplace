@@ -46,7 +46,7 @@ namespace FindAndReplace.Tests
 		public static void TearDown()
 		{
 			var tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
-			Directory.Delete(tempDir, true);
+			//Directory.Delete(tempDir, true);
 		}
 	}
 }

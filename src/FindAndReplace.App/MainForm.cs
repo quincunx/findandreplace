@@ -28,5 +28,18 @@ namespace FindAndReplace.App
 			List<Finder.FindResultItem> resultItems = finder.Find();
 			gvResults.DataSource = resultItems;
 		}
+
+		private void btnReplace_Click(object sender, EventArgs e)
+		{
+			var replacer = new Replacer();
+
+			replacer.Dir = txtDir.Text;
+			replacer.FileMask = txtFileMask.Text;
+			replacer.FindText = txtFind.Text;
+			replacer.ReplaceText = txtReplace.Text;
+
+			var results= replacer.Replace();
+			gvResults.DataSource = results;
+		}
 	}
 }

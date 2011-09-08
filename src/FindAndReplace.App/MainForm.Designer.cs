@@ -31,7 +31,7 @@
 			this.txtFind = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.txtReplace = new System.Windows.Forms.TextBox();
 			this.gvResults = new System.Windows.Forms.DataGridView();
 			this.label3 = new System.Windows.Forms.Label();
 			this.btnReplace = new System.Windows.Forms.Button();
@@ -70,14 +70,14 @@
 			this.label2.TabIndex = 4;
 			this.label2.Text = "Replace:";
 			// 
-			// textBox1
+			// txtReplace
 			// 
-			this.textBox1.Location = new System.Drawing.Point(83, 183);
-			this.textBox1.Multiline = true;
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(539, 74);
-			this.textBox1.TabIndex = 3;
-			this.textBox1.Text = "Test1";
+			this.txtReplace.Location = new System.Drawing.Point(83, 183);
+			this.txtReplace.Multiline = true;
+			this.txtReplace.Name = "txtReplace";
+			this.txtReplace.Size = new System.Drawing.Size(539, 74);
+			this.txtReplace.TabIndex = 3;
+			this.txtReplace.Text = "Test1";
 			// 
 			// gvResults
 			// 
@@ -104,6 +104,7 @@
 			this.btnReplace.TabIndex = 7;
 			this.btnReplace.Text = "Replace";
 			this.btnReplace.UseVisualStyleBackColor = true;
+			this.btnReplace.Click += new System.EventHandler(this.btnReplace_Click);
 			// 
 			// label4
 			// 
@@ -150,7 +151,7 @@
 			this.btnFindOnly.UseVisualStyleBackColor = true;
 			this.btnFindOnly.Click += new System.EventHandler(this.btnFindOnly_Click);
 			// 
-			// Form1
+			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -164,10 +165,10 @@
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.gvResults);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.textBox1);
+			this.Controls.Add(this.txtReplace);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.txtFind);
-			this.Name = "Form1";
+			this.Name = "MainForm";
 			this.Text = "Find and Replace";
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).EndInit();
 			this.ResumeLayout(false);
@@ -180,7 +181,7 @@
 		private System.Windows.Forms.TextBox txtFind;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.TextBox txtReplace;
 		private System.Windows.Forms.DataGridView gvResults;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Button btnReplace;
