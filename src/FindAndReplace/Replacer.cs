@@ -10,6 +10,7 @@ namespace FindAndReplace
 		public string FileMask { get; set; }
 		public string FindText { get; set; }
 		public string ReplaceText { get; set; }
+		public bool IsCaseSensitive { get; set; }
 	
 
 		public class ReplaceResultItem 
@@ -85,8 +86,8 @@ namespace FindAndReplace
 			var options = new RegexOptions();
 
 			//Is the match case check box checked
-			//if (isMatchCase == false)
-			//	options |= RegexOptions.IgnoreCase;
+			if (!IsCaseSensitive)
+				options |= RegexOptions.IgnoreCase;
 
 			//Return the options
 			return options;

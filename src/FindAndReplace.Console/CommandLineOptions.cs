@@ -22,6 +22,9 @@ namespace FindAndReplace.Console
 		[Option(null, "fileMask", Required = true,HelpText = "File mask.")]
 		public string FileMask = String.Empty;
 
+		[Option(null, "caseSensitive", HelpText = "Is Case Sensitive.")]
+		public bool IsCaseSensitive = false;
+
 		#endregion
 
 		#region Specialized Option Attribute
@@ -36,6 +39,7 @@ namespace FindAndReplace.Console
 			help.AddPreOptionsLine("the MIT License <http://www.opensource.org/licenses/mit-license.php>.");
 			help.AddPreOptionsLine("Usage: \n\nFindAndReplace.Console.exe --find \"Text To Find\" --replace \"Text To Replace\"  --dir \"Directory Path\" --fileMask \"*.*\"\n");
 			help.AddPreOptionsLine("FindAndReplace.Console.exe --find \"Text To Find\" --dir \"Directory Path\" --fileMask \"*.*\"");
+			help.AddPreOptionsLine("FindAndReplace.Console.exe --find \"Text To Find\" --dir \"Directory Path\" --fileMask \"*.*\" --caseSensitive");
 			help.AddOptions(this);
 
 			return help;

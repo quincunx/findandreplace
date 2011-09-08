@@ -38,6 +38,7 @@ namespace FindAndReplace.Console
 				finder.Dir = options.Dir;
 				finder.FileMask = options.FileMask;
 				finder.FindText = options.FindText;
+				finder.IsCaseSensitive = options.IsCaseSensitive;
 
 				var result = finder.Find();
 				DisplayFindResult(result);

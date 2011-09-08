@@ -131,5 +131,35 @@ namespace FindAndReplace.Tests
 
 			Assert.AreEqual("test1.test", machedResult[0].FileName, "mached filename must be test1.test");
 		}
+
+		[Test]
+		public void Find_WhenSearchTextIsEEAndCaseSensitive_FindsTextInBoth()
+		{
+			Finder finder = new Finder();
+
+			finder.Dir = _tempDir;
+			finder.FileMask = "*.*";
+			finder.FindText = "So";
+			finder.IsCaseSensitive = true;
+
+			var resultItems = finder.Find();
+
+			if (resultItems == null || resultItems.Count == 0)
+				Assert.Fail("Cant find test files");
+
+			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+
+			Assert.AreEqual(1, machedResult.Count, "Must be 1 mached file");
+
+			Assert.AreEqual("test1.test", machedResult[0].FileName, "Mached filename must be test1.test");
+
+			Assert.AreEqual(1, machedResult[0].NumMatches, "Must be 1 mache in file");
+
+			var notMachedResult = resultItems.Where(ri => ri.NumMatches == 0).ToList();
+
+			Assert.AreEqual(1, notMachedResult.Count, "Must be 1 not mached file");
+
+			Assert.AreEqual("test2.test", notMachedResult[0].FileName, "Not mached filename must be test2.test");
+		}
 	}
 }

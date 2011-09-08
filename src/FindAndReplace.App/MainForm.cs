@@ -24,6 +24,7 @@ namespace FindAndReplace.App
 			finder.Dir = txtDir.Text;
 			finder.FileMask = txtFileMask.Text;
 			finder.FindText = txtFind.Text;
+			finder.IsCaseSensitive = chkBoxCaseSense.Checked;
 
 			List<Finder.FindResultItem> resultItems = finder.Find();
 			gvResults.DataSource = resultItems;
@@ -37,6 +38,7 @@ namespace FindAndReplace.App
 			replacer.FileMask = txtFileMask.Text;
 			replacer.FindText = txtFind.Text;
 			replacer.ReplaceText = txtReplace.Text;
+			replacer.IsCaseSensitive = chkBoxCaseSense.Checked;
 
 			var results= replacer.Replace();
 			gvResults.DataSource = results;

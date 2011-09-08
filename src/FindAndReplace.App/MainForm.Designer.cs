@@ -40,6 +40,7 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.txtFileMask = new System.Windows.Forms.TextBox();
 			this.btnFindOnly = new System.Windows.Forms.Button();
+			this.chkBoxCaseSense = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -151,11 +152,22 @@
 			this.btnFindOnly.UseVisualStyleBackColor = true;
 			this.btnFindOnly.Click += new System.EventHandler(this.btnFindOnly_Click);
 			// 
+			// chkBoxCaseSense
+			// 
+			this.chkBoxCaseSense.AutoSize = true;
+			this.chkBoxCaseSense.Location = new System.Drawing.Point(83, 156);
+			this.chkBoxCaseSense.Name = "chkBoxCaseSense";
+			this.chkBoxCaseSense.Size = new System.Drawing.Size(107, 17);
+			this.chkBoxCaseSense.TabIndex = 13;
+			this.chkBoxCaseSense.Text = "Is Case Sensitive";
+			this.chkBoxCaseSense.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(691, 463);
+			this.Controls.Add(this.chkBoxCaseSense);
 			this.Controls.Add(this.btnFindOnly);
 			this.Controls.Add(this.txtFileMask);
 			this.Controls.Add(this.label5);
@@ -190,6 +202,7 @@
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox txtFileMask;
 		private System.Windows.Forms.Button btnFindOnly;
+		private System.Windows.Forms.CheckBox chkBoxCaseSense;
 	}
 }
 
