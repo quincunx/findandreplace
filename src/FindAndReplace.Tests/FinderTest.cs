@@ -106,12 +106,7 @@ namespace FindAndReplace.Tests
 
 			var resultItems = finder.Find();
 
-			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
-
-			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-
-			Assert.AreEqual(0, machedResult.Count, "Must be 0 mached file");
+			Assert.AreEqual(0, resultItems.Count, "Must be 0 mached file");
 		}
 
 		[Test]
