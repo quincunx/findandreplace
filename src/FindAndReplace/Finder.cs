@@ -10,6 +10,7 @@ namespace FindAndReplace
 		public string FileMask { get; set; }
 		public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
+		public bool IncludeSubDirectories { get; set; }
 	
 		public class FindResultItem
 		{
@@ -21,7 +22,8 @@ namespace FindAndReplace
 		public List<FindResultItem> Find()
 		{
 			//Get all txt files in the directory
-			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, SearchOption.AllDirectories);
+			SearchOption searchOption = IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, searchOption);
 
 			var resultItems = new List<FindResultItem>();
 			//Analyze each file in the directory

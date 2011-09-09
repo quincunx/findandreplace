@@ -41,12 +41,13 @@
 			this.txtFileMask = new System.Windows.Forms.TextBox();
 			this.btnFindOnly = new System.Windows.Forms.Button();
 			this.chkBoxCaseSense = new System.Windows.Forms.CheckBox();
+			this.chkSubDir = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// txtFind
 			// 
-			this.txtFind.Location = new System.Drawing.Point(83, 76);
+			this.txtFind.Location = new System.Drawing.Point(83, 93);
 			this.txtFind.Multiline = true;
 			this.txtFind.Name = "txtFind";
 			this.txtFind.Size = new System.Drawing.Size(539, 74);
@@ -56,7 +57,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(34, 76);
+			this.label1.Location = new System.Drawing.Point(34, 93);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(30, 13);
 			this.label1.TabIndex = 2;
@@ -65,7 +66,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(34, 183);
+			this.label2.Location = new System.Drawing.Point(34, 200);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(50, 13);
 			this.label2.TabIndex = 4;
@@ -73,7 +74,7 @@
 			// 
 			// txtReplace
 			// 
-			this.txtReplace.Location = new System.Drawing.Point(83, 183);
+			this.txtReplace.Location = new System.Drawing.Point(83, 200);
 			this.txtReplace.Multiline = true;
 			this.txtReplace.Name = "txtReplace";
 			this.txtReplace.Size = new System.Drawing.Size(539, 74);
@@ -83,7 +84,7 @@
 			// gvResults
 			// 
 			this.gvResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.gvResults.Location = new System.Drawing.Point(83, 315);
+			this.gvResults.Location = new System.Drawing.Point(83, 332);
 			this.gvResults.Name = "gvResults";
 			this.gvResults.Size = new System.Drawing.Size(539, 129);
 			this.gvResults.TabIndex = 5;
@@ -91,7 +92,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(32, 315);
+			this.label3.Location = new System.Drawing.Point(32, 332);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(45, 13);
 			this.label3.TabIndex = 6;
@@ -99,7 +100,7 @@
 			// 
 			// btnReplace
 			// 
-			this.btnReplace.Location = new System.Drawing.Point(547, 263);
+			this.btnReplace.Location = new System.Drawing.Point(547, 280);
 			this.btnReplace.Name = "btnReplace";
 			this.btnReplace.Size = new System.Drawing.Size(75, 23);
 			this.btnReplace.TabIndex = 7;
@@ -127,7 +128,7 @@
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(11, 50);
+			this.label5.Location = new System.Drawing.Point(11, 67);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(55, 13);
 			this.label5.TabIndex = 10;
@@ -135,7 +136,7 @@
 			// 
 			// txtFileMask
 			// 
-			this.txtFileMask.Location = new System.Drawing.Point(83, 47);
+			this.txtFileMask.Location = new System.Drawing.Point(83, 64);
 			this.txtFileMask.Name = "txtFileMask";
 			this.txtFileMask.Size = new System.Drawing.Size(274, 20);
 			this.txtFileMask.TabIndex = 11;
@@ -144,7 +145,7 @@
 			// 
 			// btnFindOnly
 			// 
-			this.btnFindOnly.Location = new System.Drawing.Point(547, 154);
+			this.btnFindOnly.Location = new System.Drawing.Point(547, 171);
 			this.btnFindOnly.Name = "btnFindOnly";
 			this.btnFindOnly.Size = new System.Drawing.Size(75, 23);
 			this.btnFindOnly.TabIndex = 12;
@@ -155,18 +156,31 @@
 			// chkBoxCaseSense
 			// 
 			this.chkBoxCaseSense.AutoSize = true;
-			this.chkBoxCaseSense.Location = new System.Drawing.Point(83, 156);
+			this.chkBoxCaseSense.Location = new System.Drawing.Point(83, 173);
 			this.chkBoxCaseSense.Name = "chkBoxCaseSense";
 			this.chkBoxCaseSense.Size = new System.Drawing.Size(107, 17);
 			this.chkBoxCaseSense.TabIndex = 13;
 			this.chkBoxCaseSense.Text = "Is Case Sensitive";
 			this.chkBoxCaseSense.UseVisualStyleBackColor = true;
 			// 
+			// chkSubDir
+			// 
+			this.chkSubDir.AutoSize = true;
+			this.chkSubDir.Checked = true;
+			this.chkSubDir.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkSubDir.Location = new System.Drawing.Point(83, 41);
+			this.chkSubDir.Name = "chkSubDir";
+			this.chkSubDir.Size = new System.Drawing.Size(133, 17);
+			this.chkSubDir.TabIndex = 13;
+			this.chkSubDir.Text = "Include SubDirectories";
+			this.chkSubDir.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(691, 463);
+			this.ClientSize = new System.Drawing.Size(663, 514);
+			this.Controls.Add(this.chkSubDir);
 			this.Controls.Add(this.chkBoxCaseSense);
 			this.Controls.Add(this.btnFindOnly);
 			this.Controls.Add(this.txtFileMask);
@@ -203,6 +217,7 @@
 		private System.Windows.Forms.TextBox txtFileMask;
 		private System.Windows.Forms.Button btnFindOnly;
 		private System.Windows.Forms.CheckBox chkBoxCaseSense;
+		private System.Windows.Forms.CheckBox chkSubDir;
 	}
 }
 

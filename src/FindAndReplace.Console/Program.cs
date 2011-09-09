@@ -28,6 +28,8 @@ namespace FindAndReplace.Console
 				replacer.FileMask = options.FileMask;
 				replacer.FindText = options.FindText;
 				replacer.ReplaceText = options.ReplaceText;
+				replacer.IsCaseSensitive = options.IsCaseSensitive;
+				replacer.IncludeSubDirectories = options.IncludeSubDirectories;
 
 				var result = replacer.Replace();
 				DisplayReplaceResult(result);
@@ -39,6 +41,7 @@ namespace FindAndReplace.Console
 				finder.FileMask = options.FileMask;
 				finder.FindText = options.FindText;
 				finder.IsCaseSensitive = options.IsCaseSensitive;
+				finder.IncludeSubDirectories = options.IncludeSubDirectories;
 
 				var result = finder.Find();
 				DisplayFindResult(result);

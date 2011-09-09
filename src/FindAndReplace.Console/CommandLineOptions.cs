@@ -25,6 +25,9 @@ namespace FindAndReplace.Console
 		[Option(null, "caseSensitive", HelpText = "Is Case Sensitive.")]
 		public bool IsCaseSensitive = false;
 
+		[Option(null, "includeSubDir", HelpText = "Include SubDirectories.")]
+		public bool IncludeSubDirectories = false;
+
 		#endregion
 
 		#region Specialized Option Attribute
@@ -35,6 +38,7 @@ namespace FindAndReplace.Console
 			var help = new HelpText("Find And Replace");
 			help.AdditionalNewLineAfterOption = true;
 			help.Copyright = new CopyrightInfo("Entech Solutions", 2011);
+			this.HandleParsingErrorsInHelp(help);
 			help.AddPreOptionsLine("This is free software. You may redistribute copies of it under the terms of");
 			help.AddPreOptionsLine("the MIT License <http://www.opensource.org/licenses/mit-license.php>.");
 			help.AddPreOptionsLine("Usage: \n\nFindAndReplace.Console.exe --find \"Text To Find\" --replace \"Text To Replace\"  --dir \"Directory Path\" --fileMask \"*.*\"\n");
@@ -43,6 +47,15 @@ namespace FindAndReplace.Console
 			help.AddOptions(this);
 
 			return help;
+		}
+
+		private void HandleParsingErrorsInHelp(HelpText help)
+		{
+			string errors = help.RenderParsingErrorsText(this);
+			if (!string.IsNullOrEmpty(errors))
+			{
+				help.AddPreOptionsLine(string.Concat(Environment.NewLine, "ERROR: ", errors, Environment.NewLine));
+			}
 		}
 
 		#endregion

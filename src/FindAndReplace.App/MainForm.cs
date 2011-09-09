@@ -17,7 +17,6 @@ namespace FindAndReplace.App
 			InitializeComponent();
 		}
 
-
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
 			var  finder = new Finder();
@@ -25,6 +24,7 @@ namespace FindAndReplace.App
 			finder.FileMask = txtFileMask.Text;
 			finder.FindText = txtFind.Text;
 			finder.IsCaseSensitive = chkBoxCaseSense.Checked;
+			finder.IncludeSubDirectories = chkSubDir.Checked;
 
 			List<Finder.FindResultItem> resultItems = finder.Find();
 			gvResults.DataSource = resultItems;
@@ -39,6 +39,7 @@ namespace FindAndReplace.App
 			replacer.FindText = txtFind.Text;
 			replacer.ReplaceText = txtReplace.Text;
 			replacer.IsCaseSensitive = chkBoxCaseSense.Checked;
+			replacer.IncludeSubDirectories = chkSubDir.Checked;
 
 			var results= replacer.Replace();
 			gvResults.DataSource = results;

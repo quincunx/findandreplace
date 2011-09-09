@@ -11,7 +11,7 @@ namespace FindAndReplace
 		public string FindText { get; set; }
 		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
-	
+		public bool IncludeSubDirectories { get; set; }
 
 		public class ReplaceResultItem 
 		{
@@ -24,7 +24,8 @@ namespace FindAndReplace
 
 		public List<ReplaceResultItem> Replace()
 		{
-			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, SearchOption.AllDirectories);
+			SearchOption searchOption = IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, searchOption);
 
 			var resultItems = new List<ReplaceResultItem>();
 
