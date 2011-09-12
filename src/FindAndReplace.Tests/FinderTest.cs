@@ -155,5 +155,41 @@ namespace FindAndReplace.Tests
 
 			Assert.AreEqual("test2.test", notMachedResult[0].FileName, "Not mached filename must be test2.test");
 		}
+
+		[Test]
+		public void Find_WhenSearchTextIsEEAndUseSubDir_FindsTextInFourFiles()
+		{
+			Finder finder = new Finder();
+
+			finder.Dir = _tempDir;
+			finder.FileMask = "*.*";
+			finder.FindText = "ee";
+			finder.IncludeSubDirectories = true;
+
+			var resultItems = finder.Find();
+
+			if (resultItems == null || resultItems.Count == 0)
+				Assert.Fail("Cant find test files");
+
+			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+
+			Assert.AreEqual(4, machedResult.Count, "Must be 2 mached file");
+
+			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
+
+			Assert.AreEqual(2, firstFile.Count, "test1.test must be twice in result list");
+
+			Assert.AreEqual(5, firstFile[0].NumMatches, "Must be 5 maches in one test1.test");
+
+			Assert.AreEqual(5, firstFile[1].NumMatches, "Must be 5 maches in another test1.test");
+
+			var secondFile = resultItems.Where(ri => ri.FileName == "test2.test").ToList();
+
+			Assert.AreEqual(2, secondFile.Count, "test2.test must be twice in result list");
+
+			Assert.AreEqual(1, secondFile[0].NumMatches, "Must be 1 maches in one test2.test");
+
+			Assert.AreEqual(1, secondFile[1].NumMatches, "Must be 1 maches in another test2.test");
+		}
 	}
 }

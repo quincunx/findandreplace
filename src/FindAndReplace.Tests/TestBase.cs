@@ -40,6 +40,10 @@ namespace FindAndReplace.Tests
 
 			sr.Close();
 			fs.Close();
+
+			Directory.CreateDirectory(tempDir + "\\subDir");
+			File.Copy(tempDir + "\\test1.test", tempDir + "\\subDir\\test1.test");
+			File.Copy(tempDir + "\\test2.test", tempDir + "\\subDir\\test2.test");
 		}
 
 		[TearDown]

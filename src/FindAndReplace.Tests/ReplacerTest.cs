@@ -120,7 +120,6 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual(0, resultItems.Count, "Must be 0 mached file");
 		}
 
-		
 		[Test]
 		public void Replace_WhenSearchMaskIsTest1_ReplacesTextInOne()
 		{
@@ -153,7 +152,6 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual(0, machedResult.Count, "Must be 0 mached file after replace");
 		}
 
-		
 		[Test]
 		public void Replace_WhenSearchTextIsSoAndCaseSensitive_ReplacesTextInOne()
 		{
@@ -193,5 +191,49 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual(0, machedResult.Count, "Must be 0 mached file after replace");
 		}
 		
+		[Test]
+		public void Replace_WhenSearchTextIsEEAndUseSubDir_ReplacesTextInFour()
+		{
+			Replacer replacer = new Replacer();
+
+			replacer.Dir = _tempDir;
+			replacer.FileMask = "*.*";
+			replacer.FindText = "ee";
+			replacer.ReplaceText = "!!";
+			replacer.IncludeSubDirectories = true;
+
+			var resultItems = replacer.Replace();
+
+			if (resultItems == null || resultItems.Count == 0)
+				Assert.Fail("Cant find test files");
+
+			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+
+			Assert.AreEqual(4, machedResult.Count, "Must be 2 mached file");
+
+			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
+
+			Assert.AreEqual(2, firstFile.Count, "test1.test must be twice in result list");
+
+			Assert.AreEqual(5, firstFile[0].NumMatches, "Must be 5 maches in one test1.test");
+
+			Assert.AreEqual(5, firstFile[1].NumMatches, "Must be 5 maches in another test1.test");
+
+			Assert.IsTrue(firstFile[0].IsSuccess, "Must be success replace in one test1.test");
+
+			Assert.IsTrue(firstFile[1].IsSuccess, "Must be success replace in another test1.test");
+
+			var secondFile = resultItems.Where(ri => ri.FileName == "test2.test").ToList();
+
+			Assert.AreEqual(2, secondFile.Count, "test2.test must be twice in result list");
+
+			Assert.AreEqual(1, secondFile[0].NumMatches, "Must be 1 maches in one test2.test");
+
+			Assert.IsTrue(secondFile[0].IsSuccess, "Must be success replace in one test2.test");
+
+			Assert.AreEqual(1, secondFile[1].NumMatches, "Must be 1 maches in another test2.test");
+
+			Assert.IsTrue(secondFile[1].IsSuccess, "Must be success replace in another test2.test");
+		}
 	}
 }
