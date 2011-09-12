@@ -8,14 +8,8 @@ using System.IO;
 namespace FindAndReplace.Tests
 {
 	[TestFixture]
-	public class FinderTest
+	public class FinderTest:TestBase
 	{
-	
-		private string _tempDir
-		{
-			get { return Path.GetTempPath() + "\\FindAndReplaceTests"; }
-		}
-
 		[Test]
 		public void Find_WhenSearchTextIsLicense_FindsTextInOne()
 		{
@@ -36,7 +30,7 @@ namespace FindAndReplace.Tests
 
 			Assert.AreEqual("test1.test", machedResult[0].FileName, "Mached filename must be test1.test");
 			
-			Assert.AreEqual(1, machedResult[0].NumMatches, "Must be 1 mache in file");
+			Assert.AreEqual(3, machedResult[0].NumMatches, "Must be 3 mache in file");
 
 			var notMachedResult = resultItems.Where(ri => ri.NumMatches == 0).ToList();
 
@@ -133,7 +127,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Find_WhenSearchTextIsEEAndCaseSensitive_FindsTextInBoth()
+		public void Find_WhenSearchTextIsSoAndCaseSensitive_FindsTextInOne()
 		{
 			Finder finder = new Finder();
 
