@@ -42,6 +42,7 @@
 			this.btnFindOnly = new System.Windows.Forms.Button();
 			this.chkBoxCaseSense = new System.Windows.Forms.CheckBox();
 			this.chkSubDir = new System.Windows.Forms.CheckBox();
+			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -88,6 +89,7 @@
 			this.gvResults.Name = "gvResults";
 			this.gvResults.Size = new System.Drawing.Size(539, 129);
 			this.gvResults.TabIndex = 5;
+			this.gvResults.Visible = false;
 			// 
 			// label3
 			// 
@@ -97,6 +99,7 @@
 			this.label3.Size = new System.Drawing.Size(45, 13);
 			this.label3.TabIndex = 6;
 			this.label3.Text = "Results:";
+			this.label3.Visible = false;
 			// 
 			// btnReplace
 			// 
@@ -175,11 +178,20 @@
 			this.chkSubDir.Text = "Include SubDirectories";
 			this.chkSubDir.UseVisualStyleBackColor = true;
 			// 
+			// progressBar1
+			// 
+			this.progressBar1.Location = new System.Drawing.Point(83, 479);
+			this.progressBar1.Name = "progressBar1";
+			this.progressBar1.Size = new System.Drawing.Size(539, 23);
+			this.progressBar1.TabIndex = 14;
+			this.progressBar1.Visible = false;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(663, 514);
+			this.ClientSize = new System.Drawing.Size(663, 309);
+			this.Controls.Add(this.progressBar1);
 			this.Controls.Add(this.chkSubDir);
 			this.Controls.Add(this.chkBoxCaseSense);
 			this.Controls.Add(this.btnFindOnly);
@@ -196,6 +208,7 @@
 			this.Controls.Add(this.txtFind);
 			this.Name = "MainForm";
 			this.Text = "Find and Replace";
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -218,6 +231,7 @@
 		private System.Windows.Forms.Button btnFindOnly;
 		private System.Windows.Forms.CheckBox chkBoxCaseSense;
 		private System.Windows.Forms.CheckBox chkSubDir;
+		private System.Windows.Forms.ProgressBar progressBar1;
 	}
 }
 
