@@ -24,19 +24,15 @@ namespace FindAndReplace.Tests
 			if (resultItems==null || resultItems.Count==0) 
 				Assert.Fail("Cant find test files");
 
-			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
-			Assert.AreEqual(1, machedResult.Count, "Must be 1 mached file");
+			Assert.AreEqual(1, matchedResultItems.Count);
+			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
+			Assert.AreEqual(3, matchedResultItems[0].NumMatches);
 
-			Assert.AreEqual("test1.test", machedResult[0].FileName, "Mached filename must be test1.test");
-			
-			Assert.AreEqual(3, machedResult[0].NumMatches, "Must be 3 mache in file");
-
-			var notMachedResult = resultItems.Where(ri => ri.NumMatches == 0).ToList();
-
-			Assert.AreEqual(1, notMachedResult.Count, "Must be 1 not mached file");
-
-			Assert.AreEqual("test2.test", notMachedResult[0].FileName, "Not mached filename must be test2.test");
+			var notNatchedResultItems = resultItems.Where(ri => ri.NumMatches == 0).ToList();
+			Assert.AreEqual(1, notNatchedResultItems.Count);
+			Assert.AreEqual("test2.test", notNatchedResultItems[0].FileName);
 		}
 
 		[Test]
@@ -53,21 +49,19 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
-			Assert.AreEqual(2, machedResult.Count, "Must be 2 mached file");
+			Assert.AreEqual(2, matchedResultItems.Count);
 
 			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
 
-			Assert.AreEqual(1, firstFile.Count, "test1.test must be in result list");
-
-			Assert.AreEqual(5, firstFile[0].NumMatches, "Must be 5 maches in test1.test");
+			Assert.AreEqual(1, firstFile.Count);
+			Assert.AreEqual(5, firstFile[0].NumMatches);
 
 			var secondFile = resultItems.Where(ri => ri.FileName == "test2.test").ToList();
 
-			Assert.AreEqual(1, secondFile.Count, "test2.test must be in result list");
-
-			Assert.AreEqual(1, secondFile[0].NumMatches, "Must be 1 maches in test2.test");
+			Assert.AreEqual(1, secondFile.Count);
+			Assert.AreEqual(1, secondFile[0].NumMatches);
 		}
 
 		[Test]
@@ -84,9 +78,9 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
-			Assert.AreEqual(0, machedResult.Count, "Must be 0 mached file");
+			Assert.AreEqual(0, matchedResultItems.Count);
 		}
 
 		[Test]
@@ -100,7 +94,7 @@ namespace FindAndReplace.Tests
 
 			var resultItems = finder.Find();
 
-			Assert.AreEqual(0, resultItems.Count, "Must be 0 mached file");
+			Assert.AreEqual(0, resultItems.Count);
 		}
 
 		[Test]
@@ -117,13 +111,13 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
-			Assert.AreEqual(1, machedResult.Count, "Must be 1 mached file");
+			Assert.AreEqual(1, matchedResultItems.Count);
 
-			Assert.AreEqual(5, machedResult[0].NumMatches, "Must be 5 maches in test1.test");
+			Assert.AreEqual(5, matchedResultItems[0].NumMatches);
 
-			Assert.AreEqual("test1.test", machedResult[0].FileName, "mached filename must be test1.test");
+			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
 		}
 
 		[Test]
@@ -141,19 +135,16 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
-			Assert.AreEqual(1, machedResult.Count, "Must be 1 mached file");
+			Assert.AreEqual(1, matchedResultItems.Count);
+			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
+			Assert.AreEqual(1, matchedResultItems[0].NumMatches);
 
-			Assert.AreEqual("test1.test", machedResult[0].FileName, "Mached filename must be test1.test");
+			var notmatchedResultItems = resultItems.Where(ri => ri.NumMatches == 0).ToList();
 
-			Assert.AreEqual(1, machedResult[0].NumMatches, "Must be 1 mache in file");
-
-			var notMachedResult = resultItems.Where(ri => ri.NumMatches == 0).ToList();
-
-			Assert.AreEqual(1, notMachedResult.Count, "Must be 1 not mached file");
-
-			Assert.AreEqual("test2.test", notMachedResult[0].FileName, "Not mached filename must be test2.test");
+			Assert.AreEqual(1, notmatchedResultItems.Count);
+			Assert.AreEqual("test2.test", notmatchedResultItems[0].FileName);
 		}
 
 		[Test]
@@ -171,25 +162,21 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var machedResult = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
-			Assert.AreEqual(4, machedResult.Count, "Must be 2 mached file");
+			Assert.AreEqual(4, matchedResultItems.Count);
 
 			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
 
-			Assert.AreEqual(2, firstFile.Count, "test1.test must be twice in result list");
-
-			Assert.AreEqual(5, firstFile[0].NumMatches, "Must be 5 maches in one test1.test");
-
-			Assert.AreEqual(5, firstFile[1].NumMatches, "Must be 5 maches in another test1.test");
+			Assert.AreEqual(2, firstFile.Count);
+			Assert.AreEqual(5, firstFile[0].NumMatches);
+			Assert.AreEqual(5, firstFile[1].NumMatches);
 
 			var secondFile = resultItems.Where(ri => ri.FileName == "test2.test").ToList();
 
-			Assert.AreEqual(2, secondFile.Count, "test2.test must be twice in result list");
-
-			Assert.AreEqual(1, secondFile[0].NumMatches, "Must be 1 maches in one test2.test");
-
-			Assert.AreEqual(1, secondFile[1].NumMatches, "Must be 1 maches in another test2.test");
+			Assert.AreEqual(2, secondFile.Count);
+			Assert.AreEqual(1, secondFile[0].NumMatches);
+			Assert.AreEqual(1, secondFile[1].NumMatches);
 		}
 	}
 }
