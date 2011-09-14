@@ -10,14 +10,16 @@ namespace FindAndReplace.Tests
 	[TestFixture]
 	public class TestBase
 	{
-		[SetUp]
-		public static void SetUp()
-		{
-			var tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
-			Directory.CreateDirectory(tempDir);
+		protected string _tempDir;
 
-			FileStream fs=new FileStream(tempDir+"\\test1.test", FileMode.Create);
-			StreamWriter sr=new StreamWriter(fs);
+		[SetUp] 
+		public void SetUp()
+		{
+			_tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
+			Directory.CreateDirectory(_tempDir);
+
+			FileStream fs = new FileStream(_tempDir + "\\test1.test", FileMode.Create);
+			StreamWriter sr = new StreamWriter(fs);
 
 			sr.Write("The licenses for most software and other practical");
 			sr.Write(" works are designed to take away your freedom to share");
@@ -27,11 +29,11 @@ namespace FindAndReplace.Tests
 			sr.Write(" software for all its users. We, the Free Software Foundation, use");
 			sr.Write(" the GNU General Public License for most of our software; it applies");
 			sr.Write(" also to any other work released this way by its authors. You can apply it to your programs, too.");
-			
+
 			sr.Close();
 			fs.Close();
 
-			fs = new FileStream(tempDir + "\\test2.test", FileMode.Create);
+			fs = new FileStream(_tempDir + "\\test2.test", FileMode.Create);
 			sr = new StreamWriter(fs);
 
 			sr.WriteLine("1234567890");
@@ -41,21 +43,17 @@ namespace FindAndReplace.Tests
 			sr.Close();
 			fs.Close();
 
-			Directory.CreateDirectory(tempDir + "\\subDir");
-			File.Copy(tempDir + "\\test1.test", tempDir + "\\subDir\\test1.test");
-			File.Copy(tempDir + "\\test2.test", tempDir + "\\subDir\\test2.test");
+			Directory.CreateDirectory(_tempDir + "\\subDir");
+			File.Copy(_tempDir + "\\test1.test", _tempDir + "\\subDir\\test1.test");
+			File.Copy(_tempDir + "\\test2.test", _tempDir + "\\subDir\\test2.test");
 		}
 
 		[TearDown]
-		public static void TearDown()
+		public void TearDown()
 		{
 			var tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
 			Directory.Delete(tempDir, true);
 		}
 
-		protected string _tempDir
-		{
-			get { return Path.GetTempPath() + "\\FindAndReplaceTests"; }
-		}
 	}
 }
