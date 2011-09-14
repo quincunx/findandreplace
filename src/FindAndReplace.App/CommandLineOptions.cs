@@ -5,22 +5,22 @@ using System.Text;
 using CommandLine;
 using CommandLine.Text;
 
-namespace FindAndReplace.App
+namespace FindAndReplace
 {
 	public class CommandLineOptions : CommandLineOptionsBase
 	{
 		#region Standard Option Attribute
+		[Option(null, "dir", Required = true, HelpText = "Directory.")]
+		public string Dir = String.Empty;
+
+		[Option(null, "fileMask", Required = true, HelpText = "File mask.")]
+		public string FileMask = String.Empty;
+		
 		[Option(null, "find", Required = true, HelpText = "Text to find.")]
 		public string FindText = String.Empty;
 
 		[Option(null, "replace", HelpText = "Replacement text.")]
 		public string ReplaceText = String.Empty;
-
-		[Option(null, "dir", Required = true, HelpText = "Directory.")]
-		public string Dir = String.Empty;
-
-		[Option(null, "fileMask", Required = true,HelpText = "File mask.")]
-		public string FileMask = String.Empty;
 
 		[Option(null, "caseSensitive", HelpText = "Is Case Sensitive.")]
 		public bool IsCaseSensitive = false;

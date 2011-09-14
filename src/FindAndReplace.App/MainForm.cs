@@ -9,7 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 
-namespace FindAndReplace.App
+namespace FindAndReplace
 {
 	public partial class MainForm : Form
 	{
@@ -24,7 +24,7 @@ namespace FindAndReplace.App
 		{
 			PrepareFinderGrid();
 
-			var  finder = new Finder();
+			var finder = new Finder();
 			finder.Dir = txtDir.Text;
 			finder.FileMask = txtFileMask.Text;
 			finder.FindText = txtFind.Text;
@@ -50,9 +50,12 @@ namespace FindAndReplace.App
 			replacer.IsCaseSensitive = chkBoxCaseSense.Checked;
 			replacer.IncludeSubDirectories = chkSubDir.Checked;
 
-			var results= replacer.Replace();
+			var results = replacer.Replace();
 
 			ShowResultPanel();
+
+			gvResults.Rows.Clear();
+			gvResults.Columns.Clear();
 			gvResults.DataSource = results;
 		}
 
@@ -75,10 +78,10 @@ namespace FindAndReplace.App
 
 		private void FindFileProceed(object sender, FinderEventArgs e)
 		{
-			
+
 			gvResults.Rows.Add();
 
-			int currentRow = gvResults.Rows.Count-2;
+			int currentRow = gvResults.Rows.Count - 2;
 
 			gvResults.Rows[currentRow].Cells[0].Value = e.ResultItem.FileName;
 			gvResults.Rows[currentRow].Cells[1].Value = e.ResultItem.FilePath;
@@ -90,6 +93,8 @@ namespace FindAndReplace.App
 
 		private void PrepareFinderGrid()
 		{
+			gvResults.DataSource = null;
+
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
 			gvResults.Columns.Add("Filename", "Filename");
@@ -112,8 +117,44 @@ namespace FindAndReplace.App
 				gvResults.Visible = true;
 				progressBar1.Visible = true;
 
+				if (!txtCommandLine.Visible)
+				{
+					label3.Top -= txtCommandLine.Height;
+					gvResults.Top -= txtCommandLine.Height;
+					progressBar1.Top -= txtCommandLine.Height;
+				}
+
 				this.Height += 200;
 			}
 		}
+
+		private void ShowCommandLinePanel()
+		{
+			if (!txtCommandLine.Visible)
+			{
+				txtCommandLine.Visible = true;
+
+				if (label3.Visible)
+				{
+					label3.Top += txtCommandLine.Height;
+					gvResults.Top += txtCommandLine.Height;
+					progressBar1.Top += txtCommandLine.Height;
+				}
+
+				this.Height += txtCommandLine.Height + 10;
+			}
+		}
+
+		private void btnGen_Click(object sender, EventArgs e)
+		{
+			ShowCommandLinePanel();
+			txtCommandLine.Clear();
+
+			string s = String.Format("{0}.exe --cl --dir \"{1}\" --fileMask \"{2}\" --find \"{3}\" --replace \"{4}\" {5} {6}",
+			                         Application.ProductName, txtDir.Text, txtFileMask.Text, txtFind.Text, txtReplace.Text, chkSubDir.Checked?"--includeSubDir":"", chkBoxCaseSense.Checked?"--caseSensitive":"");
+
+			txtCommandLine.Text = s;
+		}
+
 	}
 }

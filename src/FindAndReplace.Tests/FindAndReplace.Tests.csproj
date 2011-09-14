@@ -58,12 +58,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FindAndReplace\FindAndReplace.csproj">
-      <Project>{FE2E3014-C4CE-457A-8F25-CFA7274C1D49}</Project>
+    <ProjectReference Include="..\FindAndReplace.App\FindAndReplace.csproj">
+      <Project>{128F4172-1975-4ABA-A8D8-4B55DC9AB481}</Project>
       <Name>FindAndReplace</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
