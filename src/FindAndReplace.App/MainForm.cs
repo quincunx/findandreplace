@@ -17,6 +17,14 @@ namespace FindAndReplace.App
 	{
 		private Finder _finder;
 
+		private Replacer _replace;
+
+		private Thread _currentThread;
+
+		delegate void SetFinderResultCallback(Finder.FindResultItem resultItem, int totalCount);
+
+		delegate void SetReplaceResultCallback(Replacer.ReplaceResultItem resultItem, int totalCount);
+
 		public MainForm()
 		{
 			InitializeComponent();
@@ -37,10 +45,9 @@ namespace FindAndReplace.App
 
 			ShowResultPanel();
 
-			Thread thread = new Thread(new ThreadStart(DoFindWork));
-			thread.Start();
-			//finder.AsyncFind();
-
+			_currentThread = new Thread(new ThreadStart(DoFindWork));
+			_currentThread.IsBackground = true;
+			_currentThread.Start();
 		}
 
 		private void btnReplace_Click(object sender, EventArgs e)
@@ -54,13 +61,21 @@ namespace FindAndReplace.App
 			replacer.IsCaseSensitive = chkBoxCaseSense.Checked;
 			replacer.IncludeSubDirectories = chkSubDir.Checked;
 
-			var results = replacer.Replace();
+			//var results = replacer.Replace();
 
 			ShowResultPanel();
 
-			gvResults.Rows.Clear();
-			gvResults.Columns.Clear();
-			gvResults.DataSource = results;
+			PrepareReplacerGrid();
+
+			CreateListener(replacer);
+
+			//gvResults.Rows.Clear();
+			//gvResults.Columns.Clear();
+			//gvResults.DataSource = results;
+
+			_currentThread = new Thread(new ThreadStart(DoReplaceWork));
+			_currentThread.IsBackground = true;
+			_currentThread.Start();
 		}
 
 		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -72,6 +87,12 @@ namespace FindAndReplace.App
 		{
 			_finder = finder;
 			_finder.FileProcessed += new FileProcessedEventHandler(FindFileProceed);
+		}
+
+		private void CreateListener(Replacer replacer)
+		{
+			_replace = replacer;
+			_replace.FileProcessed += new ReplaceFileProcessedEventHandler(ReplaceFileProceed);
 		}
 
 		private void DetachListener()
@@ -86,17 +107,13 @@ namespace FindAndReplace.App
 			if (!this.gvResults.InvokeRequired)
 			{
 
-				gvResults.Rows.Add();
-
-				int currentRow = gvResults.Rows.Count - 2;
-
-				gvResults.Rows[currentRow].Cells[0].Value = e.ResultItem.FileName;
-				gvResults.Rows[currentRow].Cells[1].Value = e.ResultItem.FilePath;
-				gvResults.Rows[currentRow].Cells[2].Value = e.ResultItem.NumMatches;
+				ShowFindResult(e.ResultItem, e.TotalFilesCount);
 			}
-
-			//progressBar1.Maximum = e.TotalFilesCount;
-			//progressBar1.Increment(1);
+			else
+			{
+				SetFinderResultCallback finderResultCallback=new SetFinderResultCallback(ShowFindResult);
+				this.Invoke(finderResultCallback, new object[] {e.ResultItem, e.TotalFilesCount});
+			}
 		}
 
 		private void PrepareFinderGrid()
@@ -108,6 +125,20 @@ namespace FindAndReplace.App
 			gvResults.Columns.Add("Filename", "Filename");
 			gvResults.Columns.Add("Path", "Path");
 			gvResults.Columns.Add("Num Maches", "Num Maches");
+
+			progressBar1.Value = 0;
+		}
+
+		private void PrepareReplacerGrid()
+		{
+			gvResults.DataSource = null;
+
+			gvResults.Rows.Clear();
+			gvResults.Columns.Clear();
+			gvResults.Columns.Add("Filename", "Filename");
+			gvResults.Columns.Add("Path", "Path");
+			gvResults.Columns.Add("Num Maches", "Num Maches");
+			gvResults.Columns.Add("Is Success", "IsSuccess");
 
 			progressBar1.Value = 0;
 		}
@@ -161,7 +192,60 @@ namespace FindAndReplace.App
 
 		private void DoFindWork()
 		{
-			_finder.AsyncFind();
+			_finder.FindAsync();
+		}
+
+		private void ShowFindResult(Finder.FindResultItem findResultItem, int totalCount)
+		{
+			gvResults.Rows.Add();
+
+			int currentRow = gvResults.Rows.Count - 2;
+
+			gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
+			gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FilePath;
+			gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+
+			progressBar1.Maximum = totalCount;
+			progressBar1.Value++;
+		}
+
+		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, int totalCount)
+		{
+			gvResults.Rows.Add();
+
+			int currentRow = gvResults.Rows.Count - 2;
+
+			gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
+			gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FilePath;
+			gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
+			gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
+
+			progressBar1.Maximum = totalCount;
+			progressBar1.Value++;
+		}
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (_currentThread.IsAlive) _currentThread.Abort();
+		}
+
+		private void DoReplaceWork()
+		{
+			_replace.ReplaceAsync();
+		}
+
+		private void ReplaceFileProceed(object sender, ReplacerEventArgs e)
+		{
+
+			if (!this.gvResults.InvokeRequired)
+			{
+				ShowReplaceResult(e.ResultItem, e.TotalFilesCount);
+			}
+			else
+			{
+				SetReplaceResultCallback replaceResultCallback = new SetReplaceResultCallback(ShowReplaceResult);
+				this.Invoke(replaceResultCallback, new object[] { e.ResultItem, e.TotalFilesCount });
+			}
 		}
 	}
 }

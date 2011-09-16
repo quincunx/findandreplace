@@ -1,9 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
 namespace FindAndReplace
 {
+	public class ReplacerEventArgs : EventArgs
+	{
+		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, int fileCount)
+		{
+			this.ResultItem = resultItem;
+			TotalFilesCount = fileCount;
+		}
+		public Replacer.ReplaceResultItem ResultItem;
+
+		public int TotalFilesCount;
+	}
+
+	public delegate void ReplaceFileProcessedEventHandler(object sender, ReplacerEventArgs e);
+	
 	public class Replacer
 	{
 		public string Dir { get; set; }
@@ -38,6 +53,18 @@ namespace FindAndReplace
 			return resultItems;
 		}
 
+		public void  ReplaceAsync()
+		{
+			SearchOption searchOption = IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, searchOption);
+
+			foreach (string filePath in filesInDirectory)
+			{
+				var resultItem = ReplaceTextInFile(filePath);
+
+				OnFileProcessed(new ReplacerEventArgs(resultItem, filesInDirectory.Length));
+			}
+		}
 
 		private ReplaceResultItem ReplaceTextInFile(string filePath)
 		{
@@ -80,7 +107,6 @@ namespace FindAndReplace
 			return resultItem;
 		}
 
-
 		private RegexOptions GetRegExOptions()
 		{
 			//Create a new option
@@ -94,5 +120,12 @@ namespace FindAndReplace
 			return options;
 		}
 
+		public event ReplaceFileProcessedEventHandler FileProcessed;
+
+		protected virtual void OnFileProcessed(ReplacerEventArgs e)
+		{
+			if (FileProcessed != null)
+				FileProcessed(this, e);
+		}
 	}
 }
