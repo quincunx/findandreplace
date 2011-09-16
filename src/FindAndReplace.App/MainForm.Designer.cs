@@ -1,4 +1,4 @@
-﻿namespace FindAndReplace
+﻿namespace FindAndReplace.App
 {
 	partial class MainForm
 	{
@@ -253,9 +253,9 @@
 		private System.Windows.Forms.CheckBox chkBoxCaseSense;
 		private System.Windows.Forms.CheckBox chkSubDir;
 		private System.Windows.Forms.TextBox txtCommandLine;
-		private System.Windows.Forms.ProgressBar progressBar1;
+		public System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.DataGridView gvResults;
+		public System.Windows.Forms.DataGridView gvResults;
 		private System.Windows.Forms.Button btnGen;
 	}
 }

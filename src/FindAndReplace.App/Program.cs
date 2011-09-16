@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CommandLine;
 
-namespace FindAndReplace
+namespace FindAndReplace.App
 {
 	//from http://www.rootsilver.com/2007/08/how-to-create-a-consolewindow
 	static class Program

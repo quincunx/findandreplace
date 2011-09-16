@@ -5,7 +5,7 @@ using System.Text;
 using CommandLine;
 using CommandLine.Text;
 
-namespace FindAndReplace
+namespace FindAndReplace.App
 {
 	public class CommandLineOptions : CommandLineOptionsBase
 	{
