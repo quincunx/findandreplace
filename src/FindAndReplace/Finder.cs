@@ -57,7 +57,7 @@ namespace FindAndReplace
 			return resultItems;
 		}
 
-		public void AsyncFind()
+		public void FindAsync()
 		{
 			
 			SearchOption searchOption = IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
