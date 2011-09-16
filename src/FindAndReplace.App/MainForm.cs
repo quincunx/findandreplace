@@ -80,7 +80,7 @@ namespace FindAndReplace.App
 
 		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-
+			if (_currentThread!=null && _currentThread.IsAlive) _currentThread.Abort();
 		}
 
 		private void CreateListener(Finder finder)
@@ -183,9 +183,9 @@ namespace FindAndReplace.App
 		{
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
-
+			
 			string s = String.Format("{0}.exe --cl --dir \"{1}\" --fileMask \"{2}\" --find \"{3}\" --replace \"{4}\" {5} {6}",
-			                         Application.ProductName, txtDir.Text, txtFileMask.Text, txtFind.Text, txtReplace.Text, chkSubDir.Checked?"--includeSubDir":"", chkBoxCaseSense.Checked?"--caseSensitive":"");
+									 System.Diagnostics.Process.GetCurrentProcess().ProcessName, txtDir.Text, txtFileMask.Text, ParseText(txtFind.Text), ParseText(txtReplace.Text), chkSubDir.Checked ? "--includeSubDir" : "", chkBoxCaseSense.Checked ? "--caseSensitive" : "");
 
 			txtCommandLine.Text = s;
 		}
@@ -193,6 +193,12 @@ namespace FindAndReplace.App
 		private void DoFindWork()
 		{
 			_finder.FindAsync();
+		}
+
+		private string ParseText(string original)
+		{
+			
+			return original.Replace(Environment.NewLine, "\\r\\n").Replace("\"","\\\"");
 		}
 
 		private void ShowFindResult(Finder.FindResultItem findResultItem, int totalCount)
@@ -222,11 +228,6 @@ namespace FindAndReplace.App
 
 			progressBar1.Maximum = totalCount;
 			progressBar1.Value++;
-		}
-
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			if (_currentThread.IsAlive) _currentThread.Abort();
 		}
 
 		private void DoReplaceWork()
