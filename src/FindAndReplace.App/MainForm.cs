@@ -9,8 +9,10 @@ using System.Threading;
 using System.Windows.Forms;
 
 
-namespace FindAndReplace
+namespace FindAndReplace.App
 {
+	 
+	
 	public partial class MainForm : Form
 	{
 		private Finder _finder;
@@ -35,7 +37,9 @@ namespace FindAndReplace
 
 			ShowResultPanel();
 
-			finder.AsyncFind();
+			Thread thread = new Thread(new ThreadStart(DoFindWork));
+			thread.Start();
+			//finder.AsyncFind();
 
 		}
 
@@ -79,16 +83,20 @@ namespace FindAndReplace
 		private void FindFileProceed(object sender, FinderEventArgs e)
 		{
 
-			gvResults.Rows.Add();
+			if (!this.gvResults.InvokeRequired)
+			{
 
-			int currentRow = gvResults.Rows.Count - 2;
+				gvResults.Rows.Add();
 
-			gvResults.Rows[currentRow].Cells[0].Value = e.ResultItem.FileName;
-			gvResults.Rows[currentRow].Cells[1].Value = e.ResultItem.FilePath;
-			gvResults.Rows[currentRow].Cells[2].Value = e.ResultItem.NumMatches;
+				int currentRow = gvResults.Rows.Count - 2;
 
-			progressBar1.Maximum = e.TotalFilesCount;
-			progressBar1.Increment(1);
+				gvResults.Rows[currentRow].Cells[0].Value = e.ResultItem.FileName;
+				gvResults.Rows[currentRow].Cells[1].Value = e.ResultItem.FilePath;
+				gvResults.Rows[currentRow].Cells[2].Value = e.ResultItem.NumMatches;
+			}
+
+			//progressBar1.Maximum = e.TotalFilesCount;
+			//progressBar1.Increment(1);
 		}
 
 		private void PrepareFinderGrid()
@@ -102,11 +110,6 @@ namespace FindAndReplace
 			gvResults.Columns.Add("Num Maches", "Num Maches");
 
 			progressBar1.Value = 0;
-		}
-
-		private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-		{
-			_finder.AsyncFind();
 		}
 
 		private void ShowResultPanel()
@@ -156,5 +159,9 @@ namespace FindAndReplace
 			txtCommandLine.Text = s;
 		}
 
+		private void DoFindWork()
+		{
+			_finder.AsyncFind();
+		}
 	}
 }
