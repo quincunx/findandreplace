@@ -231,7 +231,6 @@
 			this.Controls.Add(this.txtFind);
 			this.Name = "MainForm";
 			this.Text = "Find and Replace";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).EndInit();
 			this.ResumeLayout(false);
