@@ -145,11 +145,13 @@
 			// chkIsCaseSensitive
 			// 
 			this.chkIsCaseSensitive.AutoSize = true;
+			this.chkIsCaseSensitive.Checked = true;
+			this.chkIsCaseSensitive.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.chkIsCaseSensitive.Location = new System.Drawing.Point(83, 173);
 			this.chkIsCaseSensitive.Name = "chkIsCaseSensitive";
-			this.chkIsCaseSensitive.Size = new System.Drawing.Size(107, 17);
+			this.chkIsCaseSensitive.Size = new System.Drawing.Size(96, 17);
 			this.chkIsCaseSensitive.TabIndex = 13;
-			this.chkIsCaseSensitive.Text = "Is Case Sensitive";
+			this.chkIsCaseSensitive.Text = "Case Sensitive";
 			this.chkIsCaseSensitive.UseVisualStyleBackColor = true;
 			// 
 			// chkIncludeSubDirectories
