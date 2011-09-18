@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CommandLine;
@@ -71,11 +71,12 @@ namespace FindAndReplace.App
 					var replacer = new Replacer();
 					replacer.Dir = options.Dir;
 					replacer.FileMask = options.FileMask;
+					replacer.IncludeSubDirectories = options.IncludeSubDirectories;
+
 					replacer.FindText = options.FindText;
 					replacer.ReplaceText = options.ReplaceText;
 					replacer.IsCaseSensitive = options.IsCaseSensitive;
-					replacer.IncludeSubDirectories = options.IncludeSubDirectories;
-
+					
 					var result = replacer.Replace();
 					DisplayReplaceResult(result);
 				}
@@ -84,10 +85,11 @@ namespace FindAndReplace.App
 					var finder = new Finder();
 					finder.Dir = options.Dir;
 					finder.FileMask = options.FileMask;
-					finder.FindText = options.FindText;
-					finder.IsCaseSensitive = options.IsCaseSensitive;
 					finder.IncludeSubDirectories = options.IncludeSubDirectories;
 
+					finder.FindText = options.FindText;
+					finder.IsCaseSensitive = options.IsCaseSensitive;
+					
 					var result = finder.Find();
 					DisplayFindResult(result);
 				}
@@ -137,13 +139,13 @@ namespace FindAndReplace.App
 		{
 			System.Console.WriteLine(
 				string.Format("|{0}|{1}|{2}|{3}|",
-					AlignCentre(column1, 17),
-					AlignCentre(column2, 17),
-					AlignCentre(column3, 17),
-					AlignCentre(column4, 17)));
+					AlignCenter(column1, 17),
+					AlignCenter(column2, 17),
+					AlignCenter(column3, 17),
+					AlignCenter(column4, 17)));
 		}
 
-		static string AlignCentre(string text, int width)
+		static string AlignCenter(string text, int width)
 		{
 			if (string.IsNullOrEmpty(text))
 			{
