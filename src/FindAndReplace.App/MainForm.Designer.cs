@@ -38,14 +38,17 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.txtFileMask = new System.Windows.Forms.TextBox();
 			this.btnFindOnly = new System.Windows.Forms.Button();
-			this.chkBoxCaseSense = new System.Windows.Forms.CheckBox();
-			this.chkSubDir = new System.Windows.Forms.CheckBox();
-			this.txtCommandLine = new System.Windows.Forms.TextBox();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.label3 = new System.Windows.Forms.Label();
+			this.chkIsCaseSensitive = new System.Windows.Forms.CheckBox();
+			this.chkIncludeSubDirectories = new System.Windows.Forms.CheckBox();
+			this.progressBar = new System.Windows.Forms.ProgressBar();
+			this.lblResults = new System.Windows.Forms.Label();
 			this.gvResults = new System.Windows.Forms.DataGridView();
-			this.btnGen = new System.Windows.Forms.Button();
+			this.btnGenReplaceCommandLine = new System.Windows.Forms.Button();
+			this.txtCommandLine = new System.Windows.Forms.TextBox();
+			this.lblCommandLine = new System.Windows.Forms.Label();
+			this.pnlCommandLine = new System.Windows.Forms.Panel();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
+			this.pnlCommandLine.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// txtFind
@@ -139,86 +142,109 @@
 			this.btnFindOnly.UseVisualStyleBackColor = true;
 			this.btnFindOnly.Click += new System.EventHandler(this.btnFindOnly_Click);
 			// 
-			// chkBoxCaseSense
+			// chkIsCaseSensitive
 			// 
-			this.chkBoxCaseSense.AutoSize = true;
-			this.chkBoxCaseSense.Location = new System.Drawing.Point(83, 173);
-			this.chkBoxCaseSense.Name = "chkBoxCaseSense";
-			this.chkBoxCaseSense.Size = new System.Drawing.Size(107, 17);
-			this.chkBoxCaseSense.TabIndex = 13;
-			this.chkBoxCaseSense.Text = "Is Case Sensitive";
-			this.chkBoxCaseSense.UseVisualStyleBackColor = true;
+			this.chkIsCaseSensitive.AutoSize = true;
+			this.chkIsCaseSensitive.Location = new System.Drawing.Point(83, 173);
+			this.chkIsCaseSensitive.Name = "chkIsCaseSensitive";
+			this.chkIsCaseSensitive.Size = new System.Drawing.Size(107, 17);
+			this.chkIsCaseSensitive.TabIndex = 13;
+			this.chkIsCaseSensitive.Text = "Is Case Sensitive";
+			this.chkIsCaseSensitive.UseVisualStyleBackColor = true;
 			// 
-			// chkSubDir
+			// chkIncludeSubDirectories
 			// 
-			this.chkSubDir.AutoSize = true;
-			this.chkSubDir.Checked = true;
-			this.chkSubDir.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkSubDir.Location = new System.Drawing.Point(83, 41);
-			this.chkSubDir.Name = "chkSubDir";
-			this.chkSubDir.Size = new System.Drawing.Size(133, 17);
-			this.chkSubDir.TabIndex = 13;
-			this.chkSubDir.Text = "Include SubDirectories";
-			this.chkSubDir.UseVisualStyleBackColor = true;
+			this.chkIncludeSubDirectories.AutoSize = true;
+			this.chkIncludeSubDirectories.Checked = true;
+			this.chkIncludeSubDirectories.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkIncludeSubDirectories.Location = new System.Drawing.Point(83, 41);
+			this.chkIncludeSubDirectories.Name = "chkIncludeSubDirectories";
+			this.chkIncludeSubDirectories.Size = new System.Drawing.Size(133, 17);
+			this.chkIncludeSubDirectories.TabIndex = 13;
+			this.chkIncludeSubDirectories.Text = "Include SubDirectories";
+			this.chkIncludeSubDirectories.UseVisualStyleBackColor = true;
 			// 
-			// txtCommandLine
+			// progressBar
 			// 
-			this.txtCommandLine.Location = new System.Drawing.Point(83, 338);
-			this.txtCommandLine.Multiline = true;
-			this.txtCommandLine.Name = "txtCommandLine";
-			this.txtCommandLine.Size = new System.Drawing.Size(539, 74);
-			this.txtCommandLine.TabIndex = 15;
-			this.txtCommandLine.Visible = false;
+			this.progressBar.Location = new System.Drawing.Point(83, 581);
+			this.progressBar.Name = "progressBar";
+			this.progressBar.Size = new System.Drawing.Size(712, 23);
+			this.progressBar.TabIndex = 18;
+			this.progressBar.Visible = false;
 			// 
-			// progressBar1
+			// lblResults
 			// 
-			this.progressBar1.Location = new System.Drawing.Point(83, 581);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(539, 23);
-			this.progressBar1.TabIndex = 18;
-			this.progressBar1.Visible = false;
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(32, 434);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(45, 13);
-			this.label3.TabIndex = 17;
-			this.label3.Text = "Results:";
-			this.label3.Visible = false;
+			this.lblResults.AutoSize = true;
+			this.lblResults.Location = new System.Drawing.Point(32, 434);
+			this.lblResults.Name = "lblResults";
+			this.lblResults.Size = new System.Drawing.Size(45, 13);
+			this.lblResults.TabIndex = 17;
+			this.lblResults.Text = "Results:";
+			this.lblResults.Visible = false;
 			// 
 			// gvResults
 			// 
+			this.gvResults.AllowUserToAddRows = false;
+			this.gvResults.AllowUserToDeleteRows = false;
 			this.gvResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.gvResults.Location = new System.Drawing.Point(83, 434);
+			this.gvResults.MultiSelect = false;
 			this.gvResults.Name = "gvResults";
-			this.gvResults.Size = new System.Drawing.Size(539, 129);
+			this.gvResults.RowHeadersVisible = false;
+			this.gvResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.gvResults.Size = new System.Drawing.Size(712, 129);
 			this.gvResults.TabIndex = 16;
 			this.gvResults.Visible = false;
 			// 
-			// btnGen
+			// btnGenReplaceCommandLine
 			// 
-			this.btnGen.Location = new System.Drawing.Point(448, 309);
-			this.btnGen.Name = "btnGen";
-			this.btnGen.Size = new System.Drawing.Size(174, 23);
-			this.btnGen.TabIndex = 19;
-			this.btnGen.Text = "Gen Replace Command Line";
-			this.btnGen.UseVisualStyleBackColor = true;
-			this.btnGen.Click += new System.EventHandler(this.btnGen_Click);
+			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(448, 309);
+			this.btnGenReplaceCommandLine.Name = "btnGenReplaceCommandLine";
+			this.btnGenReplaceCommandLine.Size = new System.Drawing.Size(174, 23);
+			this.btnGenReplaceCommandLine.TabIndex = 19;
+			this.btnGenReplaceCommandLine.Text = "Gen Replace Command Line";
+			this.btnGenReplaceCommandLine.UseVisualStyleBackColor = true;
+			this.btnGenReplaceCommandLine.Click += new System.EventHandler(this.btnGenReplaceCommandLine_Click);
+			// 
+			// txtCommandLine
+			// 
+			this.txtCommandLine.Location = new System.Drawing.Point(76, 11);
+			this.txtCommandLine.Multiline = true;
+			this.txtCommandLine.Name = "txtCommandLine";
+			this.txtCommandLine.Size = new System.Drawing.Size(711, 74);
+			this.txtCommandLine.TabIndex = 15;
+			this.txtCommandLine.Visible = false;
+			// 
+			// lblCommandLine
+			// 
+			this.lblCommandLine.AutoSize = true;
+			this.lblCommandLine.Location = new System.Drawing.Point(-3, 11);
+			this.lblCommandLine.Name = "lblCommandLine";
+			this.lblCommandLine.Size = new System.Drawing.Size(80, 13);
+			this.lblCommandLine.TabIndex = 20;
+			this.lblCommandLine.Text = "Command Line:";
+			this.lblCommandLine.Visible = false;
+			// 
+			// pnlCommandLine
+			// 
+			this.pnlCommandLine.Controls.Add(this.lblCommandLine);
+			this.pnlCommandLine.Controls.Add(this.txtCommandLine);
+			this.pnlCommandLine.Location = new System.Drawing.Point(7, 328);
+			this.pnlCommandLine.Name = "pnlCommandLine";
+			this.pnlCommandLine.Size = new System.Drawing.Size(797, 100);
+			this.pnlCommandLine.TabIndex = 21;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(641, 338);
-			this.Controls.Add(this.btnGen);
-			this.Controls.Add(this.progressBar1);
-			this.Controls.Add(this.label3);
+			this.ClientSize = new System.Drawing.Size(808, 337);
+			this.Controls.Add(this.btnGenReplaceCommandLine);
+			this.Controls.Add(this.progressBar);
+			this.Controls.Add(this.lblResults);
 			this.Controls.Add(this.gvResults);
-			this.Controls.Add(this.txtCommandLine);
-			this.Controls.Add(this.chkSubDir);
-			this.Controls.Add(this.chkBoxCaseSense);
+			this.Controls.Add(this.chkIncludeSubDirectories);
+			this.Controls.Add(this.chkIsCaseSensitive);
 			this.Controls.Add(this.btnFindOnly);
 			this.Controls.Add(this.txtFileMask);
 			this.Controls.Add(this.label5);
@@ -229,10 +255,13 @@
 			this.Controls.Add(this.txtReplace);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.txtFind);
+			this.Controls.Add(this.pnlCommandLine);
 			this.Name = "MainForm";
 			this.Text = "Find and Replace";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).EndInit();
+			this.pnlCommandLine.ResumeLayout(false);
+			this.pnlCommandLine.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -250,13 +279,15 @@
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox txtFileMask;
 		private System.Windows.Forms.Button btnFindOnly;
-		private System.Windows.Forms.CheckBox chkBoxCaseSense;
-		private System.Windows.Forms.CheckBox chkSubDir;
-		private System.Windows.Forms.TextBox txtCommandLine;
-		public System.Windows.Forms.ProgressBar progressBar1;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.CheckBox chkIsCaseSensitive;
+		private System.Windows.Forms.CheckBox chkIncludeSubDirectories;
+		public System.Windows.Forms.ProgressBar progressBar;
+		private System.Windows.Forms.Label lblResults;
 		public System.Windows.Forms.DataGridView gvResults;
-		private System.Windows.Forms.Button btnGen;
+		private System.Windows.Forms.Button btnGenReplaceCommandLine;
+		private System.Windows.Forms.TextBox txtCommandLine;
+		private System.Windows.Forms.Label lblCommandLine;
+		private System.Windows.Forms.Panel pnlCommandLine;
 	}
 }
 

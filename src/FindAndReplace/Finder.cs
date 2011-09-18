@@ -51,29 +51,14 @@ namespace FindAndReplace
 				resultItem.FilePath = filePath;
 				resultItem.NumMatches = GetNumMatches(filePath);
 
+				OnFileProcessed(new FinderEventArgs(resultItem, filesInDirectory.Length));
+
 				resultItems.Add(resultItem);
 			}
 
 			return resultItems;
 		}
 
-		public void FindAsync()
-		{
-			
-			SearchOption searchOption = IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, searchOption);
-
-			foreach (string filePath in filesInDirectory)
-			{
-				var resultItem = new FindResultItem();
-
-				resultItem.FileName = Path.GetFileName(filePath);
-				resultItem.FilePath = filePath;
-				resultItem.NumMatches = GetNumMatches(filePath);
-
-				OnFileProcessed(new FinderEventArgs(resultItem, filesInDirectory.Length));
-			}
-		}
 
 		public event FileProcessedEventHandler FileProcessed;
 

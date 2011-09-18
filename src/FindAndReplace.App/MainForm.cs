@@ -1,34 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
 
 namespace FindAndReplace.App
 {
-	 
-	
+
+
 	public partial class MainForm : Form
 	{
 		private Finder _finder;
-
-		private Replacer _replace;
-
+		private Replacer _replacer;
 		private Thread _currentThread;
 
-		delegate void SetFinderResultCallback(Finder.FindResultItem resultItem, int totalCount);
+		private delegate void SetFinderResultCallback(Finder.FindResultItem resultItem, int totalCount);
 
-		delegate void SetReplaceResultCallback(Replacer.ReplaceResultItem resultItem, int totalCount);
+		private delegate void SetReplacerResultCallback(Replacer.ReplaceResultItem resultItem, int totalCount);
 
 		public MainForm()
 		{
 			InitializeComponent();
 		}
+
+		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			if (_currentThread != null && _currentThread.IsAlive) _currentThread.Abort();
+		}
+
 
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
@@ -36,85 +34,21 @@ namespace FindAndReplace.App
 
 			var finder = new Finder();
 			finder.Dir = txtDir.Text;
-			finder.FileMask = txtFileMask.Text;
-			finder.FindText = txtFind.Text;
-			finder.IsCaseSensitive = chkBoxCaseSense.Checked;
-			finder.IncludeSubDirectories = chkSubDir.Checked;
 
+			finder.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
+			finder.FileMask = txtFileMask.Text;
+
+			finder.FindText = txtFind.Text;
+			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			CreateListener(finder);
 
 			ShowResultPanel();
 
-			_currentThread = new Thread(new ThreadStart(DoFindWork));
+			_currentThread = new Thread(DoFindWork);
 			_currentThread.IsBackground = true;
 			_currentThread.Start();
 		}
 
-		private void btnReplace_Click(object sender, EventArgs e)
-		{
-			var replacer = new Replacer();
-
-			replacer.Dir = txtDir.Text;
-			replacer.FileMask = txtFileMask.Text;
-			replacer.FindText = txtFind.Text;
-			replacer.ReplaceText = txtReplace.Text;
-			replacer.IsCaseSensitive = chkBoxCaseSense.Checked;
-			replacer.IncludeSubDirectories = chkSubDir.Checked;
-
-			//var results = replacer.Replace();
-
-			ShowResultPanel();
-
-			PrepareReplacerGrid();
-
-			CreateListener(replacer);
-
-			//gvResults.Rows.Clear();
-			//gvResults.Columns.Clear();
-			//gvResults.DataSource = results;
-
-			_currentThread = new Thread(new ThreadStart(DoReplaceWork));
-			_currentThread.IsBackground = true;
-			_currentThread.Start();
-		}
-
-		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-		{
-			if (_currentThread!=null && _currentThread.IsAlive) _currentThread.Abort();
-		}
-
-		private void CreateListener(Finder finder)
-		{
-			_finder = finder;
-			_finder.FileProcessed += new FileProcessedEventHandler(FindFileProceed);
-		}
-
-		private void CreateListener(Replacer replacer)
-		{
-			_replace = replacer;
-			_replace.FileProcessed += new ReplaceFileProcessedEventHandler(ReplaceFileProceed);
-		}
-
-		private void DetachListener()
-		{
-			_finder.FileProcessed -= new FileProcessedEventHandler(FindFileProceed);
-			_finder = null;
-		}
-
-		private void FindFileProceed(object sender, FinderEventArgs e)
-		{
-
-			if (!this.gvResults.InvokeRequired)
-			{
-
-				ShowFindResult(e.ResultItem, e.TotalFilesCount);
-			}
-			else
-			{
-				SetFinderResultCallback finderResultCallback=new SetFinderResultCallback(ShowFindResult);
-				this.Invoke(finderResultCallback, new object[] {e.ResultItem, e.TotalFilesCount});
-			}
-		}
 
 		private void PrepareFinderGrid()
 		{
@@ -122,11 +56,101 @@ namespace FindAndReplace.App
 
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
-			gvResults.Columns.Add("Filename", "Filename");
-			gvResults.Columns.Add("Path", "Path");
-			gvResults.Columns.Add("Num Maches", "Num Maches");
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Filename", HeaderText = "Filename", CellTemplate = new DataGridViewTextBoxCell(), Width = 200 });
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path",  HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
+			gvResults.Columns.Add("NumMatches", "Matches");
 
-			progressBar1.Value = 0;
+			progressBar.Value = 0;
+		}
+
+		private void CreateListener(Finder finder)
+		{
+			_finder = finder;
+			_finder.FileProcessed += OnFinderFileProcessed;
+		}
+
+		private void OnFinderFileProcessed(object sender, FinderEventArgs e)
+		{
+			if (!this.gvResults.InvokeRequired)
+			{
+				ShowFindResult(e.ResultItem, e.TotalFilesCount);
+			}
+			else
+			{
+				SetFinderResultCallback finderResultCallback = ShowFindResult;
+				this.Invoke(finderResultCallback, new object[] {e.ResultItem, e.TotalFilesCount});
+			}
+		}
+
+		private void ShowFindResult(Finder.FindResultItem findResultItem, int totalCount)
+		{
+			gvResults.Rows.Add();
+
+			int currentRow = gvResults.Rows.Count - 1;
+
+			gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
+			gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FilePath;
+			gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+
+			progressBar.Maximum = totalCount;
+			progressBar.Value++;
+		}
+
+		private void DoFindWork()
+		{
+			_finder.Find();
+		}
+
+
+		private void ShowResultPanel()
+		{
+			if (!lblResults.Visible)
+			{
+				lblResults.Visible = true;
+				gvResults.Visible = true;
+				progressBar.Visible = true;
+
+				if (!txtCommandLine.Visible)
+				{
+					lblResults.Top -= txtCommandLine.Height;
+					gvResults.Top -= txtCommandLine.Height;
+					progressBar.Top -= txtCommandLine.Height;
+				}
+
+				this.Height += 200;
+			}
+		}
+
+
+		private void btnReplace_Click(object sender, EventArgs e)
+		{
+			var replacer = new Replacer();
+
+			replacer.Dir = txtDir.Text;
+			replacer.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
+
+			replacer.FileMask = txtFileMask.Text;
+
+			replacer.FindText = txtFind.Text;
+			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
+
+			replacer.ReplaceText = txtReplace.Text;
+
+			ShowResultPanel();
+
+			PrepareReplacerGrid();
+
+			CreateListener(replacer);
+
+			_currentThread = new Thread(DoReplaceWork);
+			_currentThread.IsBackground = true;
+			_currentThread.Start();
+		}
+
+		private void CreateListener(Replacer replacer)
+		{
+			_replacer = replacer;
+			_replacer.FileProcessed += ReplaceFileProceed;
 		}
 
 		private void PrepareReplacerGrid()
@@ -136,84 +160,19 @@ namespace FindAndReplace.App
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
 			gvResults.Columns.Add("Filename", "Filename");
-			gvResults.Columns.Add("Path", "Path");
-			gvResults.Columns.Add("Num Maches", "Num Maches");
-			gvResults.Columns.Add("Is Success", "IsSuccess");
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
+			gvResults.Columns.Add("NumMatches", "Matches");
+			gvResults.Columns.Add("IsSuccess", "Success");
 
-			progressBar1.Value = 0;
+			progressBar.Value = 0;
 		}
 
-		private void ShowResultPanel()
+
+		private void DoReplaceWork()
 		{
-			if (!label3.Visible)
-			{
-				label3.Visible = true;
-				gvResults.Visible = true;
-				progressBar1.Visible = true;
-
-				if (!txtCommandLine.Visible)
-				{
-					label3.Top -= txtCommandLine.Height;
-					gvResults.Top -= txtCommandLine.Height;
-					progressBar1.Top -= txtCommandLine.Height;
-				}
-
-				this.Height += 200;
-			}
+			_replacer.Replace();
 		}
 
-		private void ShowCommandLinePanel()
-		{
-			if (!txtCommandLine.Visible)
-			{
-				txtCommandLine.Visible = true;
-
-				if (label3.Visible)
-				{
-					label3.Top += txtCommandLine.Height;
-					gvResults.Top += txtCommandLine.Height;
-					progressBar1.Top += txtCommandLine.Height;
-				}
-
-				this.Height += txtCommandLine.Height + 10;
-			}
-		}
-
-		private void btnGen_Click(object sender, EventArgs e)
-		{
-			ShowCommandLinePanel();
-			txtCommandLine.Clear();
-			
-			string s = String.Format("{0}.exe --cl --dir \"{1}\" --fileMask \"{2}\" --find \"{3}\" --replace \"{4}\" {5} {6}",
-									 System.Diagnostics.Process.GetCurrentProcess().ProcessName, txtDir.Text, txtFileMask.Text, ParseText(txtFind.Text), ParseText(txtReplace.Text), chkSubDir.Checked ? "--includeSubDir" : "", chkBoxCaseSense.Checked ? "--caseSensitive" : "");
-
-			txtCommandLine.Text = s;
-		}
-
-		private void DoFindWork()
-		{
-			_finder.FindAsync();
-		}
-
-		private string ParseText(string original)
-		{
-			
-			return original.Replace(Environment.NewLine, "\\r\\n").Replace("\"","\\\"");
-		}
-
-		private void ShowFindResult(Finder.FindResultItem findResultItem, int totalCount)
-		{
-			gvResults.Rows.Add();
-
-			int currentRow = gvResults.Rows.Count - 2;
-
-			gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
-			gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FilePath;
-			gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
-
-			progressBar1.Maximum = totalCount;
-			progressBar1.Value++;
-		}
 
 		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, int totalCount)
 		{
@@ -226,14 +185,10 @@ namespace FindAndReplace.App
 			gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
 			gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
 
-			progressBar1.Maximum = totalCount;
-			progressBar1.Value++;
+			progressBar.Maximum = totalCount;
+			progressBar.Value++;
 		}
 
-		private void DoReplaceWork()
-		{
-			_replace.ReplaceAsync();
-		}
 
 		private void ReplaceFileProceed(object sender, ReplacerEventArgs e)
 		{
@@ -244,9 +199,48 @@ namespace FindAndReplace.App
 			}
 			else
 			{
-				SetReplaceResultCallback replaceResultCallback = new SetReplaceResultCallback(ShowReplaceResult);
-				this.Invoke(replaceResultCallback, new object[] { e.ResultItem, e.TotalFilesCount });
+				SetReplacerResultCallback replaceResultCallback = new SetReplacerResultCallback(ShowReplaceResult);
+				this.Invoke(replaceResultCallback, new object[] {e.ResultItem, e.TotalFilesCount});
 			}
+		}
+
+
+		private void btnGenReplaceCommandLine_Click(object sender, EventArgs e)
+		{
+			ShowCommandLinePanel();
+			txtCommandLine.Clear();
+
+			string s = String.Format("{0}.exe --cl --dir \"{1}\" --fileMask \"{2}\" --find \"{3}\" --replace \"{4}\" {5} {6}",
+			                         System.Diagnostics.Process.GetCurrentProcess().ProcessName, txtDir.Text, txtFileMask.Text,
+			                         ParseText(txtFind.Text), ParseText(txtReplace.Text),
+			                         chkIncludeSubDirectories.Checked ? "--includeSubDir" : "",
+			                         chkIsCaseSensitive.Checked ? "--caseSensitive" : "");
+
+			txtCommandLine.Text = s;
+		}
+
+		private void ShowCommandLinePanel()
+		{
+			if (!txtCommandLine.Visible)
+			{
+				txtCommandLine.Visible = true;
+
+				if (lblResults.Visible)
+				{
+					lblResults.Top += txtCommandLine.Height;
+					gvResults.Top += txtCommandLine.Height;
+					progressBar.Top += txtCommandLine.Height;
+				}
+
+				this.Height += txtCommandLine.Height + 10;
+			}
+		}
+
+		private string ParseText(string original)
+		{
+			return original
+				.Replace(Environment.NewLine, "\\r\\n")
+				.Replace("\"", "\\\"");
 		}
 	}
 }
