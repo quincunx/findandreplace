@@ -6,7 +6,6 @@ using System.Windows.Forms;
 namespace FindAndReplace.App
 {
 
-
 	public partial class MainForm : Form
 	{
 		private Finder _finder;
@@ -204,16 +203,18 @@ namespace FindAndReplace.App
 			}
 		}
 
-
 		private void btnGenReplaceCommandLine_Click(object sender, EventArgs e)
 		{
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
 
-			string s = String.Format("{0}.exe --cl --dir \"{1}\" --fileMask \"{2}\" --find \"{3}\" --replace \"{4}\" {5} {6}",
-			                         System.Diagnostics.Process.GetCurrentProcess().ProcessName, txtDir.Text, txtFileMask.Text,
+			string s = String.Format("{0}.exe --cl --dir \"{1}\" --fileMask \"{2}\" {3} --find \"{4}\" --replace \"{5}\" {6}",
+			                         System.Diagnostics.Process.GetCurrentProcess().ProcessName,
+			                         txtDir.Text,
+			                         txtFileMask.Text,
+
+			                         chkIncludeSubDirectories.Checked ? "--includeSubDirectories" : "",
 			                         ParseText(txtFind.Text), ParseText(txtReplace.Text),
-			                         chkIncludeSubDirectories.Checked ? "--includeSubDir" : "",
 			                         chkIsCaseSensitive.Checked ? "--caseSensitive" : "");
 
 			txtCommandLine.Text = s;
