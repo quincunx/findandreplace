@@ -184,8 +184,8 @@ namespace FindAndReplace.App
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
 			
-			string s = String.Format("{0}.exe --cl --dir \"{1}\" --fileMask \"{2}\" --find \"{3}\" --replace \"{4}\" {5} {6}",
-									 System.Diagnostics.Process.GetCurrentProcess().ProcessName, txtDir.Text, txtFileMask.Text, ParseText(txtFind.Text), ParseText(txtReplace.Text), chkSubDir.Checked ? "--includeSubDir" : "", chkBoxCaseSense.Checked ? "--caseSensitive" : "");
+			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" --find \"{3}\" --replace \"{4}\" {5} {6}",
+									 Application.ExecutablePath, txtDir.Text, txtFileMask.Text, ParseText(txtFind.Text), ParseText(txtReplace.Text), chkSubDir.Checked ? "--includeSubDir" : "", chkBoxCaseSense.Checked ? "--caseSensitive" : "");
 
 			txtCommandLine.Text = s;
 		}
