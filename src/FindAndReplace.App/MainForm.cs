@@ -103,17 +103,13 @@ namespace FindAndReplace.App
 
 		private void ShowResultPanel()
 		{
-			if (!lblResults.Visible)
+			if (!pnlGridResults.Visible)
 			{
-				lblResults.Visible = true;
-				gvResults.Visible = true;
-				progressBar.Visible = true;
+				pnlGridResults.Visible = true;
 
-				if (!txtCommandLine.Visible)
+				if (!pnlCommandLine.Visible)
 				{
-					lblResults.Top -= txtCommandLine.Height;
-					gvResults.Top -= txtCommandLine.Height;
-					progressBar.Top -= txtCommandLine.Height;
+					pnlGridResults.Top -= pnlCommandLine.Height;
 				}
 
 				this.Height += 200;
@@ -222,18 +218,16 @@ namespace FindAndReplace.App
 
 		private void ShowCommandLinePanel()
 		{
-			if (!txtCommandLine.Visible)
+			if (!pnlCommandLine.Visible)
 			{
-				txtCommandLine.Visible = true;
+				pnlCommandLine.Visible = true;
 
-				if (lblResults.Visible)
+				if (pnlGridResults.Visible)
 				{
-					lblResults.Top += txtCommandLine.Height;
-					gvResults.Top += txtCommandLine.Height;
-					progressBar.Top += txtCommandLine.Height;
+					pnlGridResults.Top += pnlCommandLine.Height;
 				}
 
-				this.Height += txtCommandLine.Height + 10;
+				this.Height += pnlCommandLine.Height + 10;
 			}
 		}
 
