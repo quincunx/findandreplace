@@ -107,12 +107,13 @@ namespace FindAndReplace.App
 			{
 				pnlGridResults.Visible = true;
 
-				if (!pnlCommandLine.Visible)
+				if (pnlCommandLine.Visible)
 				{
-					pnlGridResults.Top -= pnlCommandLine.Height;
+					this.Height -= pnlCommandLine.Height+10;
+					pnlCommandLine.Visible = false;
 				}
 
-				this.Height += 200;
+				this.Height += pnlGridResults.Height+10;
 			}
 		}
 
@@ -224,7 +225,8 @@ namespace FindAndReplace.App
 
 				if (pnlGridResults.Visible)
 				{
-					pnlGridResults.Top += pnlCommandLine.Height;
+					pnlGridResults.Visible = false;
+					this.Height -= pnlGridResults.Height + 10;
 				}
 
 				this.Height += pnlCommandLine.Height + 10;
