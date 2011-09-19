@@ -208,8 +208,8 @@ namespace FindAndReplace.App
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
 
-			string s = String.Format("{0}.exe --cl --dir \"{1}\" --fileMask \"{2}\" {3} --find \"{4}\" --replace \"{5}\" {6}",
-			                         System.Diagnostics.Process.GetCurrentProcess().ProcessName,
+			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" {3} --find \"{4}\" --replace \"{5}\" {6}",
+			                         Application.ExecutablePath,
 			                         txtDir.Text,
 			                         txtFileMask.Text,
 
