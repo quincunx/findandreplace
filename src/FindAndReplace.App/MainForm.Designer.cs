@@ -45,9 +45,9 @@
 			this.lblCommandLine = new System.Windows.Forms.Label();
 			this.pnlCommandLine = new System.Windows.Forms.Panel();
 			this.pnlGridResults = new System.Windows.Forms.Panel();
+			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.lblResults = new System.Windows.Forms.Label();
 			this.gvResults = new System.Windows.Forms.DataGridView();
-			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.pnlCommandLine.SuspendLayout();
 			this.pnlGridResults.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
@@ -210,11 +210,18 @@
 			this.pnlGridResults.Controls.Add(this.progressBar);
 			this.pnlGridResults.Controls.Add(this.lblResults);
 			this.pnlGridResults.Controls.Add(this.gvResults);
-			this.pnlGridResults.Location = new System.Drawing.Point(7, 434);
+			this.pnlGridResults.Location = new System.Drawing.Point(6, 328);
 			this.pnlGridResults.Name = "pnlGridResults";
 			this.pnlGridResults.Size = new System.Drawing.Size(797, 180);
 			this.pnlGridResults.TabIndex = 22;
 			this.pnlGridResults.Visible = false;
+			// 
+			// progressBar
+			// 
+			this.progressBar.Location = new System.Drawing.Point(68, 144);
+			this.progressBar.Name = "progressBar";
+			this.progressBar.Size = new System.Drawing.Size(712, 23);
+			this.progressBar.TabIndex = 20;
 			// 
 			// lblResults
 			// 
@@ -238,18 +245,11 @@
 			this.gvResults.Size = new System.Drawing.Size(712, 129);
 			this.gvResults.TabIndex = 18;
 			// 
-			// progressBar
-			// 
-			this.progressBar.Location = new System.Drawing.Point(68, 144);
-			this.progressBar.Name = "progressBar";
-			this.progressBar.Size = new System.Drawing.Size(712, 23);
-			this.progressBar.TabIndex = 20;
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(815, 340);
+			this.ClientSize = new System.Drawing.Size(809, 333);
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);
 			this.Controls.Add(this.chkIncludeSubDirectories);
