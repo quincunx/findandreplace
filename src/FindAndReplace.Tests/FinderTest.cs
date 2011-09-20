@@ -24,15 +24,9 @@ namespace FindAndReplace.Tests
 			if (resultItems==null || resultItems.Count==0) 
 				Assert.Fail("Cant find test files");
 
-			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-
-			Assert.AreEqual(1, matchedResultItems.Count);
-			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
-			Assert.AreEqual(3, matchedResultItems[0].NumMatches);
-
-			var notNatchedResultItems = resultItems.Where(ri => ri.NumMatches == 0).ToList();
-			Assert.AreEqual(1, notNatchedResultItems.Count);
-			Assert.AreEqual("test2.test", notNatchedResultItems[0].FileName);
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual("test1.test", resultItems[0].FileName);
+			Assert.AreEqual(3, resultItems[0].NumMatches);
 		}
 
 		[Test]
@@ -74,13 +68,7 @@ namespace FindAndReplace.Tests
 			finder.FindText = "New York";
 
 			var resultItems = finder.Find();
-
-			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
-
-			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-
-			Assert.AreEqual(0, matchedResultItems.Count);
+			Assert.AreEqual(0, resultItems.Count);
 		}
 
 		[Test]
@@ -135,16 +123,9 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-
-			Assert.AreEqual(1, matchedResultItems.Count);
-			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
-			Assert.AreEqual(1, matchedResultItems[0].NumMatches);
-
-			var notmatchedResultItems = resultItems.Where(ri => ri.NumMatches == 0).ToList();
-
-			Assert.AreEqual(1, notmatchedResultItems.Count);
-			Assert.AreEqual("test2.test", notmatchedResultItems[0].FileName);
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual("test1.test", resultItems[0].FileName);
+			Assert.AreEqual(1, resultItems[0].NumMatches);
 		}
 
 		[Test]
@@ -162,9 +143,8 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-
-			Assert.AreEqual(4, matchedResultItems.Count);
+	
+			Assert.AreEqual(4, resultItems.Count);
 
 			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
 
