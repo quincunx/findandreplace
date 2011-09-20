@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using NUnit.Framework;
 
 namespace FindAndReplace.Tests
@@ -25,22 +21,15 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-
-			Assert.AreEqual(1, matchedResultItems.Count);
-			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
-			Assert.AreEqual(3, matchedResultItems[0].NumMatches);
-			Assert.IsTrue(matchedResultItems[0].IsSuccess);
-
-			var notMatchedResultItems = resultItems.Where(ri => ri.NumMatches == 0).ToList();
-
-			Assert.AreEqual(1, notMatchedResultItems.Count);
-			Assert.AreEqual("test2.test", notMatchedResultItems[0].FileName);
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual("test1.test", resultItems[0].FileName);
+			Assert.AreEqual(3, resultItems[0].NumMatches);
+			Assert.IsTrue(resultItems[0].IsSuccess);
 
 			resultItems = replacer.Replace();
 
-			matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-			Assert.AreEqual(0, matchedResultItems.Count);
+			resultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+			Assert.AreEqual(0, resultItems.Count);
 		}
 		
 		[Test]
@@ -87,11 +76,7 @@ namespace FindAndReplace.Tests
 
 			var resultItems = replacer.Replace();
 
-			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
-
-			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-			Assert.AreEqual(0, matchedResultItems.Count);
+			Assert.AreEqual(0, resultItems.Count);
 		}
 		
 		[Test]
@@ -154,23 +139,14 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual("test1.test", resultItems[0].FileName);
+			Assert.AreEqual(1, resultItems[0].NumMatches);
+			Assert.IsTrue(resultItems[0].IsSuccess);
 
-			Assert.AreEqual(1, matchedResultItems.Count);
-			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
-			Assert.AreEqual(1, matchedResultItems[0].NumMatches);
-			Assert.IsTrue(matchedResultItems[0].IsSuccess);
-
-			var notMatchedResultItems = resultItems.Where(ri => ri.NumMatches == 0).ToList();
-
-			Assert.AreEqual(1, notMatchedResultItems.Count);
-			Assert.AreEqual("test2.test", notMatchedResultItems[0].FileName);
-
+		
 			resultItems = replacer.Replace();
-
-			matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
-
-			Assert.AreEqual(0, matchedResultItems.Count);
+			Assert.AreEqual(0, resultItems.Count);
 		}
 		
 		[Test]
