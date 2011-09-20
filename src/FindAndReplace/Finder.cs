@@ -24,11 +24,12 @@ namespace FindAndReplace
 	public class Finder
 	{
 		public string Dir { get; set; }
+		public bool IncludeSubDirectories { get; set; }
+		
 		public string FileMask { get; set; }
 		public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
-		public bool IncludeSubDirectories { get; set; }
-	
+		
 		public class FindResultItem
 		{
 			public string FileName { get; set; }
@@ -39,6 +40,10 @@ namespace FindAndReplace
 
 		public List<FindResultItem> Find()
 		{
+			Verify.Argument.IsNotEmpty(Dir, "Dir");
+			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
+			Verify.Argument.IsNotEmpty(FindText, "FindText");
+
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<FindResultItem>();
@@ -50,12 +55,14 @@ namespace FindAndReplace
 
 				resultItem.FileName = Path.GetFileName(filePath);
 				resultItem.FilePath = filePath;
-				resultItem.FileRelativePath = filePath.Substring(Dir.Length );
+				resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length );
 				resultItem.NumMatches = GetNumMatches(filePath);
 
 				OnFileProcessed(new FinderEventArgs(resultItem, filesInDirectory.Length));
-
-				resultItems.Add(resultItem);
+	
+				//Skip files that don't have matches
+				if (resultItem.NumMatches > 0)
+					resultItems.Add(resultItem);
 			}
 
 			return resultItems;

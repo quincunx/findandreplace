@@ -44,13 +44,14 @@
 			this.txtCommandLine = new System.Windows.Forms.TextBox();
 			this.lblCommandLine = new System.Windows.Forms.Label();
 			this.pnlCommandLine = new System.Windows.Forms.Panel();
-			this.pnlGridResults = new System.Windows.Forms.Panel();
-			this.progressBar = new System.Windows.Forms.ProgressBar();
-			this.lblResults = new System.Windows.Forms.Label();
 			this.gvResults = new System.Windows.Forms.DataGridView();
+			this.lblResults = new System.Windows.Forms.Label();
+			this.progressBar = new System.Windows.Forms.ProgressBar();
+			this.lblStatus = new System.Windows.Forms.Label();
+			this.pnlGridResults = new System.Windows.Forms.Panel();
 			this.pnlCommandLine.SuspendLayout();
-			this.pnlGridResults.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
+			this.pnlGridResults.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// txtFind
@@ -167,7 +168,7 @@
 			// 
 			// btnGenReplaceCommandLine
 			// 
-			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(448, 306);
+			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(448, 308);
 			this.btnGenReplaceCommandLine.Name = "btnGenReplaceCommandLine";
 			this.btnGenReplaceCommandLine.Size = new System.Drawing.Size(174, 23);
 			this.btnGenReplaceCommandLine.TabIndex = 19;
@@ -196,38 +197,11 @@
 			// 
 			this.pnlCommandLine.Controls.Add(this.lblCommandLine);
 			this.pnlCommandLine.Controls.Add(this.txtCommandLine);
-			this.pnlCommandLine.Location = new System.Drawing.Point(7, 328);
+			this.pnlCommandLine.Location = new System.Drawing.Point(7, 344);
 			this.pnlCommandLine.Name = "pnlCommandLine";
 			this.pnlCommandLine.Size = new System.Drawing.Size(797, 100);
 			this.pnlCommandLine.TabIndex = 21;
 			this.pnlCommandLine.Visible = false;
-			// 
-			// pnlGridResults
-			// 
-			this.pnlGridResults.Controls.Add(this.progressBar);
-			this.pnlGridResults.Controls.Add(this.lblResults);
-			this.pnlGridResults.Controls.Add(this.gvResults);
-			this.pnlGridResults.Location = new System.Drawing.Point(6, 328);
-			this.pnlGridResults.Name = "pnlGridResults";
-			this.pnlGridResults.Size = new System.Drawing.Size(797, 180);
-			this.pnlGridResults.TabIndex = 22;
-			this.pnlGridResults.Visible = false;
-			// 
-			// progressBar
-			// 
-			this.progressBar.Location = new System.Drawing.Point(68, 144);
-			this.progressBar.Name = "progressBar";
-			this.progressBar.Size = new System.Drawing.Size(712, 23);
-			this.progressBar.TabIndex = 20;
-			// 
-			// lblResults
-			// 
-			this.lblResults.AutoSize = true;
-			this.lblResults.Location = new System.Drawing.Point(17, 9);
-			this.lblResults.Name = "lblResults";
-			this.lblResults.Size = new System.Drawing.Size(45, 13);
-			this.lblResults.TabIndex = 19;
-			this.lblResults.Text = "Results:";
 			// 
 			// gvResults
 			// 
@@ -242,11 +216,48 @@
 			this.gvResults.Size = new System.Drawing.Size(712, 129);
 			this.gvResults.TabIndex = 18;
 			// 
+			// lblResults
+			// 
+			this.lblResults.AutoSize = true;
+			this.lblResults.Location = new System.Drawing.Point(17, 9);
+			this.lblResults.Name = "lblResults";
+			this.lblResults.Size = new System.Drawing.Size(45, 13);
+			this.lblResults.TabIndex = 19;
+			this.lblResults.Text = "Results:";
+			// 
+			// progressBar
+			// 
+			this.progressBar.Location = new System.Drawing.Point(68, 170);
+			this.progressBar.Name = "progressBar";
+			this.progressBar.Size = new System.Drawing.Size(712, 23);
+			this.progressBar.TabIndex = 20;
+			// 
+			// lblStatus
+			// 
+			this.lblStatus.AutoSize = true;
+			this.lblStatus.Location = new System.Drawing.Point(70, 154);
+			this.lblStatus.Name = "lblStatus";
+			this.lblStatus.Size = new System.Drawing.Size(16, 13);
+			this.lblStatus.TabIndex = 21;
+			this.lblStatus.Text = "...";
+			// 
+			// pnlGridResults
+			// 
+			this.pnlGridResults.Controls.Add(this.lblStatus);
+			this.pnlGridResults.Controls.Add(this.progressBar);
+			this.pnlGridResults.Controls.Add(this.lblResults);
+			this.pnlGridResults.Controls.Add(this.gvResults);
+			this.pnlGridResults.Location = new System.Drawing.Point(6, 345);
+			this.pnlGridResults.Name = "pnlGridResults";
+			this.pnlGridResults.Size = new System.Drawing.Size(797, 196);
+			this.pnlGridResults.TabIndex = 22;
+			this.pnlGridResults.Visible = false;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(809, 335);
+			this.ClientSize = new System.Drawing.Size(809, 342);
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);
 			this.Controls.Add(this.chkIncludeSubDirectories);
@@ -267,9 +278,9 @@
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			this.pnlCommandLine.ResumeLayout(false);
 			this.pnlCommandLine.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.gvResults)).EndInit();
 			this.pnlGridResults.ResumeLayout(false);
 			this.pnlGridResults.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.gvResults)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -293,10 +304,11 @@
 		private System.Windows.Forms.TextBox txtCommandLine;
 		private System.Windows.Forms.Label lblCommandLine;
 		private System.Windows.Forms.Panel pnlCommandLine;
-		private System.Windows.Forms.Panel pnlGridResults;
-		public System.Windows.Forms.ProgressBar progressBar;
-		private System.Windows.Forms.Label lblResults;
 		public System.Windows.Forms.DataGridView gvResults;
+		private System.Windows.Forms.Label lblResults;
+		public System.Windows.Forms.ProgressBar progressBar;
+		private System.Windows.Forms.Label lblStatus;
+		private System.Windows.Forms.Panel pnlGridResults;
 	}
 }
 

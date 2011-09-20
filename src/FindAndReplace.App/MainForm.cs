@@ -23,7 +23,8 @@ namespace FindAndReplace.App
 
 		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			if (_currentThread != null && _currentThread.IsAlive) _currentThread.Abort();
+			if (_currentThread != null && _currentThread.IsAlive) 
+				_currentThread.Abort();
 		}
 
 
@@ -45,6 +46,7 @@ namespace FindAndReplace.App
 
 			_currentThread = new Thread(DoFindWork);
 			_currentThread.IsBackground = true;
+			
 			_currentThread.Start();
 		}
 
@@ -83,16 +85,46 @@ namespace FindAndReplace.App
 
 		private void ShowFindResult(Finder.FindResultItem findResultItem, int totalCount)
 		{
-			gvResults.Rows.Add();
+			if (findResultItem.NumMatches > 0)
+			{
+				gvResults.Rows.Add();
 
-			int currentRow = gvResults.Rows.Count - 1;
+				int currentRow = gvResults.Rows.Count - 1;
 
-			gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
-			gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FilePath;
-			gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+				gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
+				gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
+				gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+			}
 
 			progressBar.Maximum = totalCount;
 			progressBar.Value++;
+
+			lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " + findResultItem.FileRelativePath;
+
+			//When last file - enable buttons back
+			if (totalCount == progressBar.Value)
+				EnableButtons();
+		}
+
+		private void DisableButtons()
+		{
+			this.Cursor = Cursors.WaitCursor;
+
+			UpdateButtons(false);
+		}
+
+		private void EnableButtons()
+		{
+			UpdateButtons(true);
+
+			this.Cursor = Cursors.Default;
+		}
+
+		private void UpdateButtons(bool enabled)
+		{
+			btnFindOnly.Enabled = enabled;
+			btnReplace.Enabled = enabled;
+			btnGenReplaceCommandLine.Enabled = enabled;
 		}
 
 		private void DoFindWork()
@@ -103,17 +135,19 @@ namespace FindAndReplace.App
 
 		private void ShowResultPanel()
 		{
+			DisableButtons();
+
 			if (!pnlGridResults.Visible)
 			{
 				pnlGridResults.Visible = true;
 
 				if (pnlCommandLine.Visible)
 				{
-					this.Height -= pnlCommandLine.Height+10;
+					this.Height -= pnlCommandLine.Height + 10;
 					pnlCommandLine.Visible = false;
 				}
 
-				this.Height += pnlGridResults.Height+10;
+				this.Height += pnlGridResults.Height + 10;
 			}
 		}
 
@@ -172,23 +206,32 @@ namespace FindAndReplace.App
 
 		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, int totalCount)
 		{
-			gvResults.Rows.Add();
+			if (replaceResultItem.NumMatches > 0)
+			{
+				gvResults.Rows.Add();
 
-			int currentRow = gvResults.Rows.Count - 2;
+				int currentRow = gvResults.Rows.Count - 1;
 
-			gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
-			gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FilePath;
-			gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
-			gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
+				gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
+				gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
+				gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
+				gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
+			}
 
 			progressBar.Maximum = totalCount;
 			progressBar.Value++;
+
+			lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " + replaceResultItem.FileRelativePath;
+		
+			//When last file - enable buttons back
+			if (totalCount == progressBar.Value)
+				EnableButtons();
 		}
+
 
 
 		private void ReplaceFileProceed(object sender, ReplacerEventArgs e)
 		{
-
 			if (!this.gvResults.InvokeRequired)
 			{
 				ShowReplaceResult(e.ResultItem, e.TotalFilesCount);

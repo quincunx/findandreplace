@@ -112,22 +112,21 @@ namespace FindAndReplace.App
 			Console.WriteLine();
 
 			PrintLine();
-			PrintFinderResultRow("File Name", "Path", "Matches");
+			PrintFinderResultRow("File", "Matches");
 			PrintLine();
 			foreach (var item in resultItems)
 			{
-				PrintFinderResultRow(item.FileName, "." + item.FileRelativePath, item.NumMatches.ToString());
+				PrintFinderResultRow(item.FileRelativePath, item.NumMatches.ToString());
 			}
 			PrintLine();
 		}
 
 
-		static void PrintFinderResultRow(string fileName, string path, string matches)
+		static void PrintFinderResultRow(string path, string matches)
 		{
 			Console.WriteLine(
-				string.Format("{0} | {1} | {2}",
-				              FormatCell(fileName, 15),
-				              FormatCell(path, 48),
+				string.Format("{0} | {1}",
+				              FormatCell(path, 63),
 				              FormatCell(matches, 10)));
 		}
 
@@ -136,11 +135,11 @@ namespace FindAndReplace.App
 			Console.WriteLine();
 
 			PrintLine();
-			PrintReplacerResultRow("File Name", "Path", "Matches", "Success");
+			PrintReplacerResultRow("File", "Matches", "Success");
 			PrintLine();
 			foreach (var item in resultItems)
 			{
-				PrintReplacerResultRow(item.FileName, "." + item.FileRelativePath, item.NumMatches.ToString(), item.IsSuccess.ToString());
+				PrintReplacerResultRow(item.FileRelativePath, item.NumMatches.ToString(), item.IsSuccess.ToString());
 			}
 			PrintLine();
 		}
@@ -150,12 +149,11 @@ namespace FindAndReplace.App
 			Console.WriteLine(new string('-', 79));
 		}
 
-		static void PrintReplacerResultRow(string fileName, string path, string matches, string success)
+		static void PrintReplacerResultRow(string path, string matches, string success)
 		{
 			Console.WriteLine(
-				string.Format("{0} | {1} | {2} | {3}",
-					FormatCell(fileName, 15),
-					FormatCell(path, 35),
+				string.Format("{0} | {1} | {2}",
+					FormatCell(path, 53),
 					FormatCell(matches, 10),
 					FormatCell(success, 10)));
 		}
