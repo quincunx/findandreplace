@@ -8,14 +8,15 @@ namespace FindAndReplace
 
 	public class FinderEventArgs : EventArgs
 	{
+		public Finder.FindResultItem ResultItem { get; set; }
+		
+		public int TotalFilesCount { get; set; }
+
 		public FinderEventArgs(Finder.FindResultItem resultItem, int fileCount)
 		{
-			this.ResultItem = resultItem;
+			ResultItem = resultItem;
 			TotalFilesCount = fileCount;
 		}
-		public Finder.FindResultItem ResultItem;
-
-		public int TotalFilesCount;
 	}
 
 	public delegate void FileProcessedEventHandler(object sender, FinderEventArgs e);
@@ -32,16 +33,16 @@ namespace FindAndReplace
 		{
 			public string FileName { get; set; }
 			public string FilePath { get; set; }
+			public string FileRelativePath { get; set; }
 			public int NumMatches { get; set; }
 		}
 
 		public List<FindResultItem> Find()
 		{
-			//Get all txt files in the directory
-			SearchOption searchOption = IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, searchOption);
+			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<FindResultItem>();
+
 			//Analyze each file in the directory
 			foreach (string filePath in filesInDirectory)
 			{
@@ -49,6 +50,7 @@ namespace FindAndReplace
 
 				resultItem.FileName = Path.GetFileName(filePath);
 				resultItem.FilePath = filePath;
+				resultItem.FileRelativePath = filePath.Substring(Dir.Length );
 				resultItem.NumMatches = GetNumMatches(filePath);
 
 				OnFileProcessed(new FinderEventArgs(resultItem, filesInDirectory.Length));
@@ -59,7 +61,7 @@ namespace FindAndReplace
 			return resultItems;
 		}
 
-
+	
 		public event FileProcessedEventHandler FileProcessed;
 
 		protected virtual void OnFileProcessed(FinderEventArgs e)
@@ -72,28 +74,15 @@ namespace FindAndReplace
 		{
 			string content = string.Empty;
 
-			//Create a new object to read a file	
 			using (var sr = new StreamReader(filePath))
 			{
-				//Read the file into the string variable.
 				content = sr.ReadToEnd();
 			}
 
-			return Regex.Matches(content, FindText, GetRegExOptions()).Count;
+			return Regex.Matches(content, FindText, Utils.GetRegExOptions(IsCaseSensitive)).Count;
 		}
 
-		private RegexOptions GetRegExOptions()
-		{
-			//Create a new option
-			var options = new RegexOptions();
-
-			//Is the match case check box checked
-			if (!IsCaseSensitive)
-				options |= RegexOptions.IgnoreCase;
-
-			//Return the options
-			return options;
-		}
+		
 
 	}
 }
