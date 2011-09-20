@@ -62,7 +62,7 @@ namespace FindAndReplace.App
 				ICommandLineParser parser = new CommandLineParser(new CommandLineParserSettings(System.Console.Error));
 				if (!parser.ParseArguments(args, options, System.Console.Error))
 				{
-					System.Console.ReadKey();
+					Console.ReadKey();
 					Environment.Exit(1);
 				}
 
@@ -73,12 +73,12 @@ namespace FindAndReplace.App
 					replacer.FileMask = options.FileMask;
 					replacer.IncludeSubDirectories = options.IncludeSubDirectories;
 
-					replacer.FindText = options.FindText;
-					replacer.ReplaceText = options.ReplaceText;
+					replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
+					replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
 					replacer.IsCaseSensitive = options.IsCaseSensitive;
 					
 					var result = replacer.Replace();
-					DisplayReplaceResult(result);
+					PrintReplacerResult(result);
 				}
 				else
 				{
@@ -87,13 +87,14 @@ namespace FindAndReplace.App
 					finder.FileMask = options.FileMask;
 					finder.IncludeSubDirectories = options.IncludeSubDirectories;
 
-					finder.FindText = options.FindText;
+					finder.FindText = CommandLineUtils.DecodeText(options.FindText);
 					finder.IsCaseSensitive = options.IsCaseSensitive;
 					
 					var result = finder.Find();
-					DisplayFindResult(result);
+					PrintFinderResult(result);
 				}
-				System.Console.ReadLine();
+				
+				//Console.ReadLine();
 
 				FreeConsole();
 			}
@@ -106,52 +107,64 @@ namespace FindAndReplace.App
 			}
 		}
 
-		static void DisplayFindResult(List<Finder.FindResultItem> resultItems)
+		static void PrintFinderResult(List<Finder.FindResultItem> resultItems)
 		{
+			Console.WriteLine();
+
 			PrintLine();
-			PrintRow("File Name", "Path", "Matches", "");
+			PrintFinderResultRow("File Name", "Path", "Matches");
 			PrintLine();
 			foreach (var item in resultItems)
 			{
-				PrintRow(item.FileName, item.FilePath.Substring(0, 17), item.NumMatches.ToString(), "");
+				PrintFinderResultRow(item.FileName, "." + item.FileRelativePath, item.NumMatches.ToString());
 			}
 			PrintLine();
 		}
 
-		static void DisplayReplaceResult(List<Replacer.ReplaceResultItem> resultItems)
+
+		static void PrintFinderResultRow(string fileName, string path, string matches)
 		{
+			Console.WriteLine(
+				string.Format("{0} | {1} | {2}",
+				              FormatCell(fileName, 15),
+				              FormatCell(path, 48),
+				              FormatCell(matches, 10)));
+		}
+
+		static void PrintReplacerResult(List<Replacer.ReplaceResultItem> resultItems)
+		{
+			Console.WriteLine();
+
 			PrintLine();
-			PrintRow("File Name", "Path", "Matches", "Is Success");
+			PrintReplacerResultRow("File Name", "Path", "Matches", "Success");
 			PrintLine();
 			foreach (var item in resultItems)
 			{
-				PrintRow(item.FileName, item.FilePath.Substring(0, 17), item.NumMatches.ToString(), item.IsSuccess.ToString());
+				PrintReplacerResultRow(item.FileName, "." + item.FileRelativePath, item.NumMatches.ToString(), item.IsSuccess.ToString());
 			}
 			PrintLine();
 		}
 
 		static void PrintLine()
 		{
-			System.Console.WriteLine(new string('-', 73));
+			Console.WriteLine(new string('-', 79));
 		}
 
-		static void PrintRow(string column1, string column2, string column3, string column4)
+		static void PrintReplacerResultRow(string fileName, string path, string matches, string success)
 		{
-			System.Console.WriteLine(
-				string.Format("|{0}|{1}|{2}|{3}|",
-					AlignCenter(column1, 17),
-					AlignCenter(column2, 17),
-					AlignCenter(column3, 17),
-					AlignCenter(column4, 17)));
+			Console.WriteLine(
+				string.Format("{0} | {1} | {2} | {3}",
+					FormatCell(fileName, 15),
+					FormatCell(path, 35),
+					FormatCell(matches, 10),
+					FormatCell(success, 10)));
 		}
 
-		static string AlignCenter(string text, int width)
+
+		static string FormatCell(string text, int width)
 		{
-			if (string.IsNullOrEmpty(text))
-			{
-				return new string(' ', width);
-			}
-			return text.PadRight(width - (width - text.Length) / 2).PadLeft(width);
+			return text.PadRight(width);
 		}
+
 	}
 }

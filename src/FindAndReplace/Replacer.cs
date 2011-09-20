@@ -7,14 +7,14 @@ namespace FindAndReplace
 {
 	public class ReplacerEventArgs : EventArgs
 	{
+		public Replacer.ReplaceResultItem ResultItem { get; set; }
+		public int TotalFilesCount { get; set; }
+
 		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, int fileCount)
 		{
-			this.ResultItem = resultItem;
+			ResultItem = resultItem;
 			TotalFilesCount = fileCount;
 		}
-		public Replacer.ReplaceResultItem ResultItem;
-
-		public int TotalFilesCount;
 	}
 
 	public delegate void ReplaceFileProcessedEventHandler(object sender, ReplacerEventArgs e);
@@ -32,6 +32,7 @@ namespace FindAndReplace
 		{
 			public string FileName { get; set; }
 			public string FilePath { get; set; }
+			public string FileRelativePath { get; set; }
 			public int NumMatches { get; set; }
 			public bool IsSuccess { get; set; }
 			public string ErrorMessage { get; set; }
@@ -39,8 +40,7 @@ namespace FindAndReplace
 
 		public List<ReplaceResultItem> Replace()
 		{
-			SearchOption searchOption = IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, searchOption);
+			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<ReplaceResultItem>();
 
@@ -48,52 +48,33 @@ namespace FindAndReplace
 			{
 				var resultItem = ReplaceTextInFile(filePath);
 				resultItems.Add(resultItem);
+
+				OnFileProcessed(new ReplacerEventArgs(resultItem, filesInDirectory.Length));
 			}
 
 			return resultItems;
 		}
-
-		public void  ReplaceAsync()
-		{
-			SearchOption searchOption = IncludeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-			string[] filesInDirectory = Directory.GetFiles(Dir, FileMask, searchOption);
-
-			foreach (string filePath in filesInDirectory)
-			{
-				var resultItem = ReplaceTextInFile(filePath);
-
-				OnFileProcessed(new ReplacerEventArgs(resultItem, filesInDirectory.Length));
-			}
-		}
-
+		
 		private ReplaceResultItem ReplaceTextInFile(string filePath)
 		{
-			//holds the content of the file
 			string content = string.Empty;
 
-			//Create a new object to read a file	
 			using (StreamReader sr = new StreamReader(filePath))
 			{
-				//Read the file into the string variable.
 				content = sr.ReadToEnd();
 			}
 
+			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
-			//Look for a match
-			int matchCount = Regex.Matches(content, FindText, GetRegExOptions()).Count;
+			int matchCount = Regex.Matches(content, FindText, regexOptions).Count;
 			if (matchCount  > 0)
 			{
-				//Replace the text
-				string newContent = Regex.Replace(content, FindText, ReplaceText, GetRegExOptions());
+				string newContent = Regex.Replace(content, FindText, ReplaceText, regexOptions);
 
-				//Create a new object to write a file
 				using (var sw = new StreamWriter(filePath))
 				{
-					//Write the updated file
 					sw.Write(newContent);
 				}
-
-				//A match was found and replaced
 			}
 
 
@@ -101,23 +82,12 @@ namespace FindAndReplace
 
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
+			resultItem.FileRelativePath = filePath.Substring(Dir.Length);
+			
 			resultItem.NumMatches = matchCount;
 			resultItem.IsSuccess = matchCount > 0;
 
 			return resultItem;
-		}
-
-		private RegexOptions GetRegExOptions()
-		{
-			//Create a new option
-			var options = new RegexOptions();
-
-			//Is the match case check box checked
-			if (!IsCaseSensitive)
-				options |= RegexOptions.IgnoreCase;
-
-			//Return the options
-			return options;
 		}
 
 		public event ReplaceFileProcessedEventHandler FileProcessed;

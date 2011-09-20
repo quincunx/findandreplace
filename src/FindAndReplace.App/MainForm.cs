@@ -209,9 +209,9 @@ namespace FindAndReplace.App
 			                         Application.ExecutablePath,
 			                         txtDir.Text,
 			                         txtFileMask.Text,
-
 			                         chkIncludeSubDirectories.Checked ? "--includeSubDirectories" : "",
-			                         ParseText(txtFind.Text), ParseText(txtReplace.Text),
+			                         CommandLineUtils.EncodeText(txtFind.Text),
+			                         CommandLineUtils.EncodeText(txtReplace.Text),
 			                         chkIsCaseSensitive.Checked ? "--caseSensitive" : "");
 
 			txtCommandLine.Text = s;
@@ -233,11 +233,5 @@ namespace FindAndReplace.App
 			}
 		}
 
-		private string ParseText(string original)
-		{
-			return original
-				.Replace(Environment.NewLine, "\\r\\n")
-				.Replace("\"", "\\\"");
-		}
 	}
 }

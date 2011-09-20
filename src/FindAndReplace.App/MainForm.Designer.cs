@@ -60,7 +60,6 @@
 			this.txtFind.Name = "txtFind";
 			this.txtFind.Size = new System.Drawing.Size(539, 74);
 			this.txtFind.TabIndex = 1;
-			this.txtFind.Text = "Test";
 			// 
 			// label1
 			// 
@@ -87,7 +86,6 @@
 			this.txtReplace.Name = "txtReplace";
 			this.txtReplace.Size = new System.Drawing.Size(539, 74);
 			this.txtReplace.TabIndex = 3;
-			this.txtReplace.Text = "Test1";
 			// 
 			// btnReplace
 			// 
@@ -114,7 +112,6 @@
 			this.txtDir.Name = "txtDir";
 			this.txtDir.Size = new System.Drawing.Size(539, 20);
 			this.txtDir.TabIndex = 9;
-			this.txtDir.Text = "C:\\Temp\\FindAndReplaceTest";
 			// 
 			// label5
 			// 
@@ -170,7 +167,7 @@
 			// 
 			// btnGenReplaceCommandLine
 			// 
-			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(448, 309);
+			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(448, 306);
 			this.btnGenReplaceCommandLine.Name = "btnGenReplaceCommandLine";
 			this.btnGenReplaceCommandLine.Size = new System.Drawing.Size(174, 23);
 			this.btnGenReplaceCommandLine.TabIndex = 19;
@@ -249,7 +246,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(809, 333);
+			this.ClientSize = new System.Drawing.Size(809, 335);
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);
 			this.Controls.Add(this.chkIncludeSubDirectories);
