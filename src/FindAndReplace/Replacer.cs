@@ -75,10 +75,10 @@ namespace FindAndReplace
 
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
-			int matchCount = Regex.Matches(content, FindText, regexOptions).Count;
+			int matchCount = Regex.Matches(content, Regex.Escape(FindText), regexOptions).Count;
 			if (matchCount  > 0)
 			{
-				string newContent = Regex.Replace(content, FindText, ReplaceText, regexOptions);
+				string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
 
 				using (var sw = new StreamWriter(filePath))
 				{
