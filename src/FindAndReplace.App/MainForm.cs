@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -23,13 +24,24 @@ namespace FindAndReplace.App
 
 		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			if (_currentThread != null && _currentThread.IsAlive) 
+			if (_currentThread != null && _currentThread.IsAlive)
 				_currentThread.Abort();
 		}
 
-
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
+			txtReplace.CausesValidation = false;
+			
+			foreach (Control control in Controls)
+			{
+				control.Focus();
+
+				if (!Validate() ||  errorProvider1.GetError(control)!="")
+					return;
+				errorProvider1.SetError(control, "");
+			}
+			
+
 			PrepareFinderGrid();
 
 			var finder = new Finder();
@@ -46,10 +58,9 @@ namespace FindAndReplace.App
 
 			_currentThread = new Thread(DoFindWork);
 			_currentThread.IsBackground = true;
-			
+
 			_currentThread.Start();
 		}
-
 
 		private void PrepareFinderGrid()
 		{
@@ -58,7 +69,7 @@ namespace FindAndReplace.App
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
 			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Filename", HeaderText = "Filename", CellTemplate = new DataGridViewTextBoxCell(), Width = 200 });
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path",  HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
 			gvResults.Columns.Add("NumMatches", "Matches");
 
 			progressBar.Value = 0;
@@ -79,31 +90,45 @@ namespace FindAndReplace.App
 			else
 			{
 				SetFinderResultCallback finderResultCallback = ShowFindResult;
-				this.Invoke(finderResultCallback, new object[] {e.ResultItem, e.TotalFilesCount});
+				this.Invoke(finderResultCallback, new object[] { e.ResultItem, e.TotalFilesCount });
 			}
 		}
 
 		private void ShowFindResult(Finder.FindResultItem findResultItem, int totalCount)
 		{
-			if (findResultItem.NumMatches > 0)
+			if (totalCount != 0)
 			{
-				gvResults.Rows.Add();
+				if (findResultItem.NumMatches > 0)
+				{
+					gvResults.Rows.Add();
 
-				int currentRow = gvResults.Rows.Count - 1;
+					int currentRow = gvResults.Rows.Count - 1;
 
-				gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
-				gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
-				gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+					gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
+					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
+					gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+				}
+
+				progressBar.Maximum = totalCount;
+				progressBar.Value++;
+
+				lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " +
+				                 findResultItem.FileRelativePath;
+
 			}
+			else
+			{
+				HideResultPanel();
 
-			progressBar.Maximum = totalCount;
-			progressBar.Value++;
+				txtNoMathces.Visible = true;
+			}
+			
 
-			lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " + findResultItem.FileRelativePath;
-
+			
 			//When last file - enable buttons back
 			if (totalCount == progressBar.Value)
 				EnableButtons();
+			
 		}
 
 		private void DisableButtons()
@@ -132,10 +157,11 @@ namespace FindAndReplace.App
 			_finder.Find();
 		}
 
-
 		private void ShowResultPanel()
 		{
 			DisableButtons();
+
+			txtNoMathces.Visible = false;
 
 			if (!pnlGridResults.Visible)
 			{
@@ -151,9 +177,29 @@ namespace FindAndReplace.App
 			}
 		}
 
+		private void HideResultPanel()
+		{
+			if (pnlGridResults.Visible)
+			{
+				pnlGridResults.Visible = false;
+
+				this.Height -= pnlGridResults.Height + 10;
+			}
+		}
 
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
+
+			txtReplace.CausesValidation = true;
+
+			foreach (Control control in Controls)
+			{
+				control.Focus();
+
+				if (!Validate()) return;
+				errorProvider1.SetError(control, "");
+			}
+			
 			var replacer = new Replacer();
 
 			replacer.Dir = txtDir.Text;
@@ -197,38 +243,43 @@ namespace FindAndReplace.App
 			progressBar.Value = 0;
 		}
 
-
 		private void DoReplaceWork()
 		{
 			_replacer.Replace();
 		}
 
-
 		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, int totalCount)
 		{
-			if (replaceResultItem.NumMatches > 0)
+			if (totalCount>0)
 			{
-				gvResults.Rows.Add();
+				if (replaceResultItem.NumMatches > 0)
+				{
+					gvResults.Rows.Add();
 
-				int currentRow = gvResults.Rows.Count - 1;
+					int currentRow = gvResults.Rows.Count - 1;
 
-				gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
-				gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
-				gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
-				gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
+					gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
+					gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
+					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
+					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
+				}
+
+				progressBar.Maximum = totalCount;
+				progressBar.Value++;
+
+				lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " +
+				                 replaceResultItem.FileRelativePath;
 			}
+			else
+			{
+				HideResultPanel();
 
-			progressBar.Maximum = totalCount;
-			progressBar.Value++;
-
-			lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " + replaceResultItem.FileRelativePath;
-		
+				txtNoMathces.Visible = true;
+			}
 			//When last file - enable buttons back
 			if (totalCount == progressBar.Value)
 				EnableButtons();
 		}
-
-
 
 		private void ReplaceFileProceed(object sender, ReplacerEventArgs e)
 		{
@@ -239,7 +290,7 @@ namespace FindAndReplace.App
 			else
 			{
 				SetReplacerResultCallback replaceResultCallback = new SetReplacerResultCallback(ShowReplaceResult);
-				this.Invoke(replaceResultCallback, new object[] {e.ResultItem, e.TotalFilesCount});
+				this.Invoke(replaceResultCallback, new object[] { e.ResultItem, e.TotalFilesCount });
 			}
 		}
 
@@ -249,13 +300,13 @@ namespace FindAndReplace.App
 			txtCommandLine.Clear();
 
 			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" {3} --find \"{4}\" --replace \"{5}\" {6}",
-			                         Application.ExecutablePath,
-			                         txtDir.Text,
-			                         txtFileMask.Text,
-			                         chkIncludeSubDirectories.Checked ? "--includeSubDirectories" : "",
-			                         CommandLineUtils.EncodeText(txtFind.Text),
-			                         CommandLineUtils.EncodeText(txtReplace.Text),
-			                         chkIsCaseSensitive.Checked ? "--caseSensitive" : "");
+									 Application.ExecutablePath,
+									 txtDir.Text,
+									 txtFileMask.Text,
+									 chkIncludeSubDirectories.Checked ? "--includeSubDirectories" : "",
+									 CommandLineUtils.EncodeText(txtFind.Text),
+									 CommandLineUtils.EncodeText(txtReplace.Text),
+									 chkIsCaseSensitive.Checked ? "--caseSensitive" : "");
 
 			txtCommandLine.Text = s;
 		}
@@ -276,5 +327,56 @@ namespace FindAndReplace.App
 			}
 		}
 
+		private void txtDir_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (txtDir.Text.Trim() == "")
+			{
+				errorProvider1.SetError(txtDir, "Dir is required");
+				return;
+			}
+
+			Regex dirRegex=new Regex(@"^(([a-zA-Z]:)|(\\{2}[^\/\\:*?<>|]+))(\\([^\/\\:*?<>|]*))*(\\)?$");
+			if (!dirRegex.IsMatch(txtDir.Text))
+			{
+				errorProvider1.SetError(txtDir, "Dir is invalid");
+				e.Cancel = true;
+				return;
+			}
+
+			errorProvider1.SetError(txtDir, "");
+		}
+
+		private void txtFileMask_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (txtFileMask.Text.Trim() == "")
+			{
+				errorProvider1.SetError(txtFileMask, "FileMask is required");
+				return;
+			}
+
+			errorProvider1.SetError(txtFileMask, "");
+		}
+
+		private void txtFind_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (txtFind.Text.Trim() == "")
+			{
+				errorProvider1.SetError(txtFind, "Find is required");
+				return;
+			}
+
+			errorProvider1.SetError(txtFind, "");
+		}
+
+		private void txtReplace_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (txtReplace.Text.Trim() == "")
+			{
+				errorProvider1.SetError(txtReplace, "Replace is required");
+				return;
+			}
+
+			errorProvider1.SetError(txtReplace, "");
+		}
 	}
 }

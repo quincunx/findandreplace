@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.txtFind = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -49,9 +50,12 @@
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.lblStatus = new System.Windows.Forms.Label();
 			this.pnlGridResults = new System.Windows.Forms.Panel();
+			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+			this.txtNoMathces = new System.Windows.Forms.Label();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// txtFind
@@ -61,6 +65,7 @@
 			this.txtFind.Name = "txtFind";
 			this.txtFind.Size = new System.Drawing.Size(539, 74);
 			this.txtFind.TabIndex = 1;
+			this.txtFind.Validating += new System.ComponentModel.CancelEventHandler(this.txtFind_Validating);
 			// 
 			// label1
 			// 
@@ -87,6 +92,7 @@
 			this.txtReplace.Name = "txtReplace";
 			this.txtReplace.Size = new System.Drawing.Size(539, 74);
 			this.txtReplace.TabIndex = 3;
+			this.txtReplace.Validating += new System.ComponentModel.CancelEventHandler(this.txtReplace_Validating);
 			// 
 			// btnReplace
 			// 
@@ -113,6 +119,7 @@
 			this.txtDir.Name = "txtDir";
 			this.txtDir.Size = new System.Drawing.Size(539, 20);
 			this.txtDir.TabIndex = 9;
+			this.txtDir.Validating += new System.ComponentModel.CancelEventHandler(this.txtDir_Validating);
 			// 
 			// label5
 			// 
@@ -130,7 +137,8 @@
 			this.txtFileMask.Size = new System.Drawing.Size(274, 20);
 			this.txtFileMask.TabIndex = 11;
 			this.txtFileMask.TabStop = false;
-			this.txtFileMask.Text = "*.*";
+			this.txtFileMask.Text = "ca";
+			this.txtFileMask.Validating += new System.ComponentModel.CancelEventHandler(this.txtFileMask_Validating);
 			// 
 			// btnFindOnly
 			// 
@@ -253,11 +261,26 @@
 			this.pnlGridResults.TabIndex = 22;
 			this.pnlGridResults.Visible = false;
 			// 
+			// errorProvider1
+			// 
+			this.errorProvider1.ContainerControl = this;
+			// 
+			// txtNoMathces
+			// 
+			this.txtNoMathces.AutoSize = true;
+			this.txtNoMathces.Location = new System.Drawing.Point(80, 317);
+			this.txtNoMathces.Name = "txtNoMathces";
+			this.txtNoMathces.Size = new System.Drawing.Size(97, 13);
+			this.txtNoMathces.TabIndex = 23;
+			this.txtNoMathces.Text = " No matches found";
+			this.txtNoMathces.Visible = false;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(809, 342);
+			this.ClientSize = new System.Drawing.Size(827, 339);
+			this.Controls.Add(this.txtNoMathces);
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);
 			this.Controls.Add(this.chkIncludeSubDirectories);
@@ -281,6 +304,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).EndInit();
 			this.pnlGridResults.ResumeLayout(false);
 			this.pnlGridResults.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -309,6 +333,8 @@
 		public System.Windows.Forms.ProgressBar progressBar;
 		private System.Windows.Forms.Label lblStatus;
 		private System.Windows.Forms.Panel pnlGridResults;
+		private System.Windows.Forms.ErrorProvider errorProvider1;
+		private System.Windows.Forms.Label txtNoMathces;
 	}
 }
 
