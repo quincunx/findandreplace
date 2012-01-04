@@ -61,6 +61,8 @@ namespace FindAndReplace
 				OnFileProcessed(new ReplacerEventArgs(resultItem, filesInDirectory.Length));
 			}
 
+			if (filesInDirectory.Length == 0) OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), filesInDirectory.Length));
+
 			return resultItems;
 		}
 		

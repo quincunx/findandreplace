@@ -65,6 +65,8 @@ namespace FindAndReplace
 					resultItems.Add(resultItem);
 			}
 
+			if (filesInDirectory.Length == 0) OnFileProcessed(new FinderEventArgs(new FindResultItem(), filesInDirectory.Length));
+
 			return resultItems;
 		}
 
