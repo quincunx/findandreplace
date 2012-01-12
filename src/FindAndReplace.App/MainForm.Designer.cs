@@ -65,7 +65,6 @@
 			this.txtFind.Name = "txtFind";
 			this.txtFind.Size = new System.Drawing.Size(539, 74);
 			this.txtFind.TabIndex = 1;
-			this.txtFind.Text = "c.dat";
 			this.txtFind.Validating += new System.ComponentModel.CancelEventHandler(this.txtFind_Validating);
 			// 
 			// label1
@@ -120,7 +119,6 @@
 			this.txtDir.Name = "txtDir";
 			this.txtDir.Size = new System.Drawing.Size(539, 20);
 			this.txtDir.TabIndex = 9;
-			this.txtDir.Text = "c:\\temp\\1\\";
 			this.txtDir.Validating += new System.ComponentModel.CancelEventHandler(this.txtDir_Validating);
 			// 
 			// label5
