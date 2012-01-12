@@ -407,11 +407,13 @@ namespace FindAndReplace.App
 			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
 
 			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(resultForm.richTextBox1.Text, txtFind.Text) : Regex.Matches(resultForm.richTextBox1.Text, txtFind.Text, RegexOptions.IgnoreCase);
-			foreach (Match mathch in mathches)
+			foreach (Match match in mathches)
 			{
-				resultForm.richTextBox1.SelectionStart = mathch.Index - DetectMatchLine(clearLines.ToArray(), mathch.Index);
+				resultForm.richTextBox1.SelectionStart = match.Index - DetectMatchLine(clearLines.ToArray(), match.Index);
 
-				resultForm.richTextBox1.SelectionLength=mathch.Length;
+				var nCount = txtFind.Text.Split("\n".ToCharArray()).Count() - 1;
+
+				resultForm.richTextBox1.SelectionLength=match.Length-nCount;
 
 				resultForm.richTextBox1.SelectionFont=font;
 
@@ -425,14 +427,14 @@ namespace FindAndReplace.App
 
 		private int DetectMatchLine(string[] lines, int position)
 		{
-			var separator = "/r/n";
+			var separatorLength = 2;
 			int i = 0;
-			int charsCount = lines[0].Length + separator.Length;
+			int charsCount = lines[0].Length + separatorLength;
 
-			while (charsCount < position)
+			while (charsCount <= position)
 			{
 				i++;
-				charsCount += lines[i].Length + separator.Length;
+				charsCount += lines[i].Length + separatorLength;
 			}
 
 			return i;
