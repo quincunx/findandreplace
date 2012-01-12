@@ -65,6 +65,7 @@
 			this.txtFind.Name = "txtFind";
 			this.txtFind.Size = new System.Drawing.Size(539, 74);
 			this.txtFind.TabIndex = 1;
+			this.txtFind.Text = "c.dat";
 			this.txtFind.Validating += new System.ComponentModel.CancelEventHandler(this.txtFind_Validating);
 			// 
 			// label1
@@ -119,6 +120,7 @@
 			this.txtDir.Name = "txtDir";
 			this.txtDir.Size = new System.Drawing.Size(539, 20);
 			this.txtDir.TabIndex = 9;
+			this.txtDir.Text = "c:\\temp\\1\\";
 			this.txtDir.Validating += new System.ComponentModel.CancelEventHandler(this.txtDir_Validating);
 			// 
 			// label5
@@ -137,7 +139,7 @@
 			this.txtFileMask.Size = new System.Drawing.Size(274, 20);
 			this.txtFileMask.TabIndex = 11;
 			this.txtFileMask.TabStop = false;
-			this.txtFileMask.Text = "ca";
+			this.txtFileMask.Text = "*.*";
 			this.txtFileMask.Validating += new System.ComponentModel.CancelEventHandler(this.txtFileMask_Validating);
 			// 
 			// btnFindOnly
@@ -223,6 +225,8 @@
 			this.gvResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.gvResults.Size = new System.Drawing.Size(712, 129);
 			this.gvResults.TabIndex = 18;
+			this.gvResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gvResults_CellDoubleClick);
+			this.gvResults.CellToolTipTextNeeded += new System.Windows.Forms.DataGridViewCellToolTipTextNeededEventHandler(this.gvResults_CellToolTipTextNeeded);
 			// 
 			// lblResults
 			// 
@@ -279,7 +283,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(827, 339);
+			this.ClientSize = new System.Drawing.Size(796, 338);
 			this.Controls.Add(this.txtNoMathces);
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);

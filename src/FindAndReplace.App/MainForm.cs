@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
 
 
 namespace FindAndReplace.App
@@ -71,6 +74,8 @@ namespace FindAndReplace.App
 			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Filename", HeaderText = "Filename", CellTemplate = new DataGridViewTextBoxCell(), Width = 200 });
 			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
 			gvResults.Columns.Add("NumMatches", "Matches");
+			gvResults.Columns.Add("Tooltip", "");
+			gvResults.Columns[3].Visible = false;
 
 			progressBar.Value = 0;
 		}
@@ -107,6 +112,7 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+					gvResults.Rows[currentRow].Cells[3].Value = findResultItem.ToolTip;
 				}
 
 				progressBar.Maximum = totalCount;
@@ -378,5 +384,60 @@ namespace FindAndReplace.App
 
 			errorProvider1.SetError(txtReplace, "");
 		}
+
+		private void gvResults_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
+		{
+			e.ToolTipText = "ooo";
+
+		}
+
+		private void gvResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		{
+			var tooltip = gvResults.Rows[e.RowIndex].Cells[3].Value.ToString();
+			
+			ResultForm resultForm=new ResultForm();
+			resultForm.richTextBox1.Text = tooltip;
+			resultForm.richTextBox1.ReadOnly = true;
+
+			var lines = resultForm.richTextBox1.Text.Split("\r\n".ToCharArray());
+			var clearLines = new List<string>();
+			for (int i=0;i<lines.Count();i++)
+				if (i%2 ==0 ) clearLines.Add(lines[i]);
+
+			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
+
+			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(resultForm.richTextBox1.Text, txtFind.Text) : Regex.Matches(resultForm.richTextBox1.Text, txtFind.Text, RegexOptions.IgnoreCase);
+			foreach (Match mathch in mathches)
+			{
+				resultForm.richTextBox1.SelectionStart = mathch.Index - DetectMatchLine(clearLines.ToArray(), mathch.Index);
+
+				resultForm.richTextBox1.SelectionLength=mathch.Length;
+
+				resultForm.richTextBox1.SelectionFont=font;
+
+				resultForm.richTextBox1.SelectionColor = Color.CadetBlue;
+			}
+
+			resultForm.richTextBox1.SelectionLength = 0;
+
+			resultForm.ShowDialog();
+		}
+
+		private int DetectMatchLine(string[] lines, int position)
+		{
+			var separator = "/r/n";
+			int i = 0;
+			int charsCount = lines[0].Length + separator.Length;
+
+			while (charsCount < position)
+			{
+				i++;
+				charsCount += lines[i].Length + separator.Length;
+			}
+
+			return i;
+		}
+
+
 	}
 }
