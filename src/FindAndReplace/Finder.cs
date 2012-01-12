@@ -143,11 +143,13 @@ namespace FindAndReplace
 			for (int i = 0; i < lines.Count(); i++)
 				if (i % 2 == 0) clearLines.Add(lines[i]);
 
-			var lineIndex = DetectMatchLine(clearLines.ToArray(), match.Index);
+			var lineIndexStart = DetectMatchLine(clearLines.ToArray(), match.Index);
+			var lineIndexEnd = DetectMatchLine(clearLines.ToArray(), match.Index + match.Length);
+
 
 			var result = new List<int>();
 
-			for (int i = lineIndex - 2; i <= lineIndex + 2; i++)
+			for (int i = lineIndexStart - 2; i <= lineIndexEnd + 2; i++)
 			{
 				if (i >= 0 && i < clearLines.Count())
 					result.Add(i);
@@ -159,14 +161,14 @@ namespace FindAndReplace
 
 		private int DetectMatchLine(string[] lines, int position)
 		{
-			var separator = "/r/n";
+			var separatorLength = 2; //2-length of "/r/n"
 			int i = 0;
-			int charsCount = lines[0].Length + separator.Length;
+			int charsCount = lines[0].Length + separatorLength; //
 
-			while (charsCount < position)
+			while (charsCount <= position)
 			{
 				i++;
-				charsCount += lines[i].Length + separator.Length;
+				charsCount += lines[i].Length + separatorLength;
 			}
 
 			return i;
@@ -192,7 +194,7 @@ namespace FindAndReplace
 			var prevLineIndex = 0;
 			foreach (var rowNumber in rowNumbers)
 			{
-				if (rowNumber-prevLineIndex >1 ) stringBuilder.AppendLine("");
+				if (rowNumber-prevLineIndex >1 && prevLineIndex!=0 ) stringBuilder.AppendLine("");
 				stringBuilder.AppendLine(lines[rowNumber]);
 				prevLineIndex = rowNumber;
 			}
