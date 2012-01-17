@@ -33,17 +33,21 @@ namespace FindAndReplace.App
 
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
+			txtDir.CausesValidation = true;
+			txtFileMask.CausesValidation = true;
+			txtFind.CausesValidation = true;
 			txtReplace.CausesValidation = false;
-			
+
+			var isFormValid = true; 
 			foreach (Control control in Controls)
 			{
 				control.Focus();
 
-				if (!Validate() ||  errorProvider1.GetError(control)!="")
-					return;
+				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
 				errorProvider1.SetError(control, "");
 			}
 			
+			if (!isFormValid) return;
 
 			PrepareFinderGrid();
 
@@ -195,16 +199,21 @@ namespace FindAndReplace.App
 
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
-
+			txtDir.CausesValidation = true;
+			txtFileMask.CausesValidation = true;
+			txtFind.CausesValidation = true;
 			txtReplace.CausesValidation = true;
 
+			var isFormValid = true;
 			foreach (Control control in Controls)
 			{
 				control.Focus();
 
-				if (!Validate()) return;
-				errorProvider1.SetError(control, "");
+				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
+				else errorProvider1.SetError(control, "");
 			}
+
+			if (!isFormValid) return;
 			
 			var replacer = new Replacer();
 
@@ -302,6 +311,24 @@ namespace FindAndReplace.App
 
 		private void btnGenReplaceCommandLine_Click(object sender, EventArgs e)
 		{
+			txtDir.CausesValidation = true;
+			txtFileMask.CausesValidation = true;
+			txtFind.CausesValidation = true;
+			txtReplace.CausesValidation = true;
+
+			var isFormValid = true;
+			foreach (Control control in Controls)
+			{
+				control.Focus();
+
+				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
+				else errorProvider1.SetError(control, "");
+			}
+
+			if (!isFormValid) return;
+			
+			
+			
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
 
@@ -345,7 +372,7 @@ namespace FindAndReplace.App
 			if (!dirRegex.IsMatch(txtDir.Text))
 			{
 				errorProvider1.SetError(txtDir, "Dir is invalid");
-				e.Cancel = true;
+				//e.Cancel = true;
 				return;
 			}
 
@@ -439,7 +466,5 @@ namespace FindAndReplace.App
 
 			return i;
 		}
-
-
 	}
 }
