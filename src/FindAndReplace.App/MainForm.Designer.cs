@@ -60,6 +60,7 @@
 			// 
 			// txtFind
 			// 
+			this.txtFind.CausesValidation = false;
 			this.txtFind.Location = new System.Drawing.Point(83, 93);
 			this.txtFind.Multiline = true;
 			this.txtFind.Name = "txtFind";
@@ -87,6 +88,7 @@
 			// 
 			// txtReplace
 			// 
+			this.txtReplace.CausesValidation = false;
 			this.txtReplace.Location = new System.Drawing.Point(83, 200);
 			this.txtReplace.Multiline = true;
 			this.txtReplace.Name = "txtReplace";
@@ -115,6 +117,7 @@
 			// 
 			// txtDir
 			// 
+			this.txtDir.CausesValidation = false;
 			this.txtDir.Location = new System.Drawing.Point(83, 19);
 			this.txtDir.Name = "txtDir";
 			this.txtDir.Size = new System.Drawing.Size(539, 20);
@@ -132,6 +135,7 @@
 			// 
 			// txtFileMask
 			// 
+			this.txtFileMask.CausesValidation = false;
 			this.txtFileMask.Location = new System.Drawing.Point(83, 64);
 			this.txtFileMask.Name = "txtFileMask";
 			this.txtFileMask.Size = new System.Drawing.Size(274, 20);
@@ -265,6 +269,7 @@
 			// 
 			// errorProvider1
 			// 
+			this.errorProvider1.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
 			this.errorProvider1.ContainerControl = this;
 			// 
 			// txtNoMathces
