@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CommandLine;
+
+
 
 namespace FindAndReplace.App
 {
@@ -32,7 +36,11 @@ namespace FindAndReplace.App
 		[STAThread]
 		static void Main(string[] args)
 		{
-			if (args.Length!=0 && args[0]=="--cl")
+			// from http://blogs.msdn.com/b/microsoft_press/archive/2010/02/03/jeffrey-richter-excerpt-2-from-clr-via-c-third-edition.aspx
+			AppDomain.CurrentDomain.AssemblyResolve += ResolveEventHandler;
+
+
+			if (args.Length != 0 && args[0] == "--cl")
 			{
 
 				//Get a pointer to the forground window.  The idea here is that
@@ -58,43 +66,7 @@ namespace FindAndReplace.App
 					AllocConsole();
 				}
 
-				var options = new CommandLineOptions();
-				ICommandLineParser parser = new CommandLineParser(new CommandLineParserSettings(System.Console.Error));
-				if (!parser.ParseArguments(args, options, System.Console.Error))
-				{
-					Console.ReadKey();
-					Environment.Exit(1);
-				}
-
-				if (!String.IsNullOrEmpty(options.ReplaceText))
-				{
-					var replacer = new Replacer();
-					replacer.Dir = options.Dir;
-					replacer.FileMask = options.FileMask;
-					replacer.IncludeSubDirectories = options.IncludeSubDirectories;
-
-					replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
-					replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
-					replacer.IsCaseSensitive = options.IsCaseSensitive;
-					
-					var result = replacer.Replace();
-					PrintReplacerResult(result);
-				}
-				else
-				{
-					var finder = new Finder();
-					finder.Dir = options.Dir;
-					finder.FileMask = options.FileMask;
-					finder.IncludeSubDirectories = options.IncludeSubDirectories;
-
-					finder.FindText = CommandLineUtils.DecodeText(options.FindText);
-					finder.IsCaseSensitive = options.IsCaseSensitive;
-					
-					var result = finder.Find();
-					PrintFinderResult(result);
-				}
-				
-				//Console.ReadLine();
+				CommandLineRunner.Run(args);
 
 				FreeConsole();
 			}
@@ -103,11 +75,11 @@ namespace FindAndReplace.App
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 				Application.Run(new MainForm());
-				
+
 			}
 		}
 
-		static void PrintFinderResult(List<Finder.FindResultItem> resultItems)
+		public static void PrintFinderResult(List<Finder.FindResultItem> resultItems)
 		{
 			Console.WriteLine();
 
@@ -126,11 +98,11 @@ namespace FindAndReplace.App
 		{
 			Console.WriteLine(
 				string.Format("{0} | {1}",
-				              FormatCell(path, 63),
-				              FormatCell(matches, 10)));
+							  FormatCell(path, 63),
+							  FormatCell(matches, 10)));
 		}
 
-		static void PrintReplacerResult(List<Replacer.ReplaceResultItem> resultItems)
+		public static void PrintReplacerResult(List<Replacer.ReplaceResultItem> resultItems)
 		{
 			Console.WriteLine();
 
@@ -163,6 +135,74 @@ namespace FindAndReplace.App
 		{
 			return text.PadRight(width);
 		}
+
+		private static Assembly ResolveEventHandler(Object sender, ResolveEventArgs args)
+		{
+
+			String dllName = new AssemblyName(args.Name).Name + ".dll";
+
+			var assem = Assembly.GetExecutingAssembly();
+
+			String resourceName = assem.GetManifestResourceNames().FirstOrDefault(rn => rn.EndsWith(dllName));
+
+			if (resourceName == null) return null; // Not found, maybe another handler will find it
+
+			using (var stream = assem.GetManifestResourceStream(resourceName))
+			{
+
+				Byte[] assemblyData = new Byte[stream.Length];
+
+				stream.Read(assemblyData, 0, assemblyData.Length);
+
+				return Assembly.Load(assemblyData);
+
+			}
+		}
+	}
+
+	static class CommandLineRunner
+	{
+		public static void Run(string[] args)
+		{
+			var options = new CommandLineOptions();
+			ICommandLineParser parser = new CommandLineParser(new CommandLineParserSettings(System.Console.Error));
+			if (!parser.ParseArguments(args, options, System.Console.Error))
+			{
+				Console.ReadKey();
+				Environment.Exit(1);
+			}
+
+			if (!String.IsNullOrEmpty(options.ReplaceText))
+			{
+				var replacer = new Replacer();
+				replacer.Dir = options.Dir;
+				replacer.FileMask = options.FileMask;
+				replacer.IncludeSubDirectories = options.IncludeSubDirectories;
+
+				replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
+				replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
+				replacer.IsCaseSensitive = options.IsCaseSensitive;
+
+				var result = replacer.Replace();
+				Program.PrintReplacerResult(result);
+			}
+			else
+			{
+				var finder = new Finder();
+				finder.Dir = options.Dir;
+				finder.FileMask = options.FileMask;
+				finder.IncludeSubDirectories = options.IncludeSubDirectories;
+
+				finder.FindText = CommandLineUtils.DecodeText(options.FindText);
+				finder.IsCaseSensitive = options.IsCaseSensitive;
+
+				var result = finder.Find();
+				Program.PrintFinderResult(result);
+			}
+
+			Console.ReadLine();
+		}
+
 
 	}
 }

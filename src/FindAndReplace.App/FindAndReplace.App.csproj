@@ -51,6 +51,7 @@
   <ItemGroup>
     <Reference Include="CommandLine">
       <HintPath>..\..\lib\CommandLine\CommandLine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -120,10 +121,21 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CommandLine.dll" />
+    <EmbeddedResource Include="FindAndReplace.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\FindAndReplace\FindAndReplace.csproj">
       <Project>{4E35E2C7-099B-4356-9215-0DC77D156CFA}</Project>
       <Name>FindAndReplace</Name>
+      <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CommandLine.pdb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FindAndReplace.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
