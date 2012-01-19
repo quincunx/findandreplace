@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -38,7 +40,7 @@ namespace FindAndReplace.App
 			txtFind.CausesValidation = true;
 			txtReplace.CausesValidation = false;
 
-			var isFormValid = true; 
+			var isFormValid = true;
 			foreach (Control control in Controls)
 			{
 				control.Focus();
@@ -46,7 +48,7 @@ namespace FindAndReplace.App
 				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
 				errorProvider1.SetError(control, "");
 			}
-			
+
 			if (!isFormValid) return;
 
 			PrepareFinderGrid();
@@ -83,7 +85,6 @@ namespace FindAndReplace.App
 
 			progressBar.Value = 0;
 
-			
 			if (txtAreaMatches.Visible)
 			{
 				txtAreaMatches.Visible = false;
@@ -123,14 +124,22 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
-					gvResults.Rows[currentRow].Cells[3].Value = findResultItem.ToolTip;
+
+					var linesToTooltip = new List<int>();
+
+					foreach (Match match in findResultItem.Matches)
+					{
+						linesToTooltip.AddRange(GetLineNumbersForTooltip(findResultItem.FilePath, match));
+					}
+
+					gvResults.Rows[currentRow].Cells[3].Value = GenerateToolTip(findResultItem.FilePath, linesToTooltip);
 				}
 
 				progressBar.Maximum = totalCount;
 				progressBar.Value++;
 
 				lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " +
-				                 findResultItem.FileRelativePath;
+								 findResultItem.FileRelativePath;
 
 			}
 			else
@@ -139,13 +148,16 @@ namespace FindAndReplace.App
 
 				txtNoMathces.Visible = true;
 			}
-			
 
-			
+
+
 			//When last file - enable buttons back
 			if (totalCount == progressBar.Value)
+			{
 				EnableButtons();
-			
+				gvResults.ClearSelection();
+			}
+
 		}
 
 		private void DisableButtons()
@@ -221,7 +233,7 @@ namespace FindAndReplace.App
 			}
 
 			if (!isFormValid) return;
-			
+
 			var replacer = new Replacer();
 
 			replacer.Dir = txtDir.Text;
@@ -262,6 +274,14 @@ namespace FindAndReplace.App
 			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
 			gvResults.Columns.Add("NumMatches", "Matches");
 			gvResults.Columns.Add("IsSuccess", "Success");
+			gvResults.Columns.Add("Tooltip", "");
+			gvResults.Columns[4].Visible = false;
+
+			if (txtAreaMatches.Visible)
+			{
+				txtAreaMatches.Visible = false;
+				this.Height -= (txtAreaMatches.Height + 50);
+			}
 
 			progressBar.Value = 0;
 		}
@@ -273,7 +293,7 @@ namespace FindAndReplace.App
 
 		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, int totalCount)
 		{
-			if (totalCount>0)
+			if (totalCount > 0)
 			{
 				if (replaceResultItem.NumMatches > 0)
 				{
@@ -285,13 +305,22 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
 					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
+
+					var linesToTooltip = new List<int>();
+
+					foreach (Match match in replaceResultItem.Matches)
+					{
+						linesToTooltip.AddRange(GetLineNumbersForTooltip(replaceResultItem.FilePath, match));
+					}
+
+					gvResults.Rows[currentRow].Cells[4].Value = GenerateToolTip(replaceResultItem.FilePath, linesToTooltip);
 				}
 
 				progressBar.Maximum = totalCount;
 				progressBar.Value++;
 
 				lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " +
-				                 replaceResultItem.FileRelativePath;
+								 replaceResultItem.FileRelativePath;
 			}
 			else
 			{
@@ -301,7 +330,10 @@ namespace FindAndReplace.App
 			}
 			//When last file - enable buttons back
 			if (totalCount == progressBar.Value)
+			{
 				EnableButtons();
+				gvResults.ClearSelection();
+			}
 		}
 
 		private void ReplaceFileProceed(object sender, ReplacerEventArgs e)
@@ -334,9 +366,9 @@ namespace FindAndReplace.App
 			}
 
 			if (!isFormValid) return;
-			
-			
-			
+
+
+
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
 
@@ -382,7 +414,7 @@ namespace FindAndReplace.App
 				return;
 			}
 
-			Regex dirRegex=new Regex(@"^(([a-zA-Z]:)|(\\{2}[^\/\\:*?<>|]+))(\\([^\/\\:*?<>|]*))*(\\)?$");
+			Regex dirRegex = new Regex(@"^(([a-zA-Z]:)|(\\{2}[^\/\\:*?<>|]+))(\\([^\/\\:*?<>|]*))*(\\)?$");
 			if (!dirRegex.IsMatch(txtDir.Text))
 			{
 				errorProvider1.SetError(txtDir, "Dir is invalid");
@@ -441,34 +473,32 @@ namespace FindAndReplace.App
 			return i;
 		}
 
-		private void gvResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		private void gvResults_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (!txtAreaMatches.Visible)
 			{
 				txtAreaMatches.Visible = true;
 				this.Height += txtAreaMatches.Height + 50;
 			}
-			
-			var tooltip = gvResults.Rows[e.RowIndex].Cells[3].Value.ToString();
+
+			var tooltipColNumber = gvResults.Columns[3].Visible ? 4 : 3;
+
+
+			var tooltip = gvResults.Rows[e.RowIndex].Cells[tooltipColNumber].Value.ToString();
 
 			txtAreaMatches.Text = tooltip;
 			txtAreaMatches.ReadOnly = true;
 
-			var lines =txtAreaMatches.Text.Split("\r\n".ToCharArray());
-			//var clearLines = new List<string>();
-			//for (int i = 0; i < lines.Count(); i++)
-			//    if (i % 2 == 0) clearLines.Add(lines[i]);
-
 			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
 
-			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtAreaMatches.Text, txtFind.Text) : Regex.Matches(txtAreaMatches.Text, txtFind.Text, RegexOptions.IgnoreCase);
+			var findText = gvResults.Columns[3].Visible ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
+
+			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtAreaMatches.Text, findText) : Regex.Matches(txtAreaMatches.Text, findText, RegexOptions.IgnoreCase);
 			foreach (Match match in mathches)
 			{
-				txtAreaMatches.SelectionStart = match.Index - DetectMatchLine(lines.ToArray(), match.Index);
+				txtAreaMatches.SelectionStart = match.Index;
 
-				var nCount = txtFind.Text.Split("\n".ToCharArray()).Count() - 1;
-
-				txtAreaMatches.SelectionLength = match.Length - nCount;
+				txtAreaMatches.SelectionLength = match.Length;
 
 				txtAreaMatches.SelectionFont = font;
 
@@ -476,6 +506,67 @@ namespace FindAndReplace.App
 			}
 
 			txtAreaMatches.SelectionLength = 0;
+		}
+
+		private List<int> GetLineNumbersForTooltip(string filePath, Match match)
+		{
+			string content = string.Empty;
+
+			using (var sr = new StreamReader(filePath))
+			{
+				content = sr.ReadToEnd();
+			}
+
+			var separator = "\r\n";
+
+			var lines = content.Split(separator.ToCharArray());
+
+			var clearLines = new List<string>();
+			for (int i = 0; i < lines.Count(); i++)
+				if (i % 2 == 0) clearLines.Add(lines[i]);
+
+			var lineIndexStart = DetectMatchLine(clearLines.ToArray(), match.Index);
+			var lineIndexEnd = DetectMatchLine(clearLines.ToArray(), match.Index + match.Length);
+
+
+			var result = new List<int>();
+
+			for (int i = lineIndexStart - 2; i <= lineIndexEnd + 2; i++)
+			{
+				if (i >= 0 && i < clearLines.Count())
+					result.Add(i);
+			}
+
+			return result;
+
+		}
+
+		private string GenerateToolTip(string filePath, List<int> rowNumbers)
+		{
+			string content = string.Empty;
+
+			using (var sr = new StreamReader(filePath))
+			{
+				content = sr.ReadToEnd();
+			}
+
+			var separator = "\r\n";
+
+			var lines = content.Split(separator.ToCharArray());
+			lines = lines.Where(s => !String.IsNullOrEmpty(s)).ToArray();
+
+			StringBuilder stringBuilder = new StringBuilder();
+
+			rowNumbers = rowNumbers.Distinct().OrderBy(r => r).ToList();
+			var prevLineIndex = 0;
+			foreach (var rowNumber in rowNumbers)
+			{
+				if (rowNumber - prevLineIndex > 1 && prevLineIndex != 0) stringBuilder.AppendLine("");
+				stringBuilder.AppendLine(lines[rowNumber]);
+				prevLineIndex = rowNumber;
+			}
+
+			return stringBuilder.ToString();
 		}
 	}
 }
