@@ -37,6 +37,7 @@ namespace FindAndReplace
 			public int NumMatches { get; set; }
 			public bool IsSuccess { get; set; }
 			public string ErrorMessage { get; set; }
+			public MatchCollection Matches { get; set; }
 		}
 
 		public List<ReplaceResultItem> Replace()
@@ -77,8 +78,8 @@ namespace FindAndReplace
 
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
-			int matchCount = Regex.Matches(content, Regex.Escape(FindText), regexOptions).Count;
-			if (matchCount  > 0)
+			var matches = Regex.Matches(content, Regex.Escape(FindText), regexOptions);
+			if (matches.Count  > 0)
 			{
 				string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
 
@@ -95,8 +96,9 @@ namespace FindAndReplace
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
 			
-			resultItem.NumMatches = matchCount;
-			resultItem.IsSuccess = matchCount > 0;
+			resultItem.NumMatches = matches.Count;
+			resultItem.Matches = matches;
+			resultItem.IsSuccess = matches.Count > 0;
 
 			return resultItem;
 		}
