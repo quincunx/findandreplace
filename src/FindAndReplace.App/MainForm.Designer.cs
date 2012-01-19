@@ -52,6 +52,7 @@
 			this.pnlGridResults = new System.Windows.Forms.Panel();
 			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
 			this.txtNoMathces = new System.Windows.Forms.Label();
+			this.txtAreaMatches = new System.Windows.Forms.RichTextBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -228,7 +229,6 @@
 			this.gvResults.Size = new System.Drawing.Size(712, 129);
 			this.gvResults.TabIndex = 18;
 			this.gvResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gvResults_CellDoubleClick);
-			this.gvResults.CellToolTipTextNeeded += new System.Windows.Forms.DataGridViewCellToolTipTextNeededEventHandler(this.gvResults_CellToolTipTextNeeded);
 			// 
 			// lblResults
 			// 
@@ -282,11 +282,23 @@
 			this.txtNoMathces.Text = " No matches found";
 			this.txtNoMathces.Visible = false;
 			// 
+			// txtAreaMatches
+			// 
+			this.txtAreaMatches.BackColor = System.Drawing.SystemColors.Info;
+			this.txtAreaMatches.Location = new System.Drawing.Point(74, 563);
+			this.txtAreaMatches.Name = "txtAreaMatches";
+			this.txtAreaMatches.ReadOnly = true;
+			this.txtAreaMatches.Size = new System.Drawing.Size(729, 166);
+			this.txtAreaMatches.TabIndex = 24;
+			this.txtAreaMatches.Text = "";
+			this.txtAreaMatches.Visible = false;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(796, 338);
+			this.ClientSize = new System.Drawing.Size(822, 338);
+			this.Controls.Add(this.txtAreaMatches);
 			this.Controls.Add(this.txtNoMathces);
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);
@@ -342,6 +354,7 @@
 		private System.Windows.Forms.Panel pnlGridResults;
 		private System.Windows.Forms.ErrorProvider errorProvider1;
 		private System.Windows.Forms.Label txtNoMathces;
+		public System.Windows.Forms.RichTextBox txtAreaMatches;
 	}
 }
 
