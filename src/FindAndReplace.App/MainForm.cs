@@ -33,17 +33,21 @@ namespace FindAndReplace.App
 
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
+			txtDir.CausesValidation = true;
+			txtFileMask.CausesValidation = true;
+			txtFind.CausesValidation = true;
 			txtReplace.CausesValidation = false;
-			
+
+			var isFormValid = true; 
 			foreach (Control control in Controls)
 			{
 				control.Focus();
 
-				if (!Validate() ||  errorProvider1.GetError(control)!="")
-					return;
+				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
 				errorProvider1.SetError(control, "");
 			}
 			
+			if (!isFormValid) return;
 
 			PrepareFinderGrid();
 
@@ -78,6 +82,13 @@ namespace FindAndReplace.App
 			gvResults.Columns[3].Visible = false;
 
 			progressBar.Value = 0;
+
+			
+			if (txtAreaMatches.Visible)
+			{
+				txtAreaMatches.Visible = false;
+				this.Height -= (txtAreaMatches.Height + 50);
+			}
 		}
 
 		private void CreateListener(Finder finder)
@@ -195,16 +206,21 @@ namespace FindAndReplace.App
 
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
-
+			txtDir.CausesValidation = true;
+			txtFileMask.CausesValidation = true;
+			txtFind.CausesValidation = true;
 			txtReplace.CausesValidation = true;
 
+			var isFormValid = true;
 			foreach (Control control in Controls)
 			{
 				control.Focus();
 
-				if (!Validate()) return;
-				errorProvider1.SetError(control, "");
+				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
+				else errorProvider1.SetError(control, "");
 			}
+
+			if (!isFormValid) return;
 			
 			var replacer = new Replacer();
 
@@ -221,6 +237,7 @@ namespace FindAndReplace.App
 			ShowResultPanel();
 
 			PrepareReplacerGrid();
+			txtAreaMatches.Visible = false;
 
 			CreateListener(replacer);
 
@@ -302,6 +319,24 @@ namespace FindAndReplace.App
 
 		private void btnGenReplaceCommandLine_Click(object sender, EventArgs e)
 		{
+			txtDir.CausesValidation = true;
+			txtFileMask.CausesValidation = true;
+			txtFind.CausesValidation = true;
+			txtReplace.CausesValidation = true;
+
+			var isFormValid = true;
+			foreach (Control control in Controls)
+			{
+				control.Focus();
+
+				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
+				else errorProvider1.SetError(control, "");
+			}
+
+			if (!isFormValid) return;
+			
+			
+			
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
 
@@ -331,6 +366,12 @@ namespace FindAndReplace.App
 
 				this.Height += pnlCommandLine.Height + 10;
 			}
+
+			if (txtAreaMatches.Visible)
+			{
+				txtAreaMatches.Visible = false;
+				this.Height -= (txtAreaMatches.Height + 50);
+			}
 		}
 
 		private void txtDir_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -345,7 +386,7 @@ namespace FindAndReplace.App
 			if (!dirRegex.IsMatch(txtDir.Text))
 			{
 				errorProvider1.SetError(txtDir, "Dir is invalid");
-				e.Cancel = true;
+				//e.Cancel = true;
 				return;
 			}
 
@@ -385,46 +426,6 @@ namespace FindAndReplace.App
 			errorProvider1.SetError(txtReplace, "");
 		}
 
-		private void gvResults_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
-		{
-			e.ToolTipText = "ooo";
-
-		}
-
-		private void gvResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-		{
-			var tooltip = gvResults.Rows[e.RowIndex].Cells[3].Value.ToString();
-			
-			ResultForm resultForm=new ResultForm();
-			resultForm.richTextBox1.Text = tooltip;
-			resultForm.richTextBox1.ReadOnly = true;
-
-			var lines = resultForm.richTextBox1.Text.Split("\r\n".ToCharArray());
-			var clearLines = new List<string>();
-			for (int i=0;i<lines.Count();i++)
-				if (i%2 ==0 ) clearLines.Add(lines[i]);
-
-			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
-
-			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(resultForm.richTextBox1.Text, txtFind.Text) : Regex.Matches(resultForm.richTextBox1.Text, txtFind.Text, RegexOptions.IgnoreCase);
-			foreach (Match match in mathches)
-			{
-				resultForm.richTextBox1.SelectionStart = match.Index - DetectMatchLine(clearLines.ToArray(), match.Index);
-
-				var nCount = txtFind.Text.Split("\n".ToCharArray()).Count() - 1;
-
-				resultForm.richTextBox1.SelectionLength=match.Length-nCount;
-
-				resultForm.richTextBox1.SelectionFont=font;
-
-				resultForm.richTextBox1.SelectionColor = Color.CadetBlue;
-			}
-
-			resultForm.richTextBox1.SelectionLength = 0;
-
-			resultForm.ShowDialog();
-		}
-
 		private int DetectMatchLine(string[] lines, int position)
 		{
 			var separatorLength = 2;
@@ -440,6 +441,41 @@ namespace FindAndReplace.App
 			return i;
 		}
 
+		private void gvResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (!txtAreaMatches.Visible)
+			{
+				txtAreaMatches.Visible = true;
+				this.Height += txtAreaMatches.Height + 50;
+			}
+			
+			var tooltip = gvResults.Rows[e.RowIndex].Cells[3].Value.ToString();
 
+			txtAreaMatches.Text = tooltip;
+			txtAreaMatches.ReadOnly = true;
+
+			var lines =txtAreaMatches.Text.Split("\r\n".ToCharArray());
+			//var clearLines = new List<string>();
+			//for (int i = 0; i < lines.Count(); i++)
+			//    if (i % 2 == 0) clearLines.Add(lines[i]);
+
+			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
+
+			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtAreaMatches.Text, txtFind.Text) : Regex.Matches(txtAreaMatches.Text, txtFind.Text, RegexOptions.IgnoreCase);
+			foreach (Match match in mathches)
+			{
+				txtAreaMatches.SelectionStart = match.Index - DetectMatchLine(lines.ToArray(), match.Index);
+
+				var nCount = txtFind.Text.Split("\n".ToCharArray()).Count() - 1;
+
+				txtAreaMatches.SelectionLength = match.Length - nCount;
+
+				txtAreaMatches.SelectionFont = font;
+
+				txtAreaMatches.SelectionColor = Color.CadetBlue;
+			}
+
+			txtAreaMatches.SelectionLength = 0;
+		}
 	}
 }
