@@ -555,7 +555,9 @@ namespace FindAndReplace.App
 			var separator = Environment.NewLine;
 
 			var lines = content.Split(separator.ToCharArray());
-			lines = lines.Where(s => !String.IsNullOrEmpty(s)).ToArray();
+			var clearLines = new List<string>();
+			for (int i = 0; i < lines.Count(); i++)
+				if (i % 2 == 0) clearLines.Add(lines[i]);
 
 			var stringBuilder = new StringBuilder();
 
@@ -564,7 +566,7 @@ namespace FindAndReplace.App
 			foreach (var rowNumber in rowNumbers)
 			{
 				if (rowNumber - prevLineIndex > 1 && prevLineIndex != 0) stringBuilder.AppendLine("");
-				stringBuilder.AppendLine(lines[rowNumber]);
+				stringBuilder.AppendLine(clearLines[rowNumber]);
 				prevLineIndex = rowNumber;
 			}
 
