@@ -85,10 +85,10 @@ namespace FindAndReplace.App
 
 			progressBar.Value = 0;
 
-			if (txtAreaMatches.Visible)
+			if (txtMatches.Visible)
 			{
-				txtAreaMatches.Visible = false;
-				this.Height -= (txtAreaMatches.Height + 50);
+				txtMatches.Visible = false;
+				this.Height -= (txtMatches.Height + 50);
 			}
 		}
 
@@ -125,14 +125,14 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
 
-					var linesToTooltip = new List<int>();
+					var linesToPreview = new List<int>();
 
 					foreach (Match match in findResultItem.Matches)
 					{
-						linesToTooltip.AddRange(GetLineNumbersForTooltip(findResultItem.FilePath, match));
+						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(findResultItem.FilePath, match));
 					}
 
-					gvResults.Rows[currentRow].Cells[3].Value = GenerateToolTip(findResultItem.FilePath, linesToTooltip);
+					gvResults.Rows[currentRow].Cells[3].Value = GenerateMatchesPreviewText(findResultItem.FilePath, linesToPreview);
 				}
 
 				progressBar.Maximum = totalCount;
@@ -249,7 +249,7 @@ namespace FindAndReplace.App
 			ShowResultPanel();
 
 			PrepareReplacerGrid();
-			txtAreaMatches.Visible = false;
+			txtMatches.Visible = false;
 
 			CreateListener(replacer);
 
@@ -277,10 +277,10 @@ namespace FindAndReplace.App
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns[4].Visible = false;
 
-			if (txtAreaMatches.Visible)
+			if (txtMatches.Visible)
 			{
-				txtAreaMatches.Visible = false;
-				this.Height -= (txtAreaMatches.Height + 50);
+				txtMatches.Visible = false;
+				this.Height -= (txtMatches.Height + 50);
 			}
 
 			progressBar.Value = 0;
@@ -306,14 +306,14 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
 					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
 
-					var linesToTooltip = new List<int>();
+					var linesToPreview = new List<int>();
 
 					foreach (Match match in replaceResultItem.Matches)
 					{
-						linesToTooltip.AddRange(GetLineNumbersForTooltip(replaceResultItem.FilePath, match));
+						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(replaceResultItem.FilePath, match));
 					}
 
-					gvResults.Rows[currentRow].Cells[4].Value = GenerateToolTip(replaceResultItem.FilePath, linesToTooltip);
+					gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(replaceResultItem.FilePath, linesToPreview);
 				}
 
 				progressBar.Maximum = totalCount;
@@ -399,10 +399,10 @@ namespace FindAndReplace.App
 				this.Height += pnlCommandLine.Height + 10;
 			}
 
-			if (txtAreaMatches.Visible)
+			if (txtMatches.Visible)
 			{
-				txtAreaMatches.Visible = false;
-				this.Height -= (txtAreaMatches.Height + 50);
+				txtMatches.Visible = false;
+				this.Height -= (txtMatches.Height + 50);
 			}
 		}
 
@@ -475,40 +475,43 @@ namespace FindAndReplace.App
 
 		private void gvResults_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (!txtAreaMatches.Visible)
+            if (e.RowIndex == -1)   //heading
+                return;
+
+			if (!txtMatches.Visible)
 			{
-				txtAreaMatches.Visible = true;
-				this.Height += txtAreaMatches.Height + 50;
+				txtMatches.Visible = true;
+				this.Height += txtMatches.Height + 50;
 			}
 
-			var tooltipColNumber = gvResults.Columns[3].Visible ? 4 : 3;
+			var matchesPreviewColNumber = gvResults.Columns[3].Visible ? 4 : 3;
 
 
-			var tooltip = gvResults.Rows[e.RowIndex].Cells[tooltipColNumber].Value.ToString();
+            var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
 
-			txtAreaMatches.Text = tooltip;
-			txtAreaMatches.ReadOnly = true;
+            txtMatches.Text = matchesPreviewText;
+			txtMatches.ReadOnly = true;
 
 			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
 
 			var findText = gvResults.Columns[3].Visible ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
-			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtAreaMatches.Text, findText) : Regex.Matches(txtAreaMatches.Text, findText, RegexOptions.IgnoreCase);
+			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatches.Text, findText) : Regex.Matches(txtMatches.Text, findText, RegexOptions.IgnoreCase);
 			foreach (Match match in mathches)
 			{
-				txtAreaMatches.SelectionStart = match.Index;
+				txtMatches.SelectionStart = match.Index;
 
-				txtAreaMatches.SelectionLength = match.Length;
+				txtMatches.SelectionLength = match.Length;
 
-				txtAreaMatches.SelectionFont = font;
+				txtMatches.SelectionFont = font;
 
-				txtAreaMatches.SelectionColor = Color.CadetBlue;
+				txtMatches.SelectionColor = Color.CadetBlue;
 			}
 
-			txtAreaMatches.SelectionLength = 0;
+			txtMatches.SelectionLength = 0;
 		}
 
-		private List<int> GetLineNumbersForTooltip(string filePath, Match match)
+		private List<int> GetLineNumbersForMatchesPreview(string filePath, Match match)
 		{
 			string content = string.Empty;
 
@@ -517,8 +520,7 @@ namespace FindAndReplace.App
 				content = sr.ReadToEnd();
 			}
 
-			var separator = "\r\n";
-
+            var separator = Environment.NewLine;
 			var lines = content.Split(separator.ToCharArray());
 
 			var clearLines = new List<string>();
@@ -541,7 +543,7 @@ namespace FindAndReplace.App
 
 		}
 
-		private string GenerateToolTip(string filePath, List<int> rowNumbers)
+		private string GenerateMatchesPreviewText(string filePath, List<int> rowNumbers)
 		{
 			string content = string.Empty;
 
@@ -550,12 +552,12 @@ namespace FindAndReplace.App
 				content = sr.ReadToEnd();
 			}
 
-			var separator = "\r\n";
+			var separator = Environment.NewLine;
 
 			var lines = content.Split(separator.ToCharArray());
 			lines = lines.Where(s => !String.IsNullOrEmpty(s)).ToArray();
 
-			StringBuilder stringBuilder = new StringBuilder();
+			var stringBuilder = new StringBuilder();
 
 			rowNumbers = rowNumbers.Distinct().OrderBy(r => r).ToList();
 			var prevLineIndex = 0;
