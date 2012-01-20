@@ -418,7 +418,12 @@ namespace FindAndReplace.App
 			if (!dirRegex.IsMatch(txtDir.Text))
 			{
 				errorProvider1.SetError(txtDir, "Dir is invalid");
-				//e.Cancel = true;
+				return;
+			}
+
+            if (!Directory.Exists(txtDir.Text))
+            {
+                errorProvider1.SetError(txtDir, "Dir is invalid");
 				return;
 			}
 
