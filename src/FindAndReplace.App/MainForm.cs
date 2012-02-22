@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -81,7 +82,9 @@ namespace FindAndReplace.App
 			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
 			gvResults.Columns.Add("NumMatches", "Matches");
 			gvResults.Columns.Add("Tooltip", "");
+			gvResults.Columns.Add("TooltipLineNums", "");
 			gvResults.Columns[3].Visible = false;
+			gvResults.Columns[4].Visible = false;
 
 			progressBar.Value = 0;
 
@@ -133,6 +136,14 @@ namespace FindAndReplace.App
 					}
 
 					gvResults.Rows[currentRow].Cells[3].Value = GenerateMatchesPreviewText(findResultItem.FilePath, linesToPreview);
+
+					StringBuilder sb=new StringBuilder();
+					foreach (var line in linesToPreview)
+					{
+						sb.Append(String.Format("{0} ", line));
+					}
+
+					gvResults.Rows[currentRow].Cells[4].Value = sb.ToString();
 				}
 
 				progressBar.Maximum = totalCount;
@@ -495,13 +506,14 @@ namespace FindAndReplace.App
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
 
             txtMatches.Text = matchesPreviewText;
-			txtMatches.ReadOnly = true;
+			//txtMatches.ReadOnly = true;
 
 			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
 
 			var findText = gvResults.Columns[3].Visible ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
 			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatches.Text, findText) : Regex.Matches(txtMatches.Text, findText, RegexOptions.IgnoreCase);
+
 			foreach (Match match in mathches)
 			{
 				txtMatches.SelectionStart = match.Index;
@@ -514,6 +526,31 @@ namespace FindAndReplace.App
 			}
 
 			txtMatches.SelectionLength = 0;
+
+			//////Add line numbers
+			//var linesTooltipString = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber + 1].Value.ToString();
+			//var lines = linesTooltipString.Split(' ');
+
+			//int temp;
+			//var lineNumbs = lines.Where(l => Int32.TryParse(l, out temp)).Select(l => Convert.ToInt32(l)).ToList();
+
+			//int prevLineIndex = 0, rowIndex = 0;
+
+			//var newLines = new List<string>();
+
+			//for (int i = 0; i < lineNumbs.Count; i++)
+			//{
+			//    if (i > 0 && lineNumbs[i] - prevLineIndex > 1)
+			//    {
+			//        newLines.Add("");
+			//        rowIndex++;
+			//    }
+
+			//    newLines.Add(String.Format("{0}:", lineNumbs[i].ToString("D2")));
+
+			//    rowIndex++;
+			//    prevLineIndex = lineNumbs[i];
+			//}
 		}
 
 		private List<int> GetLineNumbersForMatchesPreview(string filePath, Match match)
@@ -576,6 +613,25 @@ namespace FindAndReplace.App
 			}
 
 			return stringBuilder.ToString();
+		}
+
+		private void MainForm_Load(object sender, EventArgs e)
+		{
+
+		}
+
+		//from http://stackoverflow.com/questions/334630/c-open-folder-and-select-the-file
+		private void gvResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.RowIndex == -1)   //heading
+				return;
+
+			var filePath = gvResults.Rows[e.RowIndex].Cells[1].Value.ToString();
+
+			string argument = @"/select, " + txtDir.Text + filePath.TrimStart('.');
+
+			Process.Start("explorer.exe", argument);
+
 		}
 	}
 }
