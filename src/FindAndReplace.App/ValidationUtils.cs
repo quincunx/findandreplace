@@ -12,13 +12,15 @@ namespace FindAndReplace.App
 		public bool IsSuccess { get; set; }
 
 		public string ErrorMessage { get; set; }
+
+		public string FieldName { get; set; }
 	}
 	
 	public static class ValidationUtils
 	{
-		public static ValidationResult IsDirValid(this string dir)
+		public static ValidationResult IsDirValid(string dir, string itemName)
 		{
-			var result = new ValidationResult() {IsSuccess = true};
+			var result = new ValidationResult() {IsSuccess = true, FieldName = itemName};
 
 			if (dir.Trim() == "")
 			{
@@ -45,9 +47,9 @@ namespace FindAndReplace.App
 			return result;
 		}
 
-		public static ValidationResult IsNotEmpty(this string text, string itemName)
+		public static ValidationResult IsNotEmpty(string text, string itemName)
 		{
-			var result = new ValidationResult() { IsSuccess = true };
+			var result = new ValidationResult() { IsSuccess = true, FieldName = itemName};
 
 			if (text.Trim() == "")
 			{
