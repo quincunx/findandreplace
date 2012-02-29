@@ -200,9 +200,10 @@ namespace FindAndReplace.App
 				Program.PrintFinderResult(result);
 			}
 
-			Console.ReadLine();
+			//#if (DEBUG)
+			//    Console.ReadLine();
+			//#endif
+
 		}
-
-
 	}
 }
