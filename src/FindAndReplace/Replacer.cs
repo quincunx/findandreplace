@@ -79,27 +79,38 @@ namespace FindAndReplace
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
 			var matches = Regex.Matches(content, Regex.Escape(FindText), regexOptions);
-			if (matches.Count  > 0)
-			{
-				string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
-
-				using (var sw = new StreamWriter(filePath))
-				{
-					sw.Write(newContent);
-				}
-			}
-
 
 			var resultItem = new ReplaceResultItem();
 
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-			
+
 			resultItem.NumMatches = matches.Count;
 			resultItem.Matches = matches;
-			resultItem.IsSuccess = matches.Count > 0;
+			resultItem.IsSuccess = false;
 
+			if (matches.Count  > 0)
+			{
+				string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
+
+				var fInfo = new FileInfo(filePath);
+
+				if (fInfo.IsReadOnly)
+				{
+					resultItem.ErrorMessage = "File is read only";
+				}
+				else
+				{
+					using (var sw = new StreamWriter(filePath))
+					{
+						sw.Write(newContent);
+					}
+
+					resultItem.IsSuccess = true;
+				}
+			}
+		
 			return resultItem;
 		}
 
