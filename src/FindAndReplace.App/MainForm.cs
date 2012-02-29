@@ -282,11 +282,12 @@ namespace FindAndReplace.App
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
 			gvResults.Columns.Add("Filename", "Filename");
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 300 });
 			gvResults.Columns.Add("NumMatches", "Matches");
 			gvResults.Columns.Add("IsSuccess", "Success");
+			gvResults.Columns.Add("ErrorMessage", "Error");
 			gvResults.Columns.Add("Tooltip", "");
-			gvResults.Columns[4].Visible = false;
+			gvResults.Columns[5].Visible = false;
 
 			if (txtMatches.Visible)
 			{
@@ -316,6 +317,7 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
 					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
+					gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
 
 					var linesToPreview = new List<int>();
 
@@ -324,7 +326,7 @@ namespace FindAndReplace.App
 						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(replaceResultItem.FilePath, match));
 					}
 
-					gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(replaceResultItem.FilePath, linesToPreview);
+					gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(replaceResultItem.FilePath, linesToPreview);
 				}
 
 				progressBar.Maximum = totalCount;
@@ -500,7 +502,7 @@ namespace FindAndReplace.App
 				this.Height += txtMatches.Height + 50;
 			}
 
-			var matchesPreviewColNumber = gvResults.Columns[3].Visible ? 4 : 3;
+			var matchesPreviewColNumber = gvResults.Columns[4].Visible ? 5 : 4;
 
 
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
@@ -510,7 +512,7 @@ namespace FindAndReplace.App
 
 			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
 
-			var findText = gvResults.Columns[3].Visible ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
+			var findText = gvResults.Columns[4].Visible ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
 			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatches.Text, findText) : Regex.Matches(txtMatches.Text, findText, RegexOptions.IgnoreCase);
 
