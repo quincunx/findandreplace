@@ -172,8 +172,40 @@ namespace FindAndReplace.App
 				Environment.Exit(1);
 			}
 
+
+			try
+			{
+
+			
+			var validationResult = options.Dir.IsDirValid();
+
+			if (!validationResult.IsSuccess)
+			{
+				throw new Exception(validationResult.ErrorMessage);
+			}
+
+			validationResult = options.FileMask.IsNotEmpty("FileMask");
+
+			if (!validationResult.IsSuccess)
+			{
+				throw new Exception(validationResult.ErrorMessage);
+			}
+
+			validationResult = options.FindText.IsNotEmpty("Find");
+
+			if (!validationResult.IsSuccess)
+			{
+				throw new Exception(validationResult.ErrorMessage);
+			}
+
 			if (!String.IsNullOrEmpty(options.ReplaceText))
 			{
+				validationResult = options.ReplaceText.IsNotEmpty("Replace");
+				if (!validationResult.IsSuccess)
+				{
+					throw new Exception(validationResult.ErrorMessage);
+				}
+				
 				var replacer = new Replacer();
 				replacer.Dir = options.Dir;
 				replacer.FileMask = options.FileMask;
@@ -203,6 +235,11 @@ namespace FindAndReplace.App
 			//#if (DEBUG)
 			//    Console.ReadLine();
 			//#endif
+			}
+			catch (Exception exception)
+			{
+				Console.WriteLine(exception.Message);
+			}
 
 		}
 	}

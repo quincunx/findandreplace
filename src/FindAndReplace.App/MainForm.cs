@@ -421,22 +421,11 @@ namespace FindAndReplace.App
 
 		private void txtDir_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if (txtDir.Text.Trim() == "")
-			{
-				errorProvider1.SetError(txtDir, "Dir is required");
-				return;
-			}
+			var validationResult = txtDir.Text.IsDirValid();
 
-			Regex dirRegex = new Regex(@"^(([a-zA-Z]:)|(\\{2}[^\/\\:*?<>|]+))(\\([^\/\\:*?<>|]*))*(\\)?$");
-			if (!dirRegex.IsMatch(txtDir.Text))
+			if (!validationResult.IsSuccess)
 			{
-				errorProvider1.SetError(txtDir, "Dir is invalid");
-				return;
-			}
-
-            if (!Directory.Exists(txtDir.Text))
-            {
-                errorProvider1.SetError(txtDir, "Dir is invalid");
+				errorProvider1.SetError(txtDir, validationResult.ErrorMessage);
 				return;
 			}
 
@@ -445,9 +434,11 @@ namespace FindAndReplace.App
 
 		private void txtFileMask_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if (txtFileMask.Text.Trim() == "")
+			var validationResult = txtFileMask.Text.IsNotEmpty("FileMask");
+
+			if (!validationResult.IsSuccess)
 			{
-				errorProvider1.SetError(txtFileMask, "FileMask is required");
+				errorProvider1.SetError(txtFileMask, validationResult.ErrorMessage);
 				return;
 			}
 
@@ -456,9 +447,11 @@ namespace FindAndReplace.App
 
 		private void txtFind_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if (txtFind.Text.Trim() == "")
+			var validationResult = txtFind.Text.IsNotEmpty("Find");
+
+			if (!validationResult.IsSuccess)
 			{
-				errorProvider1.SetError(txtFind, "Find is required");
+				errorProvider1.SetError(txtFind, validationResult.ErrorMessage);
 				return;
 			}
 
@@ -467,9 +460,11 @@ namespace FindAndReplace.App
 
 		private void txtReplace_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if (txtReplace.Text.Trim() == "")
+			var validationResult = txtReplace.Text.IsNotEmpty("Replace");
+
+			if (!validationResult.IsSuccess)
 			{
-				errorProvider1.SetError(txtReplace, "Replace is required");
+				errorProvider1.SetError(txtReplace, validationResult.ErrorMessage);
 				return;
 			}
 
