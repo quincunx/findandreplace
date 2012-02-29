@@ -76,29 +76,37 @@ namespace FindAndReplace
 				content = sr.ReadToEnd();
 			}
 
+			var resultItem = new ReplaceResultItem();
+
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
 			var matches = Regex.Matches(content, Regex.Escape(FindText), regexOptions);
-			if (matches.Count  > 0)
-			{
-				string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
-
-				using (var sw = new StreamWriter(filePath))
-				{
-					sw.Write(newContent);
-				}
-			}
-
-
-			var resultItem = new ReplaceResultItem();
 
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-			
+
 			resultItem.NumMatches = matches.Count;
 			resultItem.Matches = matches;
 			resultItem.IsSuccess = matches.Count > 0;
+
+			if (matches.Count > 0)
+			{
+				try
+				{
+					string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
+
+					using (var sw = new StreamWriter(filePath))
+					{
+						sw.Write(newContent);
+					}
+				}
+				catch(Exception ex)
+				{
+					resultItem.IsSuccess = false;
+					resultItem.ErrorMessage = ex.Message;
+				}
+			}
 
 			return resultItem;
 		}
