@@ -93,7 +93,6 @@ namespace FindAndReplace.App
 			PrintLine();
 		}
 
-
 		static void PrintFinderResultRow(string path, string matches)
 		{
 			Console.WriteLine(
@@ -172,75 +171,61 @@ namespace FindAndReplace.App
 				Environment.Exit(1);
 			}
 
+			var validationResultList = new List<ValidationResult>();
 
-			try
-			{
+			validationResultList.Add(ValidationUtils.IsDirValid(options.Dir, "dir"));
 
-			
-			var validationResult = options.Dir.IsDirValid();
+			validationResultList.Add(ValidationUtils.IsNotEmpty(options.FileMask, "fileMask"));
 
-			if (!validationResult.IsSuccess)
-			{
-				throw new Exception(validationResult.ErrorMessage);
-			}
-
-			validationResult = options.FileMask.IsNotEmpty("FileMask");
-
-			if (!validationResult.IsSuccess)
-			{
-				throw new Exception(validationResult.ErrorMessage);
-			}
-
-			validationResult = options.FindText.IsNotEmpty("Find");
-
-			if (!validationResult.IsSuccess)
-			{
-				throw new Exception(validationResult.ErrorMessage);
-			}
+			validationResultList.Add(ValidationUtils.IsNotEmpty(options.FindText, "find"));
 
 			if (!String.IsNullOrEmpty(options.ReplaceText))
 			{
-				validationResult = options.ReplaceText.IsNotEmpty("Replace");
-				if (!validationResult.IsSuccess)
+				validationResultList.Add(ValidationUtils.IsNotEmpty(options.ReplaceText, "replace"));
+			}
+			if (validationResultList.Any(vr=>!vr.IsSuccess))
+			{
+				Console.WriteLine("");
+				foreach (var validationResult in validationResultList)
 				{
-					throw new Exception(validationResult.ErrorMessage);
+					if (!validationResult.IsSuccess) Console.WriteLine(String.Format("{0}: {1}", validationResult.FieldName, validationResult.ErrorMessage));
 				}
-				
-				var replacer = new Replacer();
-				replacer.Dir = options.Dir;
-				replacer.FileMask = options.FileMask;
-				replacer.IncludeSubDirectories = options.IncludeSubDirectories;
-
-				replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
-				replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
-				replacer.IsCaseSensitive = options.IsCaseSensitive;
-
-				var result = replacer.Replace();
-				Program.PrintReplacerResult(result);
+				Console.WriteLine("");
 			}
 			else
 			{
-				var finder = new Finder();
-				finder.Dir = options.Dir;
-				finder.FileMask = options.FileMask;
-				finder.IncludeSubDirectories = options.IncludeSubDirectories;
+				if (!String.IsNullOrEmpty(options.ReplaceText))
+				{
+					var replacer = new Replacer();
+					replacer.Dir = options.Dir;
+					replacer.FileMask = options.FileMask;
+					replacer.IncludeSubDirectories = options.IncludeSubDirectories;
 
-				finder.FindText = CommandLineUtils.DecodeText(options.FindText);
-				finder.IsCaseSensitive = options.IsCaseSensitive;
+					replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
+					replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
+					replacer.IsCaseSensitive = options.IsCaseSensitive;
 
-				var result = finder.Find();
-				Program.PrintFinderResult(result);
+					var result = replacer.Replace();
+					Program.PrintReplacerResult(result);
+				}
+				else
+				{
+					var finder = new Finder();
+					finder.Dir = options.Dir;
+					finder.FileMask = options.FileMask;
+					finder.IncludeSubDirectories = options.IncludeSubDirectories;
+
+					finder.FindText = CommandLineUtils.DecodeText(options.FindText);
+					finder.IsCaseSensitive = options.IsCaseSensitive;
+
+					var result = finder.Find();
+					Program.PrintFinderResult(result);
+				}
 			}
 
 			//#if (DEBUG)
 			//    Console.ReadLine();
 			//#endif
-			}
-			catch (Exception exception)
-			{
-				Console.WriteLine(exception.Message);
-			}
-
 		}
 	}
 }

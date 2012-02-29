@@ -421,7 +421,7 @@ namespace FindAndReplace.App
 
 		private void txtDir_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			var validationResult = txtDir.Text.IsDirValid();
+			var validationResult = ValidationUtils.IsDirValid(txtDir.Text, "Dir");
 
 			if (!validationResult.IsSuccess)
 			{
@@ -434,7 +434,7 @@ namespace FindAndReplace.App
 
 		private void txtFileMask_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			var validationResult = txtFileMask.Text.IsNotEmpty("FileMask");
+			var validationResult = ValidationUtils.IsNotEmpty(txtFileMask.Text, "FileMask");
 
 			if (!validationResult.IsSuccess)
 			{
@@ -447,7 +447,7 @@ namespace FindAndReplace.App
 
 		private void txtFind_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			var validationResult = txtFind.Text.IsNotEmpty("Find");
+			var validationResult = ValidationUtils.IsNotEmpty(txtFind.Text, "Find");
 
 			if (!validationResult.IsSuccess)
 			{
@@ -460,7 +460,7 @@ namespace FindAndReplace.App
 
 		private void txtReplace_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			var validationResult = txtReplace.Text.IsNotEmpty("Replace");
+			var validationResult = ValidationUtils.IsNotEmpty(txtReplace.Text, "Replace");
 
 			if (!validationResult.IsSuccess)
 			{
