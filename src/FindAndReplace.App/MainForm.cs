@@ -502,7 +502,7 @@ namespace FindAndReplace.App
 				this.Height += txtMatches.Height + 50;
 			}
 
-			var matchesPreviewColNumber = gvResults.Columns[4].Visible ? 5 : 4;
+			var matchesPreviewColNumber = gvResults.Columns[4].Visible ? 5 : 3;
 
 
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
