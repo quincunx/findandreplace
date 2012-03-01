@@ -13,6 +13,11 @@ using System.Linq;
 namespace FindAndReplace.App
 {
 
+	public class GVResultEventArgs: EventArgs
+	{
+		public int cellRow { get; set; }
+	}
+
 	public partial class MainForm : Form
 	{
 		private Finder _finder;
@@ -123,6 +128,8 @@ namespace FindAndReplace.App
 					gvResults.Rows.Add();
 
 					int currentRow = gvResults.Rows.Count - 1;
+
+					gvResults.Rows[currentRow].ContextMenuStrip = CreateContextMenu(currentRow);
 
 					gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
@@ -625,10 +632,49 @@ namespace FindAndReplace.App
 
 			var filePath = gvResults.Rows[e.RowIndex].Cells[1].Value.ToString();
 
+			//string argument = @"/select, " + txtDir.Text + filePath.TrimStart('.');
+			//Process.Start("explorer.exe", argument);
+
+			string file = txtDir.Text + filePath.TrimStart('.');
+			Process.Start(file);
+
+		}
+
+		private ContextMenuStrip CreateContextMenu(int rowNumber)
+		{
+			var contextMenu = new ContextMenuStrip();
+
+			var openStripItem = new ToolStripMenuItem("Open");
+
+
+			var eventArgs = new GVResultEventArgs();
+			eventArgs.cellRow = rowNumber;
+			openStripItem.Click += delegate { toolStripClickOpen(this, eventArgs); };
+
+			var openFolderStripItem = new ToolStripMenuItem("Open Containing Folder");
+
+			openFolderStripItem.Click += delegate { toolStripClickOpenFolder(this, eventArgs); };
+
+			contextMenu.Items.Add(openStripItem);
+			contextMenu.Items.Add(openFolderStripItem);
+
+			return contextMenu;
+		}
+
+		private void toolStripClickOpen(object sender, GVResultEventArgs e)
+		{
+			var filePath = gvResults.Rows[e.cellRow].Cells[1].Value.ToString();
+
+			string file = txtDir.Text + filePath.TrimStart('.');
+			Process.Start(file);
+		}
+
+		private void toolStripClickOpenFolder(object sender, GVResultEventArgs e)
+		{
+			var filePath = gvResults.Rows[e.cellRow].Cells[1].Value.ToString();
+
 			string argument = @"/select, " + txtDir.Text + filePath.TrimStart('.');
-
 			Process.Start("explorer.exe", argument);
-
 		}
 	}
 }
