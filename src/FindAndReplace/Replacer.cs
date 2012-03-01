@@ -38,6 +38,8 @@ namespace FindAndReplace
 			public bool IsSuccess { get; set; }
 			public string ErrorMessage { get; set; }
 			public MatchCollection Matches { get; set; }
+			public bool IsSuccessOpen { get; set; }
+			public bool IsSuccessWrite { get; set; }
 		}
 
 		public List<ReplaceResultItem> Replace()
@@ -71,40 +73,53 @@ namespace FindAndReplace
 		{
 			string content = string.Empty;
 
-			using (StreamReader sr = new StreamReader(filePath))
+			var resultItem = new ReplaceResultItem() {IsSuccessOpen = true, IsSuccessWrite = true};
+			
+			try
 			{
-				content = sr.ReadToEnd();
+				using (StreamReader sr = new StreamReader(filePath))
+				{
+					content = sr.ReadToEnd();
+				}
+			}
+			catch(Exception exception)
+			{
+				resultItem.IsSuccessOpen = false;
+				resultItem.ErrorMessage = exception.Message;
 			}
 
-			var resultItem = new ReplaceResultItem();
 
-			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
-
-			var matches = Regex.Matches(content, Regex.Escape(FindText), regexOptions);
-
-			resultItem.FileName = Path.GetFileName(filePath);
-			resultItem.FilePath = filePath;
-			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-
-			resultItem.NumMatches = matches.Count;
-			resultItem.Matches = matches;
-			resultItem.IsSuccess = matches.Count > 0;
-
-			if (matches.Count > 0)
+			if (resultItem.IsSuccessOpen)
 			{
-				try
-				{
-					string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
+				RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
-					using (var sw = new StreamWriter(filePath))
-					{
-						sw.Write(newContent);
-					}
-				}
-				catch(Exception ex)
+				var matches = Regex.Matches(content, Regex.Escape(FindText), regexOptions);
+
+				resultItem.FileName = Path.GetFileName(filePath);
+				resultItem.FilePath = filePath;
+				resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
+
+				resultItem.NumMatches = matches.Count;
+				resultItem.Matches = matches;
+				resultItem.IsSuccess = matches.Count > 0;
+
+				if (matches.Count > 0)
 				{
-					resultItem.IsSuccess = false;
-					resultItem.ErrorMessage = ex.Message;
+					try
+					{
+						string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
+
+						using (var sw = new StreamWriter(filePath))
+						{
+							sw.Write(newContent);
+						}
+					}
+					catch (Exception ex)
+					{
+						resultItem.IsSuccess = false;
+						resultItem.IsSuccessWrite = false;
+						resultItem.ErrorMessage = ex.Message;
+					}
 				}
 			}
 
