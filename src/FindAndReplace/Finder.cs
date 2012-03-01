@@ -39,6 +39,7 @@ namespace FindAndReplace
 			public string FileRelativePath { get; set; }
 			public int NumMatches { get; set; }
 			public MatchCollection Matches { get; set; }
+			public bool IsSuccessOpen { get; set; }
 		}
 
 		public List<FindResultItem> Find()
@@ -59,8 +60,18 @@ namespace FindAndReplace
 				resultItem.FileName = Path.GetFileName(filePath);
 				resultItem.FilePath = filePath;
 				resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-				resultItem.Matches = GetMatches(filePath);
-				resultItem.NumMatches = resultItem.Matches.Count;
+				try
+				{
+					resultItem.Matches = GetMatches(filePath);
+					resultItem.IsSuccessOpen = true;
+					resultItem.NumMatches = resultItem.Matches.Count;
+				}
+				catch(Exception exception)
+				{
+					resultItem.IsSuccessOpen = false;
+					resultItem.NumMatches = 0;
+				}
+				
 
 
 				//Skip files that don't have matches

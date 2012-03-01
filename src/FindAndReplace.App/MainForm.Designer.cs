@@ -53,6 +53,7 @@
 			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
 			this.txtNoMathces = new System.Windows.Forms.Label();
 			this.txtMatches = new System.Windows.Forms.RichTextBox();
+			this.lblStats = new System.Windows.Forms.Label();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -295,11 +296,20 @@
 			this.txtMatches.Text = "";
 			this.txtMatches.Visible = false;
 			// 
+			// lblStats
+			// 
+			this.lblStats.AutoSize = true;
+			this.lblStats.Location = new System.Drawing.Point(820, 345);
+			this.lblStats.Name = "lblStats";
+			this.lblStats.Size = new System.Drawing.Size(0, 13);
+			this.lblStats.TabIndex = 25;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(882, 336);
+			this.ClientSize = new System.Drawing.Size(956, 344);
+			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatches);
 			this.Controls.Add(this.txtNoMathces);
 			this.Controls.Add(this.pnlGridResults);
@@ -358,6 +368,7 @@
 		private System.Windows.Forms.ErrorProvider errorProvider1;
 		private System.Windows.Forms.Label txtNoMathces;
 		public System.Windows.Forms.RichTextBox txtMatches;
+		private System.Windows.Forms.Label lblStats;
 	}
 }
 

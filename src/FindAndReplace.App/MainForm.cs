@@ -13,16 +13,12 @@ using System.Linq;
 namespace FindAndReplace.App
 {
 
-	public class GVResultEventArgs: EventArgs
-	{
-		public int cellRow { get; set; }
-	}
-
 	public partial class MainForm : Form
 	{
 		private Finder _finder;
 		private Replacer _replacer;
 		private Thread _currentThread;
+		private Statistic _statistic;
 
 		private delegate void SetFinderResultCallback(Finder.FindResultItem resultItem, int totalCount);
 
@@ -58,6 +54,9 @@ namespace FindAndReplace.App
 			if (!isFormValid) return;
 
 			PrepareFinderGrid();
+
+			_statistic=new Statistic();
+			lblStats.Text = "";
 
 			var finder = new Finder();
 			finder.Dir = txtDir.Text;
@@ -121,10 +120,16 @@ namespace FindAndReplace.App
 
 		private void ShowFindResult(Finder.FindResultItem findResultItem, int totalCount)
 		{
+			_statistic.TotalFilesCount++;
+			_statistic.TotalMathes += findResultItem.NumMatches;
+			if (!findResultItem.IsSuccessOpen) _statistic.FailedToOpen++;
+
 			if (totalCount != 0)
 			{
 				if (findResultItem.NumMatches > 0)
 				{
+					_statistic.FilesWithMathesCount++;
+
 					gvResults.Rows.Add();
 
 					int currentRow = gvResults.Rows.Count - 1;
@@ -174,6 +179,8 @@ namespace FindAndReplace.App
 			{
 				EnableButtons();
 				gvResults.ClearSelection();
+
+				ShowStats();
 			}
 
 		}
@@ -266,6 +273,9 @@ namespace FindAndReplace.App
 
 			ShowResultPanel();
 
+			_statistic = new Statistic();
+			lblStats.Text = "";
+
 			PrepareReplacerGrid();
 			txtMatches.Visible = false;
 
@@ -312,10 +322,19 @@ namespace FindAndReplace.App
 
 		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, int totalCount)
 		{
+			_statistic.TotalFilesCount++;
+			_statistic.TotalMathes += replaceResultItem.NumMatches;
+			if (!replaceResultItem.IsSuccessOpen) _statistic.FailedToOpen++;
+			if (!replaceResultItem.IsSuccessWrite) _statistic.FailedToWrite++;
+			
 			if (totalCount > 0)
 			{
 				if (replaceResultItem.NumMatches > 0)
 				{
+					_statistic.FilesWithMathesCount++;
+
+					if (replaceResultItem.IsSuccessWrite) _statistic.TotalReplaces += replaceResultItem.NumMatches;
+					
 					gvResults.Rows.Add();
 
 					int currentRow = gvResults.Rows.Count - 1;
@@ -353,6 +372,8 @@ namespace FindAndReplace.App
 			{
 				EnableButtons();
 				gvResults.ClearSelection();
+
+				ShowStats(true);
 			}
 		}
 
@@ -676,5 +697,43 @@ namespace FindAndReplace.App
 			string argument = @"/select, " + txtDir.Text + filePath.TrimStart('.');
 			Process.Start("explorer.exe", argument);
 		}
+
+		private void ShowStats(bool showReplaceStats=false)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine("Files:");
+			sb.AppendLine("- Total: " + _statistic.TotalFilesCount);
+			sb.AppendLine("- With Matches: " + _statistic.FilesWithMathesCount);
+			sb.AppendLine("- Without  Matches: " + (_statistic.TotalFilesCount - _statistic.FilesWithMathesCount));
+			sb.AppendLine("- Failed to Open: " + _statistic.FailedToOpen);
+			if (showReplaceStats)
+				sb.AppendLine("- Failed to Write: " + _statistic.FailedToWrite);
+			sb.AppendLine("Matches:");
+			sb.AppendLine("- Found: " + _statistic.TotalMathes);
+			if (showReplaceStats)
+				sb.AppendLine("- Replaced: " + _statistic.TotalReplaces);
+
+			lblStats.Text = sb.ToString();
+		}
+	}
+
+	public class GVResultEventArgs : EventArgs
+	{
+		public int cellRow { get; set; }
+	}
+
+	public class Statistic
+	{
+		public int TotalFilesCount { get; set; }
+
+		public int FilesWithMathesCount { get; set; }
+
+		public int FailedToOpen { get; set; }
+
+		public int FailedToWrite { get; set; }
+
+		public int TotalMathes { get; set; }
+
+		public int TotalReplaces { get; set; }
 	}
 }
