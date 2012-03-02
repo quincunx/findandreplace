@@ -16,7 +16,7 @@ namespace FindAndReplace.Tests
 			replacer.FindText = "license";
 			replacer.ReplaceText = "aggrement";
 
-			var resultItems = replacer.Replace();
+			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
@@ -26,7 +26,7 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual(3, resultItems[0].NumMatches);
 			Assert.IsTrue(resultItems[0].IsSuccess);
 
-			resultItems = replacer.Replace();
+			resultItems = replacer.Replace().ResultItems;
 
 			resultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 			Assert.AreEqual(0, resultItems.Count);
@@ -43,7 +43,7 @@ namespace FindAndReplace.Tests
 			replacer.ReplaceText = "!!";
 
 
-			var resultItems = replacer.Replace();
+			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
@@ -74,7 +74,7 @@ namespace FindAndReplace.Tests
 			replacer.FindText = "New York";
 			replacer.ReplaceText = "Moscow";
 
-			var resultItems = replacer.Replace();
+			var resultItems = replacer.Replace().ResultItems;
 
 			Assert.AreEqual(0, resultItems.Count);
 		}
@@ -89,7 +89,7 @@ namespace FindAndReplace.Tests
 			replacer.FindText = "a";
 			replacer.ReplaceText = "b";
 
-			var resultItems = replacer.Replace();
+			var resultItems = replacer.Replace().ResultItems;
 
 			Assert.AreEqual(0, resultItems.Count);
 		}
@@ -104,7 +104,7 @@ namespace FindAndReplace.Tests
 			replacer.FindText = "ee";
 			replacer.ReplaceText = "!!";
 
-			var resultItems = replacer.Replace();
+			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
@@ -116,7 +116,7 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
 			Assert.IsTrue(matchedResultItems[0].IsSuccess);
 
-			resultItems = replacer.Replace();
+			resultItems = replacer.Replace().ResultItems;
 
 			matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
@@ -134,7 +134,7 @@ namespace FindAndReplace.Tests
 			replacer.IsCaseSensitive = true;
 			replacer.ReplaceText = "Su";
 
-			var resultItems = replacer.Replace();
+			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
@@ -145,7 +145,7 @@ namespace FindAndReplace.Tests
 			Assert.IsTrue(resultItems[0].IsSuccess);
 
 		
-			resultItems = replacer.Replace();
+			resultItems = replacer.Replace().ResultItems;
 			Assert.AreEqual(0, resultItems.Count);
 		}
 		
@@ -160,7 +160,7 @@ namespace FindAndReplace.Tests
 			replacer.ReplaceText = "!!";
 			replacer.IncludeSubDirectories = true;
 
-			var resultItems = replacer.Replace();
+			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
