@@ -39,13 +39,14 @@ namespace FindAndReplace.Tests
 			sr.WriteLine("1234567890");
 			sr.WriteLine("abcdefghijk");
 			sr.WriteLine("aabbccddee");
+			sr.WriteLine("mail@mail.com");
 
 			sr.Close();
 			fs.Close();
 
 			Directory.CreateDirectory(_tempDir + "\\subDir");
-			File.Copy(_tempDir + "\\test1.test", _tempDir + "\\subDir\\test1.test");
-			File.Copy(_tempDir + "\\test2.test", _tempDir + "\\subDir\\test2.test");
+			File.Copy(_tempDir + "\\test1.test", _tempDir + "\\subDir\\test1.test", true);
+			File.Copy(_tempDir + "\\test2.test", _tempDir + "\\subDir\\test2.test", true);
 		}
 
 		[TearDown]
