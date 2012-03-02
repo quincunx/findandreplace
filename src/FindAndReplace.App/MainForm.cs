@@ -708,6 +708,7 @@ namespace FindAndReplace.App
 			sb.AppendLine("- Failed to Open: " + _statistic.FailedToOpen);
 			if (showReplaceStats)
 				sb.AppendLine("- Failed to Write: " + _statistic.FailedToWrite);
+			sb.AppendLine("");
 			sb.AppendLine("Matches:");
 			sb.AppendLine("- Found: " + _statistic.TotalMathes);
 			if (showReplaceStats)
