@@ -9,11 +9,13 @@ namespace FindAndReplace
 	{
 		public Replacer.ReplaceResultItem ResultItem { get; set; }
 		public int TotalFilesCount { get; set; }
+		public Statistic Stats { get; set; }
 
-		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, int fileCount)
+		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, int fileCount, Statistic statistic)
 		{
 			ResultItem = resultItem;
 			TotalFilesCount = fileCount;
+			Stats = statistic;
 		}
 	}
 
@@ -28,7 +30,6 @@ namespace FindAndReplace
 		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		
-
 		public class ReplaceResultItem 
 		{
 			public string FileName { get; set; }
@@ -42,7 +43,14 @@ namespace FindAndReplace
 			public bool IsSuccessWrite { get; set; }
 		}
 
-		public List<ReplaceResultItem> Replace()
+		public class ReplaceResult
+		{
+			public List<ReplaceResultItem> ResultItems { get; set; }
+
+			public Statistic Stats { get; set; }
+		}
+
+		public ReplaceResult Replace()
 		{
 			Verify.Argument.IsNotEmpty(Dir, "Dir");
 			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
@@ -52,21 +60,31 @@ namespace FindAndReplace
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<ReplaceResultItem>();
+			var stats = new Statistic();
 
 			foreach (string filePath in filesInDirectory)
 			{
+				stats.TotalFilesCount++;
+				
 				var resultItem = ReplaceTextInFile(filePath);
+				if (!resultItem.IsSuccessOpen) stats.FailedToOpen++;
+					else stats.TotalMathes += resultItem.NumMatches;
+				
+				if (!resultItem.IsSuccessWrite) stats.FailedToWrite++;
+				else stats.TotalReplaces += resultItem.NumMatches;
+
+				if (resultItem.NumMatches>0) stats.FilesWithMathesCount++;
 
 				//Skip files that don't have matches
 				if (resultItem.NumMatches > 0)
 					resultItems.Add(resultItem);
 
-				OnFileProcessed(new ReplacerEventArgs(resultItem, filesInDirectory.Length));
+				OnFileProcessed(new ReplacerEventArgs(resultItem, filesInDirectory.Length, stats));
 			}
 
-			if (filesInDirectory.Length == 0) OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), filesInDirectory.Length));
+			if (filesInDirectory.Length == 0) OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), filesInDirectory.Length, stats));
 
-			return resultItems;
+			return new ReplaceResult(){ResultItems = resultItems, Stats = stats};
 		}
 		
 		private ReplaceResultItem ReplaceTextInFile(string filePath)

@@ -129,6 +129,26 @@ namespace FindAndReplace.App
 					FormatCell(success, 10)));
 		}
 
+		public static void PrintStatistics(Statistic stats, bool isReplacerStats=false)
+		{
+			PrintLine();
+
+			Console.WriteLine("Stats:");
+			Console.WriteLine("Files:");
+			Console.WriteLine("- Total: " + stats.TotalFilesCount);
+			Console.WriteLine("- With Matches: " + stats.FilesWithMathesCount);
+			Console.WriteLine("- Without  Matches: " + (stats.TotalFilesCount - stats.FilesWithMathesCount));
+			Console.WriteLine("- Failed to Open: " + stats.FailedToOpen);
+			if (isReplacerStats)
+				Console.WriteLine("- Failed to Write: " + stats.FailedToWrite);
+			Console.WriteLine("");
+			Console.WriteLine("Matches:");
+			Console.WriteLine("- Found: " + stats.TotalMathes);
+			if (isReplacerStats)
+				Console.WriteLine("- Replaced: " + stats.TotalReplaces);
+
+			PrintLine();
+		}
 
 		static string FormatCell(string text, int width)
 		{
@@ -206,7 +226,9 @@ namespace FindAndReplace.App
 					replacer.IsCaseSensitive = options.IsCaseSensitive;
 
 					var result = replacer.Replace();
-					Program.PrintReplacerResult(result);
+					Program.PrintReplacerResult(result.ResultItems);
+
+					Program.PrintStatistics(result.Stats, true);
 				}
 				else
 				{
@@ -219,7 +241,9 @@ namespace FindAndReplace.App
 					finder.IsCaseSensitive = options.IsCaseSensitive;
 
 					var result = finder.Find();
-					Program.PrintFinderResult(result);
+					Program.PrintFinderResult(result.FindResults);
+
+					Program.PrintStatistics(result.FindStats);
 				}
 			}
 

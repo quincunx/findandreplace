@@ -14,10 +14,13 @@ namespace FindAndReplace
 
 		public int TotalFilesCount { get; set; }
 
-		public FinderEventArgs(Finder.FindResultItem resultItem, int fileCount)
+		public Statistic Stats { get; set; }
+
+		public FinderEventArgs(Finder.FindResultItem resultItem, int fileCount, Statistic stats)
 		{
 			ResultItem = resultItem;
 			TotalFilesCount = fileCount;
+			Stats = stats;
 		}
 	}
 
@@ -42,7 +45,14 @@ namespace FindAndReplace
 			public bool IsSuccessOpen { get; set; }
 		}
 
-		public List<FindResultItem> Find()
+		public class FindResult
+		{
+			public List<FindResultItem> FindResults { get; set; }
+
+			public Statistic FindStats { get; set; }
+		}
+
+		public FindResult Find()
 		{
 			Verify.Argument.IsNotEmpty(Dir, "Dir");
 			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
@@ -51,6 +61,7 @@ namespace FindAndReplace
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<FindResultItem>();
+			var stats = new Statistic();
 
 			//Analyze each file in the directory
 			foreach (string filePath in filesInDirectory)
@@ -60,19 +71,22 @@ namespace FindAndReplace
 				resultItem.FileName = Path.GetFileName(filePath);
 				resultItem.FilePath = filePath;
 				resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
+				stats.TotalFilesCount++;
+
 				try
 				{
 					resultItem.Matches = GetMatches(filePath);
 					resultItem.IsSuccessOpen = true;
 					resultItem.NumMatches = resultItem.Matches.Count;
+					stats.TotalMathes += resultItem.Matches.Count;
+					if (resultItem.Matches.Count!=0) stats.FilesWithMathesCount++;
 				}
 				catch(Exception exception)
 				{
 					resultItem.IsSuccessOpen = false;
 					resultItem.NumMatches = 0;
+					stats.FailedToOpen++;
 				}
-				
-
 
 				//Skip files that don't have matches
 				if (resultItem.NumMatches > 0)
@@ -80,14 +94,13 @@ namespace FindAndReplace
 					resultItems.Add(resultItem);
 				}
 
-				OnFileProcessed(new FinderEventArgs(resultItem, filesInDirectory.Length));
+				OnFileProcessed(new FinderEventArgs(resultItem, filesInDirectory.Length, stats));
 			}
 
-			if (filesInDirectory.Length == 0) OnFileProcessed(new FinderEventArgs(new FindResultItem(), filesInDirectory.Length));
+			if (filesInDirectory.Length == 0) OnFileProcessed(new FinderEventArgs(new FindResultItem(), filesInDirectory.Length, stats));
 
-			return resultItems;
+			return new FindResult() {FindResults = resultItems};
 		}
-
 
 		public event FileProcessedEventHandler FileProcessed;
 
