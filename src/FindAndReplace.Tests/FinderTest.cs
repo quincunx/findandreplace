@@ -158,5 +158,24 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual(1, secondFile[0].NumMatches);
 			Assert.AreEqual(1, secondFile[1].NumMatches);
 		}
+
+		[Test]
+		public void Find_WhenSearchTextIsRegularExpression_FindsTextInOne()
+		{
+			Finder finder = new Finder();
+
+			finder.Dir = _tempDir;
+			finder.FileMask = "*.*";
+			finder.FindText = @"\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b"; //email pattern
+
+			var resultItems = finder.Find();
+
+			if (resultItems == null || resultItems.Count == 0)
+				Assert.Fail("Cant find test files");
+
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual("test2.test", resultItems[0].FileName);
+			Assert.AreEqual(1, resultItems[0].NumMatches);
+		}
 	}
 }
