@@ -224,6 +224,7 @@ namespace FindAndReplace.App
 					replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
 					replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
 					replacer.IsCaseSensitive = options.IsCaseSensitive;
+					replacer.FindTextHasRegEx = options.IsFindTextHasRegEx;
 
 					var result = replacer.Replace();
 					Program.PrintReplacerResult(result.ResultItems);
@@ -239,6 +240,7 @@ namespace FindAndReplace.App
 
 					finder.FindText = CommandLineUtils.DecodeText(options.FindText);
 					finder.IsCaseSensitive = options.IsCaseSensitive;
+					finder.FindTextHasRegEx = options.IsFindTextHasRegEx;
 
 					var result = finder.Find();
 					Program.PrintFinderResult(result.FindResults);

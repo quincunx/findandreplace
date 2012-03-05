@@ -61,7 +61,7 @@ namespace FindAndReplace.App
 
 			finder.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			finder.FileMask = txtFileMask.Text;
-
+			finder.FindTextHasRegEx = chkIsRegEx.Checked;
 			finder.FindText = txtFind.Text;
 			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			CreateListener(finder);
@@ -260,7 +260,7 @@ namespace FindAndReplace.App
 
 			replacer.FindText = txtFind.Text;
 			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
-
+			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
 			replacer.ReplaceText = txtReplace.Text;
 
 			ShowResultPanel();
@@ -396,14 +396,15 @@ namespace FindAndReplace.App
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
 
-			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" {3} --find \"{4}\" --replace \"{5}\" {6}",
+			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" {3} --find \"{4}\" --replace \"{5}\" {6} {7}",
 									 Application.ExecutablePath,
 									 txtDir.Text,
 									 txtFileMask.Text,
 									 chkIncludeSubDirectories.Checked ? "--includeSubDirectories" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
 									 CommandLineUtils.EncodeText(txtReplace.Text),
-									 chkIsCaseSensitive.Checked ? "--caseSensitive" : "");
+									 chkIsCaseSensitive.Checked ? "--caseSensitive" : "",
+									 chkIsRegEx.Checked ? "--useRegEx" : "");
 
 			txtCommandLine.Text = s;
 		}

@@ -11,7 +11,7 @@ namespace FindAndReplace.Tests
 	public class FinderTest:TestBase
 	{
 		[Test]
-		public void Find_WhenSearchTextIsLicense_FindsTextInOne()
+		public void Find_WhenSearchTextIsLicenseNoRegExpr_FindsTextInOne()
 		{
 			Finder finder=new Finder();
 
@@ -30,7 +30,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Find_WhenSearchTextIsEE_FindsTextInBoth()
+		public void Find_WhenSearchTextIsEENoRegExpr_FindsTextInBoth()
 		{
 			Finder finder = new Finder();
 
@@ -59,7 +59,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Find_WhenSearchTextIsNewYork_NoFindsText()
+		public void Find_WhenSearchTextIsNewYorkNoRegExpr_NoFindsText()
 		{
 			Finder finder = new Finder();
 
@@ -72,7 +72,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Find_WhenSearchMaskIsTxtOnly_NoFindsText()
+		public void Find_WhenSearchMaskIsTxtOnlNoRegExpry_NoFindsText()
 		{
 			Finder finder = new Finder();
 
@@ -86,7 +86,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Find_WhenSearchMaskIsTest1_FindsTextInOne()
+		public void Find_WhenSearchMaskIsTest1NoRegExpr_FindsTextInOne()
 		{
 			Finder finder = new Finder();
 
@@ -109,7 +109,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Find_WhenSearchTextIsSoAndCaseSensitive_FindsTextInOne()
+		public void Find_WhenSearchTextIsSoAndCaseSensitiveNoRegExpr_FindsTextInOne()
 		{
 			Finder finder = new Finder();
 
@@ -129,7 +129,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Find_WhenSearchTextIsEEAndUseSubDir_FindsTextInFourFiles()
+		public void Find_WhenSearchTextIsEEAndUseSubDirNoRegExpr_FindsTextInFourFiles()
 		{
 			Finder finder = new Finder();
 
@@ -160,13 +160,14 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Find_WhenSearchTextIsRegularExpression_FindsTextInOne()
+		public void Find_WhenSearchTextIsEmailPatternRegularExpression_FindsTextInOne()
 		{
 			Finder finder = new Finder();
 
 			finder.Dir = _tempDir;
 			finder.FileMask = "*.*";
 			finder.FindText = @"\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b"; //email pattern
+			finder.FindTextHasRegEx = true;
 
 			var resultItems = finder.Find().FindResults;
 

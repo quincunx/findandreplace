@@ -7,7 +7,7 @@ namespace FindAndReplace.Tests
 	public class ReplacerTest:TestBase
 	{
 		[Test]
-		public void Replace_WhenSearchTextIsLicense_ReplacesTextInOne()
+		public void Replace_WhenSearchTextIsLicenseNoRegExpr_ReplacesTextInOne()
 		{
 			Replacer replacer = new Replacer();
 
@@ -33,7 +33,7 @@ namespace FindAndReplace.Tests
 		}
 		
 		[Test]
-		public void Replace_WhenSearchTextIsEE_ReplacesTextInBoth()
+		public void Replace_WhenSearchTextIsEENoRegExpr_ReplacesTextInBoth()
 		{
 			Replacer replacer = new Replacer();
 
@@ -65,7 +65,7 @@ namespace FindAndReplace.Tests
 		}
 		
 		[Test]
-		public void Replace_WhenSearchTextIsNewYork_NoReplacesText()
+		public void Replace_WhenSearchTextIsNewYorkNoRegExpr_NoReplacesText()
 		{
 			Replacer replacer = new Replacer();
 
@@ -80,7 +80,7 @@ namespace FindAndReplace.Tests
 		}
 		
 		[Test]
-		public void Replace_WhenSearchMaskIsTxtOnly_NoRepacesText()
+		public void Replace_WhenSearchMaskIsTxtOnlyNoRegExpr_NoRepacesText()
 		{
 			Replacer replacer = new Replacer();
 
@@ -95,7 +95,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Replace_WhenSearchMaskIsTest1_ReplacesTextInOne()
+		public void Replace_WhenSearchMaskIsTest1NoRegExpr_ReplacesTextInOne()
 		{
 			Replacer replacer = new Replacer();
 
@@ -124,7 +124,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Replace_WhenSearchTextIsSoAndCaseSensitive_ReplacesTextInOne()
+		public void Replace_WhenSearchTextIsSoAndCaseSensitiveNoRegExpr_ReplacesTextInOne()
 		{
 			Replacer replacer = new Replacer();
 
@@ -150,7 +150,7 @@ namespace FindAndReplace.Tests
 		}
 		
 		[Test]
-		public void Replace_WhenSearchTextIsEEAndUseSubDir_ReplacesTextInFour()
+		public void Replace_WhenSearchTextIsEEAndUseSubDirNoRegExpr_ReplacesTextInFour()
 		{
 			Replacer replacer = new Replacer();
 
@@ -184,6 +184,27 @@ namespace FindAndReplace.Tests
 			Assert.IsTrue(secondFile[0].IsSuccess);
 			Assert.AreEqual(1, secondFile[1].NumMatches);
 			Assert.IsTrue(secondFile[1].IsSuccess);
+		}
+
+		[Test]
+		public void Replace_WhenSearchTextIsRegularExpression_ReplacesTextInOne()
+		{
+			Replacer replacer = new Replacer();
+
+			replacer.Dir = _tempDir;
+			replacer.FileMask = "*.*";
+			replacer.FindText = @"\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b"; //email pattern
+			replacer.ReplaceText = "Email was here..";
+			replacer.FindTextHasRegEx = true;
+
+			var resultItems = replacer.Replace().ResultItems;
+
+			if (resultItems == null || resultItems.Count == 0)
+				Assert.Fail("Cant find test files");
+
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual("test2.test", resultItems[0].FileName);
+			Assert.AreEqual(1, resultItems[0].NumMatches);
 		}
 	}
 }
