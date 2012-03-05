@@ -54,6 +54,7 @@
 			this.txtNoMathces = new System.Windows.Forms.Label();
 			this.txtMatches = new System.Windows.Forms.RichTextBox();
 			this.lblStats = new System.Windows.Forms.Label();
+			this.chkIsRegEx = new System.Windows.Forms.CheckBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -304,11 +305,22 @@
 			this.lblStats.Size = new System.Drawing.Size(0, 13);
 			this.lblStats.TabIndex = 25;
 			// 
+			// chkIsRegEx
+			// 
+			this.chkIsRegEx.AutoSize = true;
+			this.chkIsRegEx.Location = new System.Drawing.Point(200, 173);
+			this.chkIsRegEx.Name = "chkIsRegEx";
+			this.chkIsRegEx.Size = new System.Drawing.Size(141, 17);
+			this.chkIsRegEx.TabIndex = 26;
+			this.chkIsRegEx.Text = " Use regular expressions";
+			this.chkIsRegEx.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(956, 340);
+			this.ClientSize = new System.Drawing.Size(956, 341);
+			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatches);
 			this.Controls.Add(this.txtNoMathces);
@@ -369,6 +381,7 @@
 		private System.Windows.Forms.Label txtNoMathces;
 		public System.Windows.Forms.RichTextBox txtMatches;
 		private System.Windows.Forms.Label lblStats;
+		private System.Windows.Forms.CheckBox chkIsRegEx;
 	}
 }
 

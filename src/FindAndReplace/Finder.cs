@@ -34,6 +34,7 @@ namespace FindAndReplace
 		public string FileMask { get; set; }
 		public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
+		public bool FindTextHasRegEx { get; set; }
 
 		public class FindResultItem
 		{
@@ -119,8 +120,12 @@ namespace FindAndReplace
 				content = sr.ReadToEnd();
 			}
 
-			return Regex.Matches(content, FindText, Utils.GetRegExOptions(IsCaseSensitive));
+			if (!FindTextHasRegEx)
+				return Regex.Matches(content, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
 
+			var exp = new Regex(FindText, Utils.GetRegExOptions(IsCaseSensitive));
+
+			return exp.Matches(content);
 		}
 	}
 }

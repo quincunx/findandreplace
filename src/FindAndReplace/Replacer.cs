@@ -29,6 +29,7 @@ namespace FindAndReplace
 		public string FindText { get; set; }
 		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
+		public bool FindTextHasRegEx { get; set; }
 		
 		public class ReplaceResultItem 
 		{
@@ -111,7 +112,16 @@ namespace FindAndReplace
 			{
 				RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
-				var matches = Regex.Matches(content, Regex.Escape(FindText), regexOptions);
+				var finderText = FindTextHasRegEx ? FindText : Regex.Escape(FindText);
+				MatchCollection matches;
+
+				if (!FindTextHasRegEx)
+					matches= Regex.Matches(content, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
+				else
+				{
+					var exp = new Regex(FindText, Utils.GetRegExOptions(IsCaseSensitive));
+					matches = Regex.Matches(content, finderText, regexOptions);
+				}
 
 				resultItem.FileName = Path.GetFileName(filePath);
 				resultItem.FilePath = filePath;
@@ -125,7 +135,7 @@ namespace FindAndReplace
 				{
 					try
 					{
-						string newContent = Regex.Replace(content, Regex.Escape(FindText), ReplaceText, regexOptions);
+						string newContent = Regex.Replace(content, finderText, ReplaceText, regexOptions);
 
 						using (var sw = new StreamWriter(filePath))
 						{

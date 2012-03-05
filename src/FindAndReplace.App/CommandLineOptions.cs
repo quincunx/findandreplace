@@ -32,6 +32,9 @@ namespace FindAndReplace.App
 		[Option(null, "includeSubDirectories", HelpText = "Include files in SubDirectories.")]
 		public bool IncludeSubDirectories = false;
 
+		[Option(null, "useRegEx", HelpText = "Find text has Regular Expression.")]
+		public bool IsFindTextHasRegEx = false;
+
 
 		#endregion
 
@@ -44,7 +47,7 @@ namespace FindAndReplace.App
 
 			help.Copyright = new CopyrightInfo("Entech Solutions", 2011);
 			this.HandleParsingErrorsInHelp(help);
-			help.AddPreOptionsLine("Usage: \n\nfnr.exe --cl --find \"Text To Find\" --replace \"Text To Replace\"  --caseSensitive  --dir \"Directory Path\" --fileMask \"*.*\"  --includeSubDirectories");
+			help.AddPreOptionsLine("Usage: \n\nfnr.exe --cl --find \"Text To Find\" --replace \"Text To Replace\"  --caseSensitive  --dir \"Directory Path\" --fileMask \"*.*\"  --includeSubDirectories --useRegEx");
 			help.AddPreOptionsLine("\n");
 			help.AddPreOptionsLine("Mask new line and quote characters using \\n and \\\".");
 
