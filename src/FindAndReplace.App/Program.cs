@@ -84,21 +84,22 @@ namespace FindAndReplace.App
 			Console.WriteLine();
 
 			PrintLine();
-			PrintFinderResultRow("File", "Matches");
+			PrintFinderResultRow("File", "Matches", "Error Message");
 			PrintLine();
 			foreach (var item in resultItems)
 			{
-				PrintFinderResultRow(item.FileRelativePath, item.NumMatches.ToString());
+				PrintFinderResultRow(item.FileRelativePath, item.NumMatches.ToString(), String.IsNullOrEmpty(item.ErrorMessage)?"":item.ErrorMessage.Substring(0, 20));
 			}
 			PrintLine();
 		}
 
-		static void PrintFinderResultRow(string path, string matches)
+		static void PrintFinderResultRow(string path, string matches, string error)
 		{
 			Console.WriteLine(
-				string.Format("{0} | {1}",
-							  FormatCell(path, 63),
-							  FormatCell(matches, 10)));
+				string.Format("{0} | {1} | {2}",
+							  FormatCell(path, 43),
+							  FormatCell(matches, 10),
+							  FormatCell(error, 20)));
 		}
 
 		public static void PrintReplacerResult(List<Replacer.ReplaceResultItem> resultItems)
@@ -106,11 +107,11 @@ namespace FindAndReplace.App
 			Console.WriteLine();
 
 			PrintLine();
-			PrintReplacerResultRow("File", "Matches", "Success");
+			PrintReplacerResultRow("File", "Matches", "Success", "Error Message");
 			PrintLine();
 			foreach (var item in resultItems)
 			{
-				PrintReplacerResultRow(item.FileRelativePath, item.NumMatches.ToString(), item.IsSuccess.ToString());
+				PrintReplacerResultRow(item.FileRelativePath, item.NumMatches.ToString(), item.IsSuccess.ToString(), String.IsNullOrEmpty(item.ErrorMessage)?"":item.ErrorMessage.Substring(0, 10));
 			}
 			PrintLine();
 		}
@@ -120,13 +121,14 @@ namespace FindAndReplace.App
 			Console.WriteLine(new string('-', 79));
 		}
 
-		static void PrintReplacerResultRow(string path, string matches, string success)
+		static void PrintReplacerResultRow(string path, string matches, string success, string error)
 		{
 			Console.WriteLine(
-				string.Format("{0} | {1} | {2}",
-					FormatCell(path, 53),
+				string.Format("{0} | {1} | {2} | {3}",
+					FormatCell(path, 33),
 					FormatCell(matches, 10),
-					FormatCell(success, 10)));
+					FormatCell(success, 10),
+					FormatCell(error, 10)));
 		}
 
 		public static void PrintStatistics(Statistic stats, bool isReplacerStats=false)
@@ -249,9 +251,9 @@ namespace FindAndReplace.App
 				}
 			}
 
-			//#if (DEBUG)
-			//    Console.ReadLine();
-			//#endif
+			#if (DEBUG)
+				Console.ReadLine();
+			#endif
 		}
 	}
 }

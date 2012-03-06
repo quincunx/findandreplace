@@ -102,7 +102,7 @@ namespace FindAndReplace
 
 			if (filesInDirectory.Length == 0) OnFileProcessed(new FinderEventArgs(new FindResultItem(), filesInDirectory.Length, stats));
 
-			return new FindResult() {FindResults = resultItems};
+			return new FindResult() {FindResults = resultItems, FindStats = stats};
 		}
 
 		public event FileProcessedEventHandler FileProcessed;
