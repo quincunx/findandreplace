@@ -134,12 +134,19 @@ namespace FindAndReplace.App
 
 					var linesToPreview = new List<int>();
 
+					string content = string.Empty;
+
+					using (var sr = new StreamReader(findResultItem.FilePath))
+					{
+						content = sr.ReadToEnd();
+					}
+					
 					foreach (Match match in findResultItem.Matches)
 					{
-						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(findResultItem.FilePath, match));
+						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
 					}
 
-					gvResults.Rows[currentRow].Cells[3].Value = GenerateMatchesPreviewText(findResultItem.FilePath, linesToPreview);
+					gvResults.Rows[currentRow].Cells[3].Value = GenerateMatchesPreviewText(content, linesToPreview);
 
 					StringBuilder sb=new StringBuilder();
 					foreach (var line in linesToPreview)
@@ -188,7 +195,7 @@ namespace FindAndReplace.App
 		{
 			UpdateButtons(true);
 
-			this.Cursor = Cursors.Default;
+			this.Cursor = Cursors.Arrow;
 		}
 
 		private void UpdateButtons(bool enabled)
@@ -329,12 +336,19 @@ namespace FindAndReplace.App
 
 					var linesToPreview = new List<int>();
 
+					string content = string.Empty;
+
+					using (var sr = new StreamReader(replaceResultItem.FilePath))
+					{
+						content = sr.ReadToEnd();
+					}
+					
 					foreach (Match match in replaceResultItem.Matches)
 					{
-						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(replaceResultItem.FilePath, match));
+						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
 					}
 
-					gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(replaceResultItem.FilePath, linesToPreview);
+					gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, linesToPreview);
 				}
 
 				progressBar.Maximum = totalCount;
@@ -511,7 +525,6 @@ namespace FindAndReplace.App
 
 			var matchesPreviewColNumber = gvResults.Columns[4].Visible ? 5 : 3;
 
-
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
 
             txtMatches.Text = matchesPreviewText;
@@ -536,9 +549,14 @@ namespace FindAndReplace.App
 
 			txtMatches.SelectionLength = 0;
 
+			//txtMatches.Text = "5| " + txtMatches.Text.Replace("\n", "\n5| ");
+
 			//////Add line numbers
 			//var linesTooltipString = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber + 1].Value.ToString();
-			//var lines = linesTooltipString.Split(' ');
+			//var lines = linesTooltipString.Split(' ').Distinct().ToArray();
+			//richTextBox1.Lines = lines;
+
+			//richTextBox1.
 
 			//int temp;
 			//var lineNumbs = lines.Where(l => Int32.TryParse(l, out temp)).Select(l => Convert.ToInt32(l)).ToList();
@@ -562,53 +580,30 @@ namespace FindAndReplace.App
 			//}
 		}
 
-		private List<int> GetLineNumbersForMatchesPreview(string filePath, Match match)
+		private List<int> GetLineNumbersForMatchesPreview(string content, Match match)
 		{
-			string content = string.Empty;
+			var separator = Environment.NewLine;
+			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
 
-			using (var sr = new StreamReader(filePath))
-			{
-				content = sr.ReadToEnd();
-			}
-
-            var separator = Environment.NewLine;
-			var lines = content.Split(separator.ToCharArray());
-
-			var clearLines = new List<string>();
-			for (int i = 0; i < lines.Count(); i++)
-				if (i % 2 == 0) clearLines.Add(lines[i]);
-
-			var lineIndexStart = DetectMatchLine(clearLines.ToArray(), match.Index);
-			var lineIndexEnd = DetectMatchLine(clearLines.ToArray(), match.Index + match.Length);
-
+			var lineIndexStart = DetectMatchLine(lines.ToArray(), match.Index);
+			var lineIndexEnd = DetectMatchLine(lines.ToArray(), match.Index + match.Length);
 
 			var result = new List<int>();
 
 			for (int i = lineIndexStart - 2; i <= lineIndexEnd + 2; i++)
 			{
-				if (i >= 0 && i < clearLines.Count())
+				if (i >= 0 && i < lines.Count())
 					result.Add(i);
 			}
 
 			return result;
-
 		}
 
-		private string GenerateMatchesPreviewText(string filePath, List<int> rowNumbers)
+		private string GenerateMatchesPreviewText(string content, List<int> rowNumbers)
 		{
-			string content = string.Empty;
-
-			using (var sr = new StreamReader(filePath))
-			{
-				content = sr.ReadToEnd();
-			}
-
 			var separator = Environment.NewLine;
 
-			var lines = content.Split(separator.ToCharArray());
-			var clearLines = new List<string>();
-			for (int i = 0; i < lines.Count(); i++)
-				if (i % 2 == 0) clearLines.Add(lines[i]);
+			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
 
 			var stringBuilder = new StringBuilder();
 
@@ -617,7 +612,7 @@ namespace FindAndReplace.App
 			foreach (var rowNumber in rowNumbers)
 			{
 				if (rowNumber - prevLineIndex > 1 && prevLineIndex != 0) stringBuilder.AppendLine("");
-				stringBuilder.AppendLine(clearLines[rowNumber]);
+				stringBuilder.AppendLine(lines[rowNumber]);
 				prevLineIndex = rowNumber;
 			}
 
