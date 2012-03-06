@@ -18,6 +18,7 @@ namespace FindAndReplace.App
 		private Finder _finder;
 		private Replacer _replacer;
 		private Thread _currentThread;
+		private bool _isFindeMode;
 
 		private delegate void SetFinderResultCallback(Finder.FindResultItem resultItem, int totalCount, Statistic stats);
 
@@ -36,6 +37,8 @@ namespace FindAndReplace.App
 
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
+			_isFindeMode = true;
+			
 			txtDir.CausesValidation = true;
 			txtFileMask.CausesValidation = true;
 			txtFind.CausesValidation = true;
@@ -80,12 +83,14 @@ namespace FindAndReplace.App
 
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Filename", HeaderText = "Filename", CellTemplate = new DataGridViewTextBoxCell(), Width = 200, SortMode = DataGridViewColumnSortMode.Automatic });
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400, SortMode = DataGridViewColumnSortMode.Automatic });
+			gvResults.Columns.Add("Filename", "Filename");
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 300, SortMode = DataGridViewColumnSortMode.Automatic });
 			gvResults.Columns.Add("NumMatches", "Matches");
+			gvResults.Columns.Add("IsSuccess", "Success");
+			gvResults.Columns.Add("ErrorMessage", "Error");
 			gvResults.Columns.Add("Tooltip", "");
-			gvResults.Columns.Add("TooltipLineNums", "");
-			gvResults.Columns[3].Visible = false;
+			//gvResults.Columns.Add("TooltipLineNums", "");
+			gvResults.Columns[5].Visible = false;
 			gvResults.Columns[4].Visible = false;
 
 			progressBar.Value = 0;
@@ -120,7 +125,7 @@ namespace FindAndReplace.App
 		{
 			if (totalCount != 0)
 			{
-				if (findResultItem.NumMatches > 0)
+				if (findResultItem.NumMatches > 0 || !findResultItem.IsSuccessOpen)
 				{
 					gvResults.Rows.Add();
 
@@ -131,31 +136,38 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+					gvResults.Rows[currentRow].Cells[3].Value = findResultItem.IsSuccessOpen;
+					gvResults.Rows[currentRow].Cells[4].Value = findResultItem.ErrorMessage;
+					if (!String.IsNullOrEmpty(findResultItem.ErrorMessage)) gvResults.Columns[4].Visible = true;
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
-					var linesToPreview = new List<int>();
-
-					string content = string.Empty;
-
-					using (var sr = new StreamReader(findResultItem.FilePath))
-					{
-						content = sr.ReadToEnd();
-					}
 					
-					foreach (Match match in findResultItem.Matches)
+					if (findResultItem.IsSuccessOpen)
 					{
-						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
+						var linesToPreview = new List<int>();
+
+						string content = string.Empty;
+
+						using (var sr = new StreamReader(findResultItem.FilePath))
+						{
+							content = sr.ReadToEnd();
+						}
+
+						foreach (Match match in findResultItem.Matches)
+						{
+							linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
+						}
+
+						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, linesToPreview);
 					}
 
-					gvResults.Rows[currentRow].Cells[3].Value = GenerateMatchesPreviewText(content, linesToPreview);
+					//StringBuilder sb=new StringBuilder();
+					//foreach (var line in linesToPreview)
+					//{
+					//    sb.Append(String.Format("{0} ", line));
+					//}
 
-					StringBuilder sb=new StringBuilder();
-					foreach (var line in linesToPreview)
-					{
-						sb.Append(String.Format("{0} ", line));
-					}
-
-					gvResults.Rows[currentRow].Cells[4].Value = sb.ToString();
+					//gvResults.Rows[currentRow].Cells[4].Value = sb.ToString();
 				}
 
 				progressBar.Maximum = totalCount;
@@ -243,6 +255,8 @@ namespace FindAndReplace.App
 
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
+			_isFindeMode = false;
+
 			txtDir.CausesValidation = true;
 			txtFileMask.CausesValidation = true;
 			txtFind.CausesValidation = true;
@@ -304,6 +318,7 @@ namespace FindAndReplace.App
 			gvResults.Columns.Add("ErrorMessage", "Error");
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns[5].Visible = false;
+			gvResults.Columns[4].Visible = false;
 
 			if (txtMatches.Visible)
 			{
@@ -334,6 +349,8 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
 					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
 					gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
+					if (!String.IsNullOrEmpty(replaceResultItem.ErrorMessage)) gvResults.Columns[4].Visible = true;
+					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
 					var linesToPreview = new List<int>();
 
@@ -518,13 +535,18 @@ namespace FindAndReplace.App
             if (e.RowIndex == -1)   //heading
                 return;
 
+			var matchesPreviewColNumber = 5;
+
+			if (gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value == null)
+				return;
+
 			if (!txtMatches.Visible)
 			{
 				txtMatches.Visible = true;
 				this.Height += txtMatches.Height + 50;
 			}
 
-			var matchesPreviewColNumber = gvResults.Columns[4].Visible ? 5 : 3;
+			//gvResults.Columns[4].Visible ? 5 : 3;
 
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
 
@@ -536,7 +558,7 @@ namespace FindAndReplace.App
 
 			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
 
-			var findText = gvResults.Columns[4].Visible ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
+			var findText = !_isFindeMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
 			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatches.Text, findText) : Regex.Matches(txtMatches.Text, findText, RegexOptions.IgnoreCase);
 

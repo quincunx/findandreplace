@@ -44,6 +44,7 @@ namespace FindAndReplace
 			public int NumMatches { get; set; }
 			public MatchCollection Matches { get; set; }
 			public bool IsSuccessOpen { get; set; }
+			public string ErrorMessage { get; set; }
 		}
 
 		public class FindResult
@@ -87,6 +88,7 @@ namespace FindAndReplace
 					resultItem.IsSuccessOpen = false;
 					resultItem.NumMatches = 0;
 					stats.FailedToOpen++;
+					resultItem.ErrorMessage = exception.Message;
 				}
 
 				//Skip files that don't have matches
