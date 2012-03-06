@@ -80,8 +80,8 @@ namespace FindAndReplace.App
 
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Filename", HeaderText = "Filename", CellTemplate = new DataGridViewTextBoxCell(), Width = 200 });
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400 });
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Filename", HeaderText = "Filename", CellTemplate = new DataGridViewTextBoxCell(), Width = 200, SortMode = DataGridViewColumnSortMode.Automatic });
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 400, SortMode = DataGridViewColumnSortMode.Automatic });
 			gvResults.Columns.Add("NumMatches", "Matches");
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns.Add("TooltipLineNums", "");
@@ -131,6 +131,7 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
+					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
 					var linesToPreview = new List<int>();
 
@@ -297,7 +298,7 @@ namespace FindAndReplace.App
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
 			gvResults.Columns.Add("Filename", "Filename");
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 300 });
+			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 300, SortMode = DataGridViewColumnSortMode.Automatic  });
 			gvResults.Columns.Add("NumMatches", "Matches");
 			gvResults.Columns.Add("IsSuccess", "Success");
 			gvResults.Columns.Add("ErrorMessage", "Error");
@@ -527,7 +528,10 @@ namespace FindAndReplace.App
 
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
 
-            txtMatches.Text = matchesPreviewText;
+			txtMatches.SelectionLength = 0;
+			txtMatches.Clear();
+
+			txtMatches.Text = matchesPreviewText;
 			//txtMatches.ReadOnly = true;
 
 			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
