@@ -8,14 +8,12 @@ namespace FindAndReplace
 	public class ReplacerEventArgs : EventArgs
 	{
 		public Replacer.ReplaceResultItem ResultItem { get; set; }
-		public int TotalFilesCount { get; set; }
-		public Statistic Stats { get; set; }
+		public Stats Stats { get; set; }
 
-		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, int fileCount, Statistic statistic)
+		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, Stats stats)
 		{
 			ResultItem = resultItem;
-			TotalFilesCount = fileCount;
-			Stats = statistic;
+			Stats = stats;
 		}
 	}
 
@@ -40,15 +38,15 @@ namespace FindAndReplace
 			public bool IsSuccess { get; set; }
 			public string ErrorMessage { get; set; }
 			public MatchCollection Matches { get; set; }
-			public bool IsSuccessOpen { get; set; }
-			public bool IsSuccessWrite { get; set; }
+			public bool FailedToOpen { get; set; }
+			public bool FailedToWrite { get; set; }
 		}
 
 		public class ReplaceResult
 		{
 			public List<ReplaceResultItem> ResultItems { get; set; }
 
-			public Statistic Stats { get; set; }
+			public Stats Stats { get; set; }
 		}
 
 		public ReplaceResult Replace()
@@ -61,39 +59,58 @@ namespace FindAndReplace
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<ReplaceResultItem>();
-			var stats = new Statistic();
+			var stats = new Stats();
+			stats.TotalFiles = filesInDirectory.Length;
 
 			foreach (string filePath in filesInDirectory)
 			{
-				stats.TotalFilesCount++;
-				
 				var resultItem = ReplaceTextInFile(filePath);
-				if (!resultItem.IsSuccessOpen) stats.FailedToOpen++;
-					else stats.TotalMathes += resultItem.NumMatches;
+				stats.ProcessedFiles++;
+
+				if (resultItem.IsSuccess)
+				{
+					if (resultItem.NumMatches > 0)
+					{
+						stats.FilesWithMatches++;
+						stats.TotalReplaces += resultItem.NumMatches;
+					}
+					else
+					{
+						stats.FilesWithoutMatches++;
+					}
+				}
+				else
+				{
+					if (resultItem.FailedToOpen)
+					{
+						stats.FailedToOpen++;
+					}
+
+					if (resultItem.FailedToWrite)
+					{
+						stats.FailedToWrite++;
+					}
+				}
 				
-				if (!resultItem.IsSuccessWrite) stats.FailedToWrite++;
-				else stats.TotalReplaces += resultItem.NumMatches;
-
-				if (resultItem.NumMatches>0) stats.FilesWithMathesCount++;
-
-				//Skip files that don't have matches
-				if (resultItem.NumMatches > 0)
+				if (resultItem.NumMatches > 0 || !resultItem.IsSuccess)
 					resultItems.Add(resultItem);
-
-				OnFileProcessed(new ReplacerEventArgs(resultItem, filesInDirectory.Length, stats));
+				
+				OnFileProcessed(new ReplacerEventArgs(resultItem, stats));
 			}
 
-			if (filesInDirectory.Length == 0) OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), filesInDirectory.Length, stats));
+			if (filesInDirectory.Length == 0) 
+				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats));
 
-			return new ReplaceResult(){ResultItems = resultItems, Stats = stats};
+			return new ReplaceResult() {ResultItems = resultItems, Stats = stats};
 		}
 		
 		private ReplaceResultItem ReplaceTextInFile(string filePath)
 		{
 			string content = string.Empty;
 
-			var resultItem = new ReplaceResultItem() {IsSuccessOpen = true, IsSuccessWrite = true};
-			
+			var resultItem = new ReplaceResultItem();
+			resultItem.IsSuccess = true;
+
 			try
 			{
 				using (StreamReader sr = new StreamReader(filePath))
@@ -101,55 +118,57 @@ namespace FindAndReplace
 					content = sr.ReadToEnd();
 				}
 			}
-			catch(Exception exception)
+			catch (Exception exception)
 			{
-				resultItem.IsSuccessOpen = false;
+				resultItem.IsSuccess = false;
+				resultItem.FailedToOpen = true;
 				resultItem.ErrorMessage = exception.Message;
+				
+				return resultItem;
 			}
+			
+			
+			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
+			var finderText = FindTextHasRegEx ? FindText : Regex.Escape(FindText);
+			MatchCollection matches;
 
-			if (resultItem.IsSuccessOpen)
+			if (!FindTextHasRegEx)
 			{
-				RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
+				matches= Regex.Matches(content, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
+			}
+			else
+			{
+				matches = Regex.Matches(content, finderText, regexOptions);
+			}
 
-				var finderText = FindTextHasRegEx ? FindText : Regex.Escape(FindText);
-				MatchCollection matches;
+			resultItem.FileName = Path.GetFileName(filePath);
+			resultItem.FilePath = filePath;
+			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
 
-				if (!FindTextHasRegEx)
-					matches= Regex.Matches(content, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
-				else
+			resultItem.NumMatches = matches.Count;
+			resultItem.Matches = matches;
+			resultItem.IsSuccess = matches.Count > 0;
+
+			if (matches.Count > 0)
+			{
+				try
 				{
-					var exp = new Regex(FindText, Utils.GetRegExOptions(IsCaseSensitive));
-					matches = Regex.Matches(content, finderText, regexOptions);
+					string newContent = Regex.Replace(content, finderText, ReplaceText, regexOptions);
+
+					using (var sw = new StreamWriter(filePath))
+					{
+						sw.Write(newContent);
+					}
 				}
-
-				resultItem.FileName = Path.GetFileName(filePath);
-				resultItem.FilePath = filePath;
-				resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-
-				resultItem.NumMatches = matches.Count;
-				resultItem.Matches = matches;
-				resultItem.IsSuccess = matches.Count > 0;
-
-				if (matches.Count > 0)
+				catch (Exception ex)
 				{
-					try
-					{
-						string newContent = Regex.Replace(content, finderText, ReplaceText, regexOptions);
-
-						using (var sw = new StreamWriter(filePath))
-						{
-							sw.Write(newContent);
-						}
-					}
-					catch (Exception ex)
-					{
-						resultItem.IsSuccess = false;
-						resultItem.IsSuccessWrite = false;
-						resultItem.ErrorMessage = ex.Message;
-					}
+					resultItem.IsSuccess = false;
+					resultItem.FailedToWrite = true;
+					resultItem.ErrorMessage = ex.Message;
 				}
 			}
+			
 
 			return resultItem;
 		}

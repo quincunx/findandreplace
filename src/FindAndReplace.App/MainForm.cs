@@ -20,9 +20,9 @@ namespace FindAndReplace.App
 		private Thread _currentThread;
 		private bool _isFindeMode;
 
-		private delegate void SetFinderResultCallback(Finder.FindResultItem resultItem, int totalCount, Statistic stats);
-
-		private delegate void SetReplacerResultCallback(Replacer.ReplaceResultItem resultItem, int totalCount, Statistic statistic);
+		private delegate void SetFindResultCallback(Finder.FindResultItem resultItem, Stats stats);
+		
+		private delegate void SetReplaceResultCallback(Replacer.ReplaceResultItem resultItem, Stats stats);
 
 		public MainForm()
 		{
@@ -83,14 +83,14 @@ namespace FindAndReplace.App
 
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
-			gvResults.Columns.Add("Filename", "Filename");
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 300, SortMode = DataGridViewColumnSortMode.Automatic });
-			gvResults.Columns.Add("NumMatches", "Matches");
-			gvResults.Columns.Add("IsSuccess", "Success");
-			gvResults.Columns.Add("ErrorMessage", "Error");
+
+			AddResultsColumn("Filename", "Filename", 370);
+			AddResultsColumn("Path", "Path", 370);
+			AddResultsColumn("NumMatches", "Matches", 50);
+			AddResultsColumn("ErrorMessage", "Error", 100);
+
 			gvResults.Columns.Add("Tooltip", "");
-			//gvResults.Columns.Add("TooltipLineNums", "");
-			gvResults.Columns[5].Visible = false;
+			
 			gvResults.Columns[4].Visible = false;
 
 			progressBar.Value = 0;
@@ -100,6 +100,18 @@ namespace FindAndReplace.App
 				txtMatches.Visible = false;
 				this.Height -= (txtMatches.Height + 50);
 			}
+		}
+
+		private void AddResultsColumn(string dataPropertyName, string headerText, int width)
+		{
+			gvResults.Columns.Add(new DataGridViewColumn()
+			                      	{
+			                      		DataPropertyName = dataPropertyName,
+			                      		HeaderText = headerText,
+			                      		CellTemplate = new DataGridViewTextBoxCell(),
+			                      		Width = width,
+			                      		SortMode = DataGridViewColumnSortMode.Automatic
+			                      	});
 		}
 
 		private void CreateListener(Finder finder)
@@ -112,20 +124,20 @@ namespace FindAndReplace.App
 		{
 			if (!this.gvResults.InvokeRequired)
 			{
-				ShowFindResult(e.ResultItem, e.TotalFilesCount, e.Stats);
+				ShowFindResult(e.ResultItem, e.Stats);
 			}
 			else
 			{
-				SetFinderResultCallback finderResultCallback = ShowFindResult;
-				this.Invoke(finderResultCallback, new object[] { e.ResultItem, e.TotalFilesCount, e.Stats });
+				SetFindResultCallback findResultCallback = ShowFindResult;
+				this.Invoke(findResultCallback, new object[] { e.ResultItem, e.Stats });
 			}
 		}
 
-		private void ShowFindResult(Finder.FindResultItem findResultItem, int totalCount, Statistic stats)
+		private void ShowFindResult(Finder.FindResultItem findResultItem, Stats stats)
 		{
-			if (totalCount != 0)
+			if (stats.TotalFiles != 0)
 			{
-				if (findResultItem.NumMatches > 0 || !findResultItem.IsSuccessOpen)
+				if (findResultItem.NumMatches > 0 || !findResultItem.IsSuccess)
 				{
 					gvResults.Rows.Add();
 
@@ -136,13 +148,11 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
-					gvResults.Rows[currentRow].Cells[3].Value = findResultItem.IsSuccessOpen;
-					gvResults.Rows[currentRow].Cells[4].Value = findResultItem.ErrorMessage;
-					if (!String.IsNullOrEmpty(findResultItem.ErrorMessage)) gvResults.Columns[4].Visible = true;
-					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
-
+					gvResults.Rows[currentRow].Cells[3].Value = findResultItem.ErrorMessage;
 					
-					if (findResultItem.IsSuccessOpen)
+					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
+					
+					if (findResultItem.IsSuccess)
 					{
 						var linesToPreview = new List<int>();
 
@@ -158,7 +168,7 @@ namespace FindAndReplace.App
 							linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
 						}
 
-						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, linesToPreview);
+						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(content, linesToPreview);
 					}
 
 					//StringBuilder sb=new StringBuilder();
@@ -170,10 +180,9 @@ namespace FindAndReplace.App
 					//gvResults.Rows[currentRow].Cells[4].Value = sb.ToString();
 				}
 
-				progressBar.Maximum = totalCount;
-				progressBar.Value++;
-
-				lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " +
+				progressBar.Maximum = stats.TotalFiles;
+				
+				lblStatus.Text = "Processing " + stats.ProcessedFiles + " of " + stats.TotalFiles + " files.  Last file: " +
 								 findResultItem.FileRelativePath;
 
 			}
@@ -185,12 +194,10 @@ namespace FindAndReplace.App
 			}
 
 			//When last file - enable buttons back
-			if (totalCount == progressBar.Value)
+			if (stats.ProcessedFiles == stats.TotalFiles)
 			{
 				EnableButtons();
 				gvResults.ClearSelection();
-
-				
 			}
 
 			ShowStats(stats);
@@ -199,7 +206,7 @@ namespace FindAndReplace.App
 
 		private void DisableButtons()
 		{
-			this.Cursor = Cursors.WaitCursor;
+			//this.Cursor = Cursors.WaitCursor;
 
 			UpdateButtons(false);
 		}
@@ -208,7 +215,7 @@ namespace FindAndReplace.App
 		{
 			UpdateButtons(true);
 
-			this.Cursor = Cursors.Arrow;
+			//this.Cursor = Cursors.Arrow;
 		}
 
 		private void UpdateButtons(bool enabled)
@@ -334,9 +341,9 @@ namespace FindAndReplace.App
 			_replacer.Replace();
 		}
 
-		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, int totalCount, Statistic stats)
+		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, Stats stats)
 		{
-			if (totalCount > 0)
+			if (stats.TotalFiles > 0)
 			{
 				if (replaceResultItem.NumMatches > 0)
 				{
@@ -349,7 +356,9 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
 					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
 					gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
-					if (!String.IsNullOrEmpty(replaceResultItem.ErrorMessage)) gvResults.Columns[4].Visible = true;
+					
+					if (!String.IsNullOrEmpty(replaceResultItem.ErrorMessage)) 
+						gvResults.Columns[4].Visible = true;
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
 					var linesToPreview = new List<int>();
@@ -369,10 +378,9 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, linesToPreview);
 				}
 
-				progressBar.Maximum = totalCount;
-				progressBar.Value++;
+				progressBar.Maximum = stats.TotalFiles;
 
-				lblStatus.Text = "Processing " + progressBar.Value + " of " + totalCount + " files.  Last file: " +
+				lblStatus.Text = "Processing " + stats.ProcessedFiles + " of " + stats.TotalFiles + " files.  Last file: " +
 								 replaceResultItem.FileRelativePath;
 			}
 			else
@@ -382,7 +390,7 @@ namespace FindAndReplace.App
 				txtNoMathces.Visible = true;
 			}
 			//When last file - enable buttons back
-			if (totalCount == progressBar.Value)
+			if (stats.ProcessedFiles == stats.TotalFiles)
 			{
 				EnableButtons();
 				gvResults.ClearSelection();
@@ -396,12 +404,12 @@ namespace FindAndReplace.App
 		{
 			if (!this.gvResults.InvokeRequired)
 			{
-				ShowReplaceResult(e.ResultItem, e.TotalFilesCount, e.Stats);
+				ShowReplaceResult(e.ResultItem,  e.Stats);
 			}
 			else
 			{
-				SetReplacerResultCallback replaceResultCallback = new SetReplacerResultCallback(ShowReplaceResult);
-				this.Invoke(replaceResultCallback, new object[] { e.ResultItem, e.TotalFilesCount, e.Stats });
+				var replaceResultCallback = new SetReplaceResultCallback(ShowReplaceResult);
+				this.Invoke(replaceResultCallback, new object[] { e.ResultItem, e.Stats });
 			}
 		}
 
@@ -703,24 +711,29 @@ namespace FindAndReplace.App
 			Process.Start("explorer.exe", argument);
 		}
 
-		private void ShowStats(Statistic stats, bool showReplaceStats=false)
+		private void ShowStats(Stats stats, bool showReplaceStats=false)
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("Files:");
-			sb.AppendLine("- Total: " + stats.TotalFilesCount);
-			sb.AppendLine("- With Matches: " + stats.FilesWithMathesCount);
-			sb.AppendLine("- Without  Matches: " + (stats.TotalFilesCount - stats.FilesWithMathesCount));
+			sb.AppendLine("- Total: " + stats.TotalFiles);
+			sb.AppendLine("- Processed: " + stats.ProcessedFiles);
+			sb.AppendLine("- With Matches: " + stats.FilesWithMatches);
+			sb.AppendLine("- Without Matches: " + stats.FilesWithoutMatches);
 			sb.AppendLine("- Failed to Open: " + stats.FailedToOpen);
+			
 			if (showReplaceStats)
 				sb.AppendLine("- Failed to Write: " + stats.FailedToWrite);
+			
 			sb.AppendLine("");
 			sb.AppendLine("Matches:");
-			sb.AppendLine("- Found: " + stats.TotalMathes);
+			sb.AppendLine("- Found: " + stats.TotalMatches);
+
 			if (showReplaceStats)
 				sb.AppendLine("- Replaced: " + stats.TotalReplaces);
 
 			lblStats.Text = sb.ToString();
 		}
+
 	}
 
 	public class GVResultEventArgs : EventArgs

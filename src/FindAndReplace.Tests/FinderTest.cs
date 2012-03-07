@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using NUnit.Framework;
-using System.IO;
 
 namespace FindAndReplace.Tests
 {
 	[TestFixture]
-	public class FinderTest:TestBase
+	public class FinderTest : TestBase
 	{
 		[Test]
 		public void Find_WhenSearchTextIsLicenseNoRegExpr_FindsTextInOne()
 		{
-			Finder finder=new Finder();
+			Finder finder = new Finder();
 
 			finder.Dir = _tempDir;
 			finder.FileMask = "*.*";
 			finder.FindText = "license";
 
-			var resultItems = finder.Find().FindResults;
+			var resultItems = finder.Find().Items;
 
-			if (resultItems==null || resultItems.Count==0) 
+			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
 			Assert.AreEqual(1, resultItems.Count);
@@ -38,7 +34,7 @@ namespace FindAndReplace.Tests
 			finder.FileMask = "*.*";
 			finder.FindText = "ee";
 
-			var resultItems = finder.Find().FindResults;
+			var resultItems = finder.Find().Items;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
@@ -67,7 +63,7 @@ namespace FindAndReplace.Tests
 			finder.FileMask = "*.*";
 			finder.FindText = "New York";
 
-			var resultItems = finder.Find().FindResults;
+			var resultItems = finder.Find().Items;
 			Assert.AreEqual(0, resultItems.Count);
 		}
 
@@ -80,7 +76,7 @@ namespace FindAndReplace.Tests
 			finder.FileMask = "*.txt";
 			finder.FindText = "a";
 
-			var resultItems = finder.Find().FindResults;
+			var resultItems = finder.Find().Items;
 
 			Assert.AreEqual(0, resultItems.Count);
 		}
@@ -94,7 +90,7 @@ namespace FindAndReplace.Tests
 			finder.FileMask = "test1.*";
 			finder.FindText = "ee";
 
-			var resultItems = finder.Find().FindResults;
+			var resultItems = finder.Find().Items;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
@@ -118,7 +114,7 @@ namespace FindAndReplace.Tests
 			finder.FindText = "So";
 			finder.IsCaseSensitive = true;
 
-			var resultItems = finder.Find().FindResults;
+			var resultItems = finder.Find().Items;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
@@ -138,12 +134,12 @@ namespace FindAndReplace.Tests
 			finder.FindText = "ee";
 			finder.IncludeSubDirectories = true;
 
-			var resultItems = finder.Find().FindResults;
+			var resultItems = finder.Find().Items;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-	
+
 			Assert.AreEqual(4, resultItems.Count);
 
 			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
@@ -169,7 +165,7 @@ namespace FindAndReplace.Tests
 			finder.FindText = @"\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b"; //email pattern
 			finder.FindTextHasRegEx = true;
 
-			var resultItems = finder.Find().FindResults;
+			var resultItems = finder.Find().Items;
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");

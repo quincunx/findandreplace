@@ -16,4 +16,5 @@ _ReSharper*/
 *.log
 *.orig
 *.ReSharper.user
+*.DotSettings.user
 

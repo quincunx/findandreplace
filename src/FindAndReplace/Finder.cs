@@ -12,14 +12,11 @@ namespace FindAndReplace
 	{
 		public Finder.FindResultItem ResultItem { get; set; }
 
-		public int TotalFilesCount { get; set; }
+		public Stats Stats { get; set; }
 
-		public Statistic Stats { get; set; }
-
-		public FinderEventArgs(Finder.FindResultItem resultItem, int fileCount, Statistic stats)
+		public FinderEventArgs(Finder.FindResultItem resultItem, Stats stats)
 		{
 			ResultItem = resultItem;
-			TotalFilesCount = fileCount;
 			Stats = stats;
 		}
 	}
@@ -43,15 +40,15 @@ namespace FindAndReplace
 			public string FileRelativePath { get; set; }
 			public int NumMatches { get; set; }
 			public MatchCollection Matches { get; set; }
-			public bool IsSuccessOpen { get; set; }
+			public bool IsSuccess { get; set; }
+			public bool FailedToOpen { get; set; }
 			public string ErrorMessage { get; set; }
 		}
 
 		public class FindResult
 		{
-			public List<FindResultItem> FindResults { get; set; }
-
-			public Statistic FindStats { get; set; }
+			public List<FindResultItem> Items { get; set; }
+			public Stats Stats { get; set; }
 		}
 
 		public FindResult Find()
@@ -63,46 +60,66 @@ namespace FindAndReplace
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<FindResultItem>();
-			var stats = new Statistic();
+			var stats = new Stats();
+			stats.TotalFiles = filesInDirectory.Length;
 
 			//Analyze each file in the directory
 			foreach (string filePath in filesInDirectory)
 			{
 				var resultItem = new FindResultItem();
+				resultItem.IsSuccess = true;
 
 				resultItem.FileName = Path.GetFileName(filePath);
 				resultItem.FilePath = filePath;
 				resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-				stats.TotalFilesCount++;
 
+				stats.ProcessedFiles++;
+
+				string fileContent = string.Empty;
+				
 				try
 				{
-					resultItem.Matches = GetMatches(filePath);
-					resultItem.IsSuccessOpen = true;
-					resultItem.NumMatches = resultItem.Matches.Count;
-					stats.TotalMathes += resultItem.Matches.Count;
-					if (resultItem.Matches.Count!=0) stats.FilesWithMathesCount++;
+					using (var sr = new StreamReader(filePath))
+					{
+						fileContent = sr.ReadToEnd();
+					}
+
 				}
-				catch(Exception exception)
+				catch (Exception exception)
 				{
-					resultItem.IsSuccessOpen = false;
-					resultItem.NumMatches = 0;
-					stats.FailedToOpen++;
+					resultItem.IsSuccess = false;
+					resultItem.FailedToOpen = true;
 					resultItem.ErrorMessage = exception.Message;
+
+					stats.FailedToOpen++;
 				}
+
+
+				if (!resultItem.FailedToOpen)
+				{
+					resultItem.Matches = GetMatches(fileContent);
+					resultItem.NumMatches = resultItem.Matches.Count;
+
+					stats.TotalMatches += resultItem.Matches.Count;
+
+					if (resultItem.Matches.Count > 0)
+						stats.FilesWithMatches++;
+					else
+						stats.FilesWithoutMatches++;
+				}
+
 
 				//Skip files that don't have matches
-				if (resultItem.NumMatches > 0)
-				{
+				if (resultItem.NumMatches > 0 || !resultItem.IsSuccess)
 					resultItems.Add(resultItem);
-				}
-
-				OnFileProcessed(new FinderEventArgs(resultItem, filesInDirectory.Length, stats));
+				
+				OnFileProcessed(new FinderEventArgs(resultItem, stats));
 			}
 
-			if (filesInDirectory.Length == 0) OnFileProcessed(new FinderEventArgs(new FindResultItem(), filesInDirectory.Length, stats));
+			if (filesInDirectory.Length == 0)
+				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats));
 
-			return new FindResult() {FindResults = resultItems, FindStats = stats};
+			return new FindResult() {Items = resultItems, Stats = stats};
 		}
 
 		public event FileProcessedEventHandler FileProcessed;
@@ -113,21 +130,14 @@ namespace FindAndReplace
 				FileProcessed(this, e);
 		}
 
-		private MatchCollection GetMatches(string filePath)
+		private MatchCollection GetMatches(string fileContent)
 		{
-			string content = string.Empty;
-
-			using (var sr = new StreamReader(filePath))
-			{
-				content = sr.ReadToEnd();
-			}
-
 			if (!FindTextHasRegEx)
-				return Regex.Matches(content, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
+				return Regex.Matches(fileContent, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
 
 			var exp = new Regex(FindText, Utils.GetRegExOptions(IsCaseSensitive));
 
-			return exp.Matches(content);
+			return exp.Matches(fileContent);
 		}
 	}
 }

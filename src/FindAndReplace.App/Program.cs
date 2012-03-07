@@ -131,21 +131,21 @@ namespace FindAndReplace.App
 					FormatCell(error, 10)));
 		}
 
-		public static void PrintStatistics(Statistic stats, bool isReplacerStats=false)
+		public static void PrintStatistics(Stats stats, bool isReplacerStats=false)
 		{
 			PrintLine();
 
 			Console.WriteLine("Stats:");
 			Console.WriteLine("Files:");
-			Console.WriteLine("- Total: " + stats.TotalFilesCount);
-			Console.WriteLine("- With Matches: " + stats.FilesWithMathesCount);
-			Console.WriteLine("- Without  Matches: " + (stats.TotalFilesCount - stats.FilesWithMathesCount));
+			Console.WriteLine("- Total: " + stats.TotalFiles);
+			Console.WriteLine("- With Matches: " + stats.FilesWithMatches);
+			Console.WriteLine("- Without  Matches: " + (stats.TotalFiles - stats.FilesWithMatches));
 			Console.WriteLine("- Failed to Open: " + stats.FailedToOpen);
 			if (isReplacerStats)
 				Console.WriteLine("- Failed to Write: " + stats.FailedToWrite);
 			Console.WriteLine("");
 			Console.WriteLine("Matches:");
-			Console.WriteLine("- Found: " + stats.TotalMathes);
+			Console.WriteLine("- Found: " + stats.TotalMatches);
 			if (isReplacerStats)
 				Console.WriteLine("- Replaced: " + stats.TotalReplaces);
 
@@ -245,9 +245,9 @@ namespace FindAndReplace.App
 					finder.FindTextHasRegEx = options.IsFindTextHasRegEx;
 
 					var result = finder.Find();
-					Program.PrintFinderResult(result.FindResults);
+					Program.PrintFinderResult(result.Items);
 
-					Program.PrintStatistics(result.FindStats);
+					Program.PrintStatistics(result.Stats);
 				}
 			}
 
