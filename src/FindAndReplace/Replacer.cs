@@ -66,6 +66,7 @@ namespace FindAndReplace
 			{
 				var resultItem = ReplaceTextInFile(filePath);
 				stats.ProcessedFiles++;
+				stats.TotalMatches += resultItem.NumMatches;
 
 				if (resultItem.IsSuccess)
 				{

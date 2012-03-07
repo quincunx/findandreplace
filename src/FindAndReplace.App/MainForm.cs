@@ -84,10 +84,10 @@ namespace FindAndReplace.App
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
 
-			AddResultsColumn("Filename", "Filename", 370);
-			AddResultsColumn("Path", "Path", 370);
+			AddResultsColumn("Filename", "Filename", 250);
+			AddResultsColumn("Path", "Path", 450);
 			AddResultsColumn("NumMatches", "Matches", 50);
-			AddResultsColumn("ErrorMessage", "Error", 100);
+			AddResultsColumn("ErrorMessage", "Error", 140);
 
 			gvResults.Columns.Add("Tooltip", "");
 			
@@ -318,14 +318,15 @@ namespace FindAndReplace.App
 
 			gvResults.Rows.Clear();
 			gvResults.Columns.Clear();
-			gvResults.Columns.Add("Filename", "Filename");
-			gvResults.Columns.Add(new DataGridViewColumn() { DataPropertyName = "Path", HeaderText = "Path", CellTemplate = new DataGridViewTextBoxCell(), Width = 300, SortMode = DataGridViewColumnSortMode.Automatic  });
-			gvResults.Columns.Add("NumMatches", "Matches");
-			gvResults.Columns.Add("IsSuccess", "Success");
-			gvResults.Columns.Add("ErrorMessage", "Error");
+
+			AddResultsColumn("Filename", "Filename", 250);
+			AddResultsColumn("Path", "Path", 400);
+			AddResultsColumn("NumMatches", "Matches", 50);
+			AddResultsColumn("IsSuccess", "Replaced", 50);
+			AddResultsColumn("ErrorMessage", "Error", 140);
+
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns[5].Visible = false;
-			gvResults.Columns[4].Visible = false;
 
 			if (txtMatches.Visible)
 			{
@@ -354,11 +355,9 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
-					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess;
+					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess ? "Yes" : "No";
 					gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
 					
-					if (!String.IsNullOrEmpty(replaceResultItem.ErrorMessage)) 
-						gvResults.Columns[4].Visible = true;
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
 					var linesToPreview = new List<int>();
@@ -430,8 +429,6 @@ namespace FindAndReplace.App
 			}
 
 			if (!isFormValid) return;
-
-
 
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
@@ -543,7 +540,7 @@ namespace FindAndReplace.App
             if (e.RowIndex == -1)   //heading
                 return;
 
-			var matchesPreviewColNumber = 5;
+			var matchesPreviewColNumber = 4;
 
 			if (gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value == null)
 				return;
@@ -678,18 +675,17 @@ namespace FindAndReplace.App
 		{
 			var contextMenu = new ContextMenuStrip();
 
-			var openStripItem = new ToolStripMenuItem("Open");
-
+			var menuItem = new ToolStripMenuItem("Open");
 
 			var eventArgs = new GVResultEventArgs();
 			eventArgs.cellRow = rowNumber;
-			openStripItem.Click += delegate { toolStripClickOpen(this, eventArgs); };
+			menuItem.Click += delegate { toolStripClickOpen(this, eventArgs); };
 
 			var openFolderStripItem = new ToolStripMenuItem("Open Containing Folder");
 
 			openFolderStripItem.Click += delegate { toolStripClickOpenFolder(this, eventArgs); };
 
-			contextMenu.Items.Add(openStripItem);
+			contextMenu.Items.Add(menuItem);
 			contextMenu.Items.Add(openFolderStripItem);
 
 			return contextMenu;
