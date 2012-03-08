@@ -183,7 +183,8 @@ namespace FindAndReplace.App
 				}
 
 				progressBar.Maximum = stats.TotalFiles;
-				
+				progressBar.Value = stats.ProcessedFiles;
+
 				lblStatus.Text = "Processing " + stats.ProcessedFiles + " of " + stats.TotalFiles + " files.  Last file: " +
 								 findResultItem.FileRelativePath;
 
@@ -194,16 +195,17 @@ namespace FindAndReplace.App
 
 				txtNoMatches.Visible = true;
 			}
+			
+			ShowStats(stats);
 
 			//When last file - enable buttons back
 			if (stats.ProcessedFiles == stats.TotalFiles)
 			{
+				lblStatus.Text = "Processed " + stats.ProcessedFiles + " files.";
 				EnableButtons();
-				gvResults.ClearSelection();
 			}
-
-			ShowStats(stats);
-
+				
+			
 		}
 
 		private void DisableButtons()
@@ -435,6 +437,7 @@ namespace FindAndReplace.App
 				}
 
 				progressBar.Maximum = stats.TotalFiles;
+				progressBar.Value = stats.ProcessedFiles;
 
 				lblStatus.Text = "Processing " + stats.ProcessedFiles + " of " + stats.TotalFiles + " files.  Last file: " +
 								 replaceResultItem.FileRelativePath;
@@ -445,15 +448,16 @@ namespace FindAndReplace.App
 
 				txtNoMatches.Visible = true;
 			}
+			
+
+			ShowStats(stats, true);
+
 			//When last file - enable buttons back
 			if (stats.ProcessedFiles == stats.TotalFiles)
 			{
+				lblStatus.Text = "Processed " + stats.ProcessedFiles + " files.";
 				EnableButtons();
-				gvResults.ClearSelection();
-
 			}
-
-			ShowStats(stats, true);
 		}
 
 		private void ReplaceFileProceed(object sender, ReplacerEventArgs e)
