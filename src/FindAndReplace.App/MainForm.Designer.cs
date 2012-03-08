@@ -1,4 +1,6 @@
-﻿namespace FindAndReplace.App
+﻿using NumberedTextBox;
+
+namespace FindAndReplace.App
 {
 	partial class MainForm
 	{
@@ -52,9 +54,9 @@
 			this.pnlGridResults = new System.Windows.Forms.Panel();
 			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
 			this.txtNoMathces = new System.Windows.Forms.Label();
-			this.txtMatches = new System.Windows.Forms.RichTextBox();
 			this.lblStats = new System.Windows.Forms.Label();
 			this.chkIsRegEx = new System.Windows.Forms.CheckBox();
+			this.txtMatches = new NumberedTextBox.NumberedTextBoxUC();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -286,17 +288,6 @@
 			this.txtNoMathces.Text = " No matches found";
 			this.txtNoMathces.Visible = false;
 			// 
-			// txtMatches
-			// 
-			this.txtMatches.BackColor = System.Drawing.SystemColors.Info;
-			this.txtMatches.Location = new System.Drawing.Point(74, 563);
-			this.txtMatches.Name = "txtMatches";
-			this.txtMatches.ReadOnly = true;
-			this.txtMatches.Size = new System.Drawing.Size(729, 166);
-			this.txtMatches.TabIndex = 24;
-			this.txtMatches.Text = "";
-			this.txtMatches.Visible = false;
-			// 
 			// lblStats
 			// 
 			this.lblStats.AutoSize = true;
@@ -315,11 +306,20 @@
 			this.chkIsRegEx.Text = " Use regular expressions";
 			this.chkIsRegEx.UseVisualStyleBackColor = true;
 			// 
+			// txtMatches
+			// 
+			this.txtMatches.BackColor = System.Drawing.SystemColors.Info;
+			this.txtMatches.Location = new System.Drawing.Point(74, 563);
+			this.txtMatches.Name = "txtMatches";
+			this.txtMatches.Size = new System.Drawing.Size(729, 166);
+			this.txtMatches.TabIndex = 24;
+			this.txtMatches.Visible = false;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(813, 339);
+			this.ClientSize = new System.Drawing.Size(813, 334);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatches);
@@ -379,7 +379,8 @@
 		private System.Windows.Forms.Panel pnlGridResults;
 		private System.Windows.Forms.ErrorProvider errorProvider1;
 		private System.Windows.Forms.Label txtNoMathces;
-		public System.Windows.Forms.RichTextBox txtMatches;
+		//public System.Windows.Forms.RichTextBox txtMatches;
+		public NumberedTextBoxUC txtMatches;
 		private System.Windows.Forms.Label lblStats;
 		private System.Windows.Forms.CheckBox chkIsRegEx;
 	}
