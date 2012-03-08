@@ -139,7 +139,6 @@ namespace FindAndReplace.App
 			Console.WriteLine("====================================");
 		}
 
-
 		private static Assembly ResolveEventHandler(Object sender, ResolveEventArgs args)
 		{
 			String dllName = new AssemblyName(args.Name).Name + ".dll";
