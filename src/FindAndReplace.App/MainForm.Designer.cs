@@ -63,7 +63,6 @@
 			// 
 			// txtFind
 			// 
-			this.txtFind.CausesValidation = false;
 			this.txtFind.Location = new System.Drawing.Point(83, 93);
 			this.txtFind.Multiline = true;
 			this.txtFind.Name = "txtFind";
@@ -74,7 +73,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(34, 93);
+			this.label1.Location = new System.Drawing.Point(32, 93);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(30, 13);
 			this.label1.TabIndex = 5;
@@ -83,7 +82,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(34, 200);
+			this.label2.Location = new System.Drawing.Point(12, 200);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(50, 13);
 			this.label2.TabIndex = 10;
@@ -97,7 +96,6 @@
 			this.txtReplace.Name = "txtReplace";
 			this.txtReplace.Size = new System.Drawing.Size(539, 74);
 			this.txtReplace.TabIndex = 11;
-			this.txtReplace.Validating += new System.ComponentModel.CancelEventHandler(this.txtReplace_Validating);
 			// 
 			// btnReplace
 			// 
@@ -120,7 +118,6 @@
 			// 
 			// txtDir
 			// 
-			this.txtDir.CausesValidation = false;
 			this.txtDir.Location = new System.Drawing.Point(83, 19);
 			this.txtDir.Name = "txtDir";
 			this.txtDir.Size = new System.Drawing.Size(539, 20);
@@ -130,7 +127,7 @@
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(11, 67);
+			this.label5.Location = new System.Drawing.Point(7, 67);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(55, 13);
 			this.label5.TabIndex = 3;
@@ -138,7 +135,6 @@
 			// 
 			// txtFileMask
 			// 
-			this.txtFileMask.CausesValidation = false;
 			this.txtFileMask.Location = new System.Drawing.Point(83, 64);
 			this.txtFileMask.Name = "txtFileMask";
 			this.txtFileMask.Size = new System.Drawing.Size(274, 20);
@@ -316,7 +312,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(632, 338);
+			this.ClientSize = new System.Drawing.Size(649, 338);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatches);

@@ -42,7 +42,22 @@ namespace FindAndReplace
 			public MatchCollection Matches { get; set; }
 			public bool IsSuccess { get; set; }
 			public bool FailedToOpen { get; set; }
+			public bool IsBinaryFile { get; set; }
 			public string ErrorMessage { get; set; }
+
+			public bool IncludeInResultsList
+			{
+				get
+				{
+					if (IsSuccess && NumMatches > 0)
+						return true;
+
+					if (!IsSuccess && !String.IsNullOrEmpty(ErrorMessage))
+						return true;
+
+					return false;
+				}
+			}
 		}
 
 		public class FindResult
@@ -97,20 +112,28 @@ namespace FindAndReplace
 
 				if (!resultItem.FailedToOpen)
 				{
-					resultItem.Matches = GetMatches(fileContent);
-					resultItem.NumMatches = resultItem.Matches.Count;
+					if (!Utils.IsBinaryFile(fileContent))
+					{
+						resultItem.Matches = GetMatches(fileContent);
+						resultItem.NumMatches = resultItem.Matches.Count;
 
-					stats.TotalMatches += resultItem.Matches.Count;
+						stats.TotalMatches += resultItem.Matches.Count;
 
-					if (resultItem.Matches.Count > 0)
-						stats.FilesWithMatches++;
+						if (resultItem.Matches.Count > 0)
+							stats.FilesWithMatches++;
+						else
+							stats.FilesWithoutMatches++;
+					}
 					else
-						stats.FilesWithoutMatches++;
+					{
+						resultItem.IsSuccess = false;
+						stats.BinaryFiles++;
+					}
 				}
 
 
 				//Skip files that don't have matches
-				if (resultItem.NumMatches > 0 || !resultItem.IsSuccess)
+				if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
 					resultItems.Add(resultItem);
 				
 				OnFileProcessed(new FinderEventArgs(resultItem, stats));
@@ -121,6 +144,7 @@ namespace FindAndReplace
 
 			return new FindResult() {Items = resultItems, Stats = stats};
 		}
+
 
 		public event FileProcessedEventHandler FileProcessed;
 

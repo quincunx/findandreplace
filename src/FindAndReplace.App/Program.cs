@@ -122,6 +122,7 @@ namespace FindAndReplace.App
 			Console.WriteLine("");
 			Console.WriteLine("Files:");
 			Console.WriteLine("- Total: " + stats.TotalFiles);
+			Console.WriteLine("- Binary: " + stats.BinaryFiles + " (skipped)");
 			Console.WriteLine("- With Matches: " + stats.FilesWithMatches);
 			Console.WriteLine("- Without Matches: " + stats.FilesWithoutMatches);
 			Console.WriteLine("- Failed to Open: " + stats.FailedToOpen);
@@ -234,7 +235,7 @@ namespace FindAndReplace.App
 
 		private static void OnFinderFileProcessed(object sender, FinderEventArgs e)
 		{
-			if (!e.ResultItem.IsSuccess || e.ResultItem.NumMatches > 0)
+			if (e.ResultItem.IncludeInResultsList)
 				Program.PrintFinderResultRow(e.ResultItem);
 
 			if (e.Stats.ProcessedFiles == e.Stats.TotalFiles)
@@ -245,7 +246,7 @@ namespace FindAndReplace.App
 
 		private static void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
 		{
-			if (!e.ResultItem.IsSuccess || e.ResultItem.NumMatches > 0)
+			if (e.ResultItem.IncludeInResultsList)
 				Program.PrintReplacerResultRow(e.ResultItem);
 
 			if (e.Stats.ProcessedFiles == e.Stats.TotalFiles)

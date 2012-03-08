@@ -23,6 +23,9 @@ namespace FindAndReplace.App
 		[Option(null, "caseSensitive", HelpText = "Case Sensitive.")]
 		public bool IsCaseSensitive = false;
 
+		[Option(null, "useRegEx", HelpText = "Find text has Regular Expression.")]
+		public bool IsFindTextHasRegEx = false;
+
 		[Option(null, "dir", Required = true, HelpText = "Directory path.")]
 		public string Dir = String.Empty;
 
@@ -31,10 +34,6 @@ namespace FindAndReplace.App
 
 		[Option(null, "includeSubDirectories", HelpText = "Include files in SubDirectories.")]
 		public bool IncludeSubDirectories = false;
-
-		[Option(null, "useRegEx", HelpText = "Find text has Regular Expression.")]
-		public bool IsFindTextHasRegEx = false;
-
 
 		#endregion
 

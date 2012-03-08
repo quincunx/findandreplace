@@ -24,5 +24,14 @@ namespace FindAndReplace
 			string[] filesInDirectory = Directory.GetFiles(dir, fileMask, searchOption);
 			return filesInDirectory;
 		}
+
+		public static bool IsBinaryFile(string fileContent)
+		{
+			//http://stackoverflow.com/questions/910873/how-can-i-determine-if-a-file-is-binary-or-text-in-c
+			if (fileContent.Contains("\0\0\0\0"))
+				return true;
+
+			return false;
+		}
 	}
 }

@@ -40,23 +40,10 @@ namespace FindAndReplace.App
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
 			_isFindMode = true;
+
+			if (!ValidateForm())
+				return;
 			
-			txtDir.CausesValidation = true;
-			txtFileMask.CausesValidation = true;
-			txtFind.CausesValidation = true;
-			txtReplace.CausesValidation = false;
-
-			var isFormValid = true;
-			foreach (Control control in Controls)
-			{
-				control.Focus();
-
-				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
-				errorProvider1.SetError(control, "");
-			}
-
-			if (!isFormValid) return;
-
 			PrepareFinderGrid();
 
 			lblStats.Text = "";
@@ -135,7 +122,7 @@ namespace FindAndReplace.App
 		{
 			if (stats.TotalFiles != 0)
 			{
-				if (findResultItem.NumMatches > 0 || !findResultItem.IsSuccess)
+				if (findResultItem.IncludeInResultsList)
 				{
 					gvResults.Rows.Add();
 
@@ -314,26 +301,51 @@ namespace FindAndReplace.App
 			}
 		}
 
+		private bool ValidateForm()
+		{
+			var isFormValid = true;
+			Control firstInvalidControl = null;
+
+			foreach (Control control in Controls)
+			{
+				control.Focus();
+
+				if (!Validate() || errorProvider1.GetError(control) != "")
+				{
+					if (isFormValid)
+						firstInvalidControl = control;
+
+					isFormValid = false;
+				}
+				else
+				{
+					errorProvider1.SetError(control, "");
+				}
+			}
+
+			//Focus on first invalid control
+			if (firstInvalidControl != null)
+				firstInvalidControl.Focus();
+
+			return isFormValid;
+		}
 
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
 			_isFindMode = false;
 
-			txtDir.CausesValidation = true;
-			txtFileMask.CausesValidation = true;
-			txtFind.CausesValidation = true;
-			txtReplace.CausesValidation = true;
+			if (!ValidateForm())
+				return;
 
-			var isFormValid = true;
-			foreach (Control control in Controls)
+			if (String.IsNullOrEmpty(txtReplace.Text))
 			{
-				control.Focus();
-
-				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
-				else errorProvider1.SetError(control, "");
+				DialogResult dlgResult = MessageBox.Show(this, 
+														"Are you sure you would like to replace with an empty string", null,
+				                                         MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				if (dlgResult == DialogResult.No)
+					return;
 			}
 
-			if (!isFormValid) return;
 
 			var replacer = new Replacer();
 
@@ -397,7 +409,7 @@ namespace FindAndReplace.App
 		{
 			if (stats.TotalFiles > 0)
 			{
-				if (!replaceResultItem.IsSuccess || replaceResultItem.NumMatches > 0)
+				if (replaceResultItem.IncludeInResultsList)
 				{
 					gvResults.Rows.Add();
 
@@ -475,34 +487,22 @@ namespace FindAndReplace.App
 
 		private void btnGenReplaceCommandLine_Click(object sender, EventArgs e)
 		{
-			txtDir.CausesValidation = true;
-			txtFileMask.CausesValidation = true;
-			txtFind.CausesValidation = true;
-			txtReplace.CausesValidation = true;
-
-			var isFormValid = true;
-			foreach (Control control in Controls)
-			{
-				control.Focus();
-
-				if (!Validate() || errorProvider1.GetError(control) != "") isFormValid = false;
-				else errorProvider1.SetError(control, "");
-			}
-
-			if (!isFormValid) return;
+			if (!ValidateForm())
+				return;
 
 			ShowCommandLinePanel();
 			txtCommandLine.Clear();
 
-			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" {3} --find \"{4}\" --replace \"{5}\" {6} {7}",
+			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5} --find \"{6}\" --replace \"{7}\"",
 									 Application.ExecutablePath,
 									 txtDir.Text,
 									 txtFileMask.Text,
-									 chkIncludeSubDirectories.Checked ? "--includeSubDirectories" : "",
+									 chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
+									 chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
+									 chkIsRegEx.Checked ? " --useRegEx" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
-									 CommandLineUtils.EncodeText(txtReplace.Text),
-									 chkIsCaseSensitive.Checked ? "--caseSensitive" : "",
-									 chkIsRegEx.Checked ? "--useRegEx" : "");
+									 CommandLineUtils.EncodeText(txtReplace.Text)
+									 );
 
 			txtCommandLine.Text = s;
 		}
@@ -548,18 +548,6 @@ namespace FindAndReplace.App
 			errorProvider1.SetError(txtFind, "");
 		}
 
-		private void txtReplace_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			var validationResult = ValidationUtils.IsNotEmpty(txtReplace.Text, "Replace");
-
-			if (!validationResult.IsSuccess)
-			{
-				errorProvider1.SetError(txtReplace, validationResult.ErrorMessage);
-				return;
-			}
-
-			errorProvider1.SetError(txtReplace, "");
-		}
 
 		private int DetectMatchLine(string[] lines, int position)
 		{
@@ -750,6 +738,7 @@ namespace FindAndReplace.App
 			sb.AppendLine("Files:");
 			sb.AppendLine("- Total: " + stats.TotalFiles);
 			sb.AppendLine("- Processed: " + stats.ProcessedFiles);
+			sb.AppendLine("- Binary: " + stats.BinaryFiles + " (skipped)");
 			sb.AppendLine("- With Matches: " + stats.FilesWithMatches);
 			sb.AppendLine("- Without Matches: " + stats.FilesWithoutMatches);
 			sb.AppendLine("- Failed to Open: " + stats.FailedToOpen);

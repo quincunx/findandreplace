@@ -35,11 +35,26 @@ namespace FindAndReplace
 			public string FilePath { get; set; }
 			public string FileRelativePath { get; set; }
 			public int NumMatches { get; set; }
-			public bool IsSuccess { get; set; }
-			public string ErrorMessage { get; set; }
 			public MatchCollection Matches { get; set; }
+			public bool IsSuccess { get; set; }
+			public bool IsBinaryFile { get; set; }
 			public bool FailedToOpen { get; set; }
 			public bool FailedToWrite { get; set; }
+			public string ErrorMessage { get; set; }
+
+			public bool IncludeInResultsList
+			{
+				get
+				{
+					if (IsSuccess && NumMatches > 0)
+						return true;
+
+					if (!IsSuccess && !String.IsNullOrEmpty(ErrorMessage))
+						return true;
+
+					return false;
+				}
+			}
 		}
 
 		public class ReplaceResult
@@ -54,7 +69,7 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(Dir, "Dir");
 			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
-			Verify.Argument.IsNotEmpty(FindText, "ReplaceText");
+			Verify.Argument.IsNotNull(FindText, "ReplaceText");
 
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
@@ -83,17 +98,16 @@ namespace FindAndReplace
 				else
 				{
 					if (resultItem.FailedToOpen)
-					{
 						stats.FailedToOpen++;
-					}
+		
+					if (resultItem.IsBinaryFile)
+						stats.BinaryFiles++;
 
 					if (resultItem.FailedToWrite)
-					{
 						stats.FailedToWrite++;
-					}
 				}
 				
-				if (resultItem.NumMatches > 0 || !resultItem.IsSuccess)
+				if (resultItem.IncludeInResultsList)
 					resultItems.Add(resultItem);
 				
 				OnFileProcessed(new ReplacerEventArgs(resultItem, stats));
@@ -107,7 +121,7 @@ namespace FindAndReplace
 		
 		private ReplaceResultItem ReplaceTextInFile(string filePath)
 		{
-			string content = string.Empty;
+			string fileContent = string.Empty;
 
 			var resultItem = new ReplaceResultItem();
 			resultItem.IsSuccess = true;
@@ -119,7 +133,7 @@ namespace FindAndReplace
 			{
 				using (StreamReader sr = new StreamReader(filePath))
 				{
-					content = sr.ReadToEnd();
+					fileContent = sr.ReadToEnd();
 				}
 			}
 			catch (Exception exception)
@@ -132,6 +146,13 @@ namespace FindAndReplace
 			}
 			
 			
+			if (Utils.IsBinaryFile(fileContent))
+			{
+				resultItem.IsSuccess = false;
+				resultItem.IsBinaryFile = true;
+				return resultItem;
+			}
+
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
 			var finderText = FindTextHasRegEx ? FindText : Regex.Escape(FindText);
@@ -139,11 +160,11 @@ namespace FindAndReplace
 
 			if (!FindTextHasRegEx)
 			{
-				matches= Regex.Matches(content, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
+				matches= Regex.Matches(fileContent, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
 			}
 			else
 			{
-				matches = Regex.Matches(content, finderText, regexOptions);
+				matches = Regex.Matches(fileContent, finderText, regexOptions);
 			}
 
 			
@@ -154,7 +175,7 @@ namespace FindAndReplace
 			{
 				try
 				{
-					string newContent = Regex.Replace(content, finderText, ReplaceText, regexOptions);
+					string newContent = Regex.Replace(fileContent, finderText, ReplaceText, regexOptions);
 
 					using (var sw = new StreamWriter(filePath))
 					{

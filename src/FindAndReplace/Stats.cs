@@ -10,6 +10,8 @@ namespace FindAndReplace
 		public int TotalFiles { get; set; }
 
 		public int ProcessedFiles { get; set; }
+
+		public int BinaryFiles { get; set; }
 		
 		public int FilesWithMatches { get; set; }
 
