@@ -16,8 +16,8 @@ namespace FindAndReplace.App
 	public partial class MainForm : Form
 	{
 		public const int ExtraWidthWhenResults = 400;
-		public static List<string> RichTextBoxLinNumbers { get; set; }
-		public static int LineNumbersDigitCount { get; set; }
+		//public static List<string> RichTextBoxLinNumbers { get; set; }
+		//public static int LineNumbersDigitCount { get; set; }
 
 		private Finder _finder;
 		private Replacer _replacer;
@@ -32,8 +32,7 @@ namespace FindAndReplace.App
 		{
 			InitializeComponent();
 
-			RichTextBoxLinNumbers = new List<string>();
-
+			//RichTextBoxLinNumbers = new List<string>();
 
 			//txtMatches.richTextBox1.get
 		}
@@ -155,7 +154,7 @@ namespace FindAndReplace.App
 
 						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(content, findResultItem.LineNumbers.Select(ln=>ln.LineNumber).ToList());
 
-						PrepareLineNumbersForTooltip(findResultItem.LineNumbers, currentRow);
+						//PrepareLineNumbersForTooltip(findResultItem.LineNumbers, currentRow);
 					}
 					else
 					{
@@ -322,6 +321,7 @@ namespace FindAndReplace.App
 
 			return isFormValid;
 		}
+
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
 			_isFindMode = false;
@@ -418,8 +418,6 @@ namespace FindAndReplace.App
 
 					if (!replaceResultItem.FailedToOpen)
 					{
-						var linesToPreview = new List<int>();
-
 						string content = string.Empty;
 
 						using (var sr = new StreamReader(replaceResultItem.FilePath))
@@ -431,12 +429,12 @@ namespace FindAndReplace.App
 					//{
 					//    linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
 					//}
-
-						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, linesToPreview);
+						if (replaceResultItem.LineNumbers!=null)
+						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, replaceResultItem.LineNumbers.Select(ln => ln.LineNumber).ToList());
 					}
 					else
 					{
-						gvResults.Rows[currentRow].Cells[5].Value = replaceResultItem.ErrorMessage;
+						gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
 					}
 
 				}
@@ -539,7 +537,6 @@ namespace FindAndReplace.App
 			errorProvider1.SetError(txtFind, "");
 		}
 
-
 		private void gvResults_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
             if (e.RowIndex == -1)   //heading
@@ -551,42 +548,39 @@ namespace FindAndReplace.App
 				return;
 
 			ShowMatchesPreviewPanel();
-			GenerateLineNumbers(gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber + 1].Value.ToString());
+			//GenerateLineNumbers(gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber + 1].Value.ToString());
 			
 
 			//gvResults.Columns[4].Visible ? 5 : 3;
 
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
 
-			txtMatches.richTextBox1.SelectionLength = 0;
-			txtMatches.richTextBox1.Clear();
+			txtMatches.SelectionLength = 0;
+			txtMatches.Clear();
 
-			txtMatches.richTextBox1.Text = matchesPreviewText;
+			txtMatches.Text = matchesPreviewText;
 			//txtMatches.ReadOnly = true;
 
 			var font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
 
 			var findText = !_isFindMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
-			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatches.richTextBox1.Text, findText) : Regex.Matches(txtMatches.richTextBox1.Text, findText, RegexOptions.IgnoreCase);
+			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatches.Text, findText) : Regex.Matches(txtMatches.Text, findText, RegexOptions.IgnoreCase);
 
 			foreach (Match match in mathches)
 			{
-				txtMatches.richTextBox1.SelectionStart = match.Index;
+				txtMatches.SelectionStart = match.Index;
 
-				txtMatches.richTextBox1.SelectionLength = match.Length;
+				txtMatches.SelectionLength = match.Length;
 
-				txtMatches.richTextBox1.SelectionFont = font;
+				txtMatches.SelectionFont = font;
 
-				txtMatches.richTextBox1.SelectionColor = Color.CadetBlue;
+				txtMatches.SelectionColor = Color.CadetBlue;
 			}
 
-			txtMatches.richTextBox1.SelectionLength = 0;
+			txtMatches.SelectionLength = 0;
 
-			txtMatches.updateNumberLabel();
-
-		
-
+			//UpdateLineNumbersLabel();
 		}
 
 		private string GenerateMatchesPreviewText(string content, List<int> rowNumbers)
@@ -688,6 +682,7 @@ namespace FindAndReplace.App
 			lblStats.Text = sb.ToString();
 		}
 
+		/*
 		private void GenerateLineNumbers(string lines)
 		{
 			RichTextBoxLinNumbers.Clear();
@@ -710,8 +705,9 @@ namespace FindAndReplace.App
 
 			LineNumbersDigitCount = (int) Math.Ceiling(Math.Log10(prevLineNumber));
 		}
-
-		private void PrepareLineNumbersForTooltip(List<Finder.TooltipLineNumber> lineNumbers, int gridRowNumber)
+		*/
+		/*
+		private void PrepareLineNumbersForTooltip(List<MathLineNumber> lineNumbers, int gridRowNumber)
 		{
 			StringBuilder sb = new StringBuilder();
 			foreach (var line in lineNumbers)
@@ -720,14 +716,75 @@ namespace FindAndReplace.App
 				sb.Append(String.Format("{0} ", lineNumber));
 			}
 
-			
-			
 			gvResults.Rows[gridRowNumber].Cells[gvResults.Columns.Count-1].Value = sb.ToString();
-	}
+		}
+		*/
+		/*
+		public void UpdateLineNumbersLabel()
+		{
+				var lineNumbers = MainForm.RichTextBoxLinNumbers;
 
-	public class GVResultEventArgs : EventArgs
-	{
-		public int cellRow { get; set; }
+				//finally, renumber label
+				numberLabel.Text = "";
+				string format = "D" + MainForm.LineNumbersDigitCount;
+
+				var highLightFont = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+				var regularFont = new Font("Microsoft Sans Serif", 8, FontStyle.Regular);
+				numberLabel.Font = regularFont;
+
+				for (int i = 0; i < lineNumbers.Count(); i++)
+				{
+					int lineNumber;
+
+					var lineNumberStr = lineNumbers[i];
+					if (lineNumberStr != "...")
+					{
+						var splitLineNumber = lineNumberStr.Split('-');
+
+						if (Int32.TryParse(splitLineNumber[0], out lineNumber))
+						{
+							numberLabel.Text += lineNumber.ToString(format) + "\n";
+						}
+
+					}
+					else numberLabel.Text += lineNumbers[i] + "\n";
+				}
+
+				//highliting
+				for (int i = 0; i < lineNumbers.Count(); i++)
+				{
+					int lineNumber;
+
+					var lineNumberStr = lineNumbers[i];
+					if (lineNumberStr != "...")
+					{
+						var splitLineNumber = lineNumberStr.Split('-');
+
+						if (Int32.TryParse(splitLineNumber[0], out lineNumber))
+						{
+							if (splitLineNumber[1] == "True")
+							{
+
+								var selectionStart = numberLabel.GetFirstCharIndexFromLine(i);
+
+								numberLabel.Select(selectionStart, MainForm.LineNumbersDigitCount);
+
+								numberLabel.SelectionFont = highLightFont;
+
+								numberLabel.SelectionColor = Color.Black;
+							}
+						}
+					}
+				}
+
+			
+
+		}
+		*/
+
+		public class GVResultEventArgs : EventArgs
+		{
+			public int cellRow { get; set; }
+		}
 	}
-}
 }

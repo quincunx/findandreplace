@@ -41,6 +41,7 @@ namespace FindAndReplace
 			public bool FailedToOpen { get; set; }
 			public bool FailedToWrite { get; set; }
 			public string ErrorMessage { get; set; }
+			public List<MathLineNumber> LineNumbers { get; set; }
 
 			public bool IncludeInResultsList
 			{
@@ -181,6 +182,8 @@ namespace FindAndReplace
 					{
 						sw.Write(newContent);
 					}
+
+					resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, matches);
 				}
 				catch (Exception ex)
 				{
@@ -189,7 +192,6 @@ namespace FindAndReplace
 					resultItem.ErrorMessage = ex.Message;
 				}
 			}
-			
 
 			return resultItem;
 		}
