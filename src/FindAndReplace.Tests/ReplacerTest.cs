@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace FindAndReplace.Tests
 {
 	[TestFixture]
-	public class ReplacerTest:TestBase
+	public class ReplacerTest : TestBase
 	{
 		[Test]
 		public void Replace_WhenSearchTextIsLicenseNoRegExpr_ReplacesTextInOne()
