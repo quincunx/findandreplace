@@ -51,7 +51,7 @@
 			this.lblStatus = new System.Windows.Forms.Label();
 			this.pnlGridResults = new System.Windows.Forms.Panel();
 			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-			this.txtNoMathces = new System.Windows.Forms.Label();
+			this.txtNoMatches = new System.Windows.Forms.Label();
 			this.txtMatches = new System.Windows.Forms.RichTextBox();
 			this.lblStats = new System.Windows.Forms.Label();
 			this.chkIsRegEx = new System.Windows.Forms.CheckBox();
@@ -162,9 +162,9 @@
 			this.chkIsCaseSensitive.AutoSize = true;
 			this.chkIsCaseSensitive.Location = new System.Drawing.Point(83, 173);
 			this.chkIsCaseSensitive.Name = "chkIsCaseSensitive";
-			this.chkIsCaseSensitive.Size = new System.Drawing.Size(96, 17);
+			this.chkIsCaseSensitive.Size = new System.Drawing.Size(94, 17);
 			this.chkIsCaseSensitive.TabIndex = 13;
-			this.chkIsCaseSensitive.Text = "Case Sensitive";
+			this.chkIsCaseSensitive.Text = "Case sensitive";
 			this.chkIsCaseSensitive.UseVisualStyleBackColor = true;
 			// 
 			// chkIncludeSubDirectories
@@ -174,9 +174,9 @@
 			this.chkIncludeSubDirectories.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.chkIncludeSubDirectories.Location = new System.Drawing.Point(83, 41);
 			this.chkIncludeSubDirectories.Name = "chkIncludeSubDirectories";
-			this.chkIncludeSubDirectories.Size = new System.Drawing.Size(133, 17);
+			this.chkIncludeSubDirectories.Size = new System.Drawing.Size(132, 17);
 			this.chkIncludeSubDirectories.TabIndex = 13;
-			this.chkIncludeSubDirectories.Text = "Include SubDirectories";
+			this.chkIncludeSubDirectories.Text = "Include sub-directories";
 			this.chkIncludeSubDirectories.UseVisualStyleBackColor = true;
 			// 
 			// btnGenReplaceCommandLine
@@ -243,15 +243,15 @@
 			// 
 			// progressBar
 			// 
-			this.progressBar.Location = new System.Drawing.Point(68, 170);
+			this.progressBar.Location = new System.Drawing.Point(77, 170);
 			this.progressBar.Name = "progressBar";
-			this.progressBar.Size = new System.Drawing.Size(939, 23);
+			this.progressBar.Size = new System.Drawing.Size(930, 23);
 			this.progressBar.TabIndex = 20;
 			// 
 			// lblStatus
 			// 
 			this.lblStatus.AutoSize = true;
-			this.lblStatus.Location = new System.Drawing.Point(70, 154);
+			this.lblStatus.Location = new System.Drawing.Point(74, 154);
 			this.lblStatus.Name = "lblStatus";
 			this.lblStatus.Size = new System.Drawing.Size(16, 13);
 			this.lblStatus.TabIndex = 21;
@@ -274,23 +274,23 @@
 			this.errorProvider1.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
 			this.errorProvider1.ContainerControl = this;
 			// 
-			// txtNoMathces
+			// txtNoMatches
 			// 
-			this.txtNoMathces.AutoSize = true;
-			this.txtNoMathces.Location = new System.Drawing.Point(80, 317);
-			this.txtNoMathces.Name = "txtNoMathces";
-			this.txtNoMathces.Size = new System.Drawing.Size(97, 13);
-			this.txtNoMathces.TabIndex = 23;
-			this.txtNoMathces.Text = " No matches found";
-			this.txtNoMathces.Visible = false;
+			this.txtNoMatches.AutoSize = true;
+			this.txtNoMatches.Location = new System.Drawing.Point(80, 317);
+			this.txtNoMatches.Name = "txtNoMatches";
+			this.txtNoMatches.Size = new System.Drawing.Size(97, 13);
+			this.txtNoMatches.TabIndex = 23;
+			this.txtNoMatches.Text = " No matches found";
+			this.txtNoMatches.Visible = false;
 			// 
 			// txtMatches
 			// 
 			this.txtMatches.BackColor = System.Drawing.SystemColors.Info;
-			this.txtMatches.Location = new System.Drawing.Point(74, 563);
+			this.txtMatches.Location = new System.Drawing.Point(83, 563);
 			this.txtMatches.Name = "txtMatches";
 			this.txtMatches.ReadOnly = true;
-			this.txtMatches.Size = new System.Drawing.Size(882, 166);
+			this.txtMatches.Size = new System.Drawing.Size(930, 166);
 			this.txtMatches.TabIndex = 24;
 			this.txtMatches.Text = "";
 			this.txtMatches.Visible = false;
@@ -317,11 +317,11 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1054, 535);
+			this.ClientSize = new System.Drawing.Size(632, 342);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatches);
-			this.Controls.Add(this.txtNoMathces);
+			this.Controls.Add(this.txtNoMatches);
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);
 			this.Controls.Add(this.chkIncludeSubDirectories);
@@ -376,7 +376,7 @@
 		private System.Windows.Forms.Label lblStatus;
 		private System.Windows.Forms.Panel pnlGridResults;
 		private System.Windows.Forms.ErrorProvider errorProvider1;
-		private System.Windows.Forms.Label txtNoMathces;
+		private System.Windows.Forms.Label txtNoMatches;
 		public System.Windows.Forms.RichTextBox txtMatches;
 		private System.Windows.Forms.Label lblStats;
 		private System.Windows.Forms.CheckBox chkIsRegEx;

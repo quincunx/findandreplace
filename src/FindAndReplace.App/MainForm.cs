@@ -15,10 +15,12 @@ namespace FindAndReplace.App
 
 	public partial class MainForm : Form
 	{
+		public const int ExtraWidthWhenResults = 400;
+
 		private Finder _finder;
 		private Replacer _replacer;
 		private Thread _currentThread;
-		private bool _isFindeMode;
+		private bool _isFindMode;
 
 		private delegate void SetFindResultCallback(Finder.FindResultItem resultItem, Stats stats);
 		
@@ -37,7 +39,7 @@ namespace FindAndReplace.App
 
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
-			_isFindeMode = true;
+			_isFindMode = true;
 			
 			txtDir.CausesValidation = true;
 			txtFileMask.CausesValidation = true;
@@ -93,13 +95,9 @@ namespace FindAndReplace.App
 			
 			gvResults.Columns[4].Visible = false;
 
-			progressBar.Value = 0;
+			HideMatchesPreviewPanel();
 
-			if (txtMatches.Visible)
-			{
-				txtMatches.Visible = false;
-				this.Height -= (txtMatches.Height + 50);
-			}
+			progressBar.Value = 0;
 		}
 
 		private void AddResultsColumn(string dataPropertyName, string headerText, int width)
@@ -170,6 +168,10 @@ namespace FindAndReplace.App
 
 						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(content, linesToPreview);
 					}
+					else
+					{
+						gvResults.Rows[currentRow].Cells[4].Value = findResultItem.ErrorMessage;
+					}
 
 					//StringBuilder sb=new StringBuilder();
 					//foreach (var line in linesToPreview)
@@ -190,7 +192,7 @@ namespace FindAndReplace.App
 			{
 				HideResultPanel();
 
-				txtNoMathces.Visible = true;
+				txtNoMatches.Visible = true;
 			}
 
 			//When last file - enable buttons back
@@ -234,7 +236,10 @@ namespace FindAndReplace.App
 		{
 			DisableButtons();
 
-			txtNoMathces.Visible = false;
+			txtNoMatches.Visible = false;
+			
+			HideCommandLinePanel();
+			HideMatchesPreviewPanel();
 
 			if (!pnlGridResults.Visible)
 			{
@@ -247,6 +252,7 @@ namespace FindAndReplace.App
 				}
 
 				this.Height += pnlGridResults.Height + 10;
+				this.Width += ExtraWidthWhenResults;
 			}
 		}
 
@@ -257,12 +263,59 @@ namespace FindAndReplace.App
 				pnlGridResults.Visible = false;
 
 				this.Height -= pnlGridResults.Height + 10;
+				this.Width -= ExtraWidthWhenResults;
 			}
 		}
 
+		
+
+		private void ShowCommandLinePanel()
+		{
+			HideResultPanel();
+			HideMatchesPreviewPanel();
+
+			if (!pnlCommandLine.Visible)
+			{
+				pnlCommandLine.Visible = true;
+				this.Height += pnlCommandLine.Height + 10;
+				this.Width += ExtraWidthWhenResults;
+			}
+		}
+
+
+		private void HideCommandLinePanel()
+		{
+			if (pnlCommandLine.Visible)
+			{
+				pnlCommandLine.Visible = false;
+				this.Height -= pnlCommandLine.Height + 10;
+				this.Width -= ExtraWidthWhenResults;
+			}
+		}
+
+		private void ShowMatchesPreviewPanel()
+		{
+			if (!txtMatches.Visible)
+			{
+				txtMatches.Visible = true;
+				this.Height += txtMatches.Height + 50;
+			}
+
+		}
+
+		private void HideMatchesPreviewPanel()
+		{
+			if (txtMatches.Visible)
+			{
+				txtMatches.Visible = false;
+				this.Height -= (txtMatches.Height + 50);
+			}
+		}
+
+
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
-			_isFindeMode = false;
+			_isFindMode = false;
 
 			txtDir.CausesValidation = true;
 			txtFileMask.CausesValidation = true;
@@ -328,15 +381,11 @@ namespace FindAndReplace.App
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns[5].Visible = false;
 
-			if (txtMatches.Visible)
-			{
-				txtMatches.Visible = false;
-				this.Height -= (txtMatches.Height + 50);
-			}
-
+			HideMatchesPreviewPanel();
 			progressBar.Value = 0;
 		}
 
+		
 		private void DoReplaceWork()
 		{
 			_replacer.Replace();
@@ -346,7 +395,7 @@ namespace FindAndReplace.App
 		{
 			if (stats.TotalFiles > 0)
 			{
-				if (replaceResultItem.NumMatches > 0)
+				if (!replaceResultItem.IsSuccess || replaceResultItem.NumMatches > 0)
 				{
 					gvResults.Rows.Add();
 
@@ -360,21 +409,29 @@ namespace FindAndReplace.App
 					
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
-					var linesToPreview = new List<int>();
-
-					string content = string.Empty;
-
-					using (var sr = new StreamReader(replaceResultItem.FilePath))
+					if (!replaceResultItem.FailedToOpen)
 					{
-						content = sr.ReadToEnd();
+						var linesToPreview = new List<int>();
+
+						string content = string.Empty;
+
+						using (var sr = new StreamReader(replaceResultItem.FilePath))
+						{
+							content = sr.ReadToEnd();
+						}
+
+						foreach (Match match in replaceResultItem.Matches)
+						{
+							linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
+						}
+
+						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, linesToPreview);
 					}
-					
-					foreach (Match match in replaceResultItem.Matches)
+					else
 					{
-						linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
+						gvResults.Rows[currentRow].Cells[5].Value = replaceResultItem.ErrorMessage;
 					}
 
-					gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, linesToPreview);
 				}
 
 				progressBar.Maximum = stats.TotalFiles;
@@ -386,7 +443,7 @@ namespace FindAndReplace.App
 			{
 				HideResultPanel();
 
-				txtNoMathces.Visible = true;
+				txtNoMatches.Visible = true;
 			}
 			//When last file - enable buttons back
 			if (stats.ProcessedFiles == stats.TotalFiles)
@@ -446,27 +503,7 @@ namespace FindAndReplace.App
 			txtCommandLine.Text = s;
 		}
 
-		private void ShowCommandLinePanel()
-		{
-			if (!pnlCommandLine.Visible)
-			{
-				pnlCommandLine.Visible = true;
-
-				if (pnlGridResults.Visible)
-				{
-					pnlGridResults.Visible = false;
-					this.Height -= pnlGridResults.Height + 10;
-				}
-
-				this.Height += pnlCommandLine.Height + 10;
-			}
-
-			if (txtMatches.Visible)
-			{
-				txtMatches.Visible = false;
-				this.Height -= (txtMatches.Height + 50);
-			}
-		}
+		
 
 		private void txtDir_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
@@ -540,16 +577,12 @@ namespace FindAndReplace.App
             if (e.RowIndex == -1)   //heading
                 return;
 
-			var matchesPreviewColNumber = 5;
+			int matchesPreviewColNumber = _isFindMode ? 4 : 5;
 
 			if (gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value == null)
 				return;
 
-			if (!txtMatches.Visible)
-			{
-				txtMatches.Visible = true;
-				this.Height += txtMatches.Height + 50;
-			}
+			ShowMatchesPreviewPanel();
 
 			//gvResults.Columns[4].Visible ? 5 : 3;
 
@@ -563,7 +596,7 @@ namespace FindAndReplace.App
 
 			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
 
-			var findText = !_isFindeMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
+			var findText = !_isFindMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
 			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatches.Text, findText) : Regex.Matches(txtMatches.Text, findText, RegexOptions.IgnoreCase);
 
@@ -610,6 +643,8 @@ namespace FindAndReplace.App
 			//    prevLineIndex = lineNumbs[i];
 			//}
 		}
+
+		
 
 		private List<int> GetLineNumbersForMatchesPreview(string content, Match match)
 		{
