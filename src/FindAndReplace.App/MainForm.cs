@@ -576,7 +576,7 @@ namespace FindAndReplace.App
 			txtMatches.richTextBox1.Text = matchesPreviewText;
 			//txtMatches.ReadOnly = true;
 
-			var font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
+			var font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
 
 			var findText = !_isFindMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
