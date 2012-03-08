@@ -40,7 +40,7 @@ namespace FindAndReplace.App
 			if (!Directory.Exists(dir))
 			{
 				result.IsSuccess = false;
-				result.ErrorMessage = "Dir not exist";
+				result.ErrorMessage = "Dir does not exist";
 				return result;
 			}
 
