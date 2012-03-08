@@ -44,7 +44,7 @@ namespace NumberedTextBox
 				numberLabel.Text = "";
 				string format = "D" + MainForm.LineNumbersDigitCount;
 
-				var highLightFont = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
+				var highLightFont = new Font("Microsoft Sans Serif", 10, FontStyle.Regular);
 				var regularFont = new Font("Microsoft Sans Serif", 8, FontStyle.Regular);
 				numberLabel.Font = regularFont;
 
@@ -89,7 +89,7 @@ namespace NumberedTextBox
 
 								numberLabel.SelectionFont = highLightFont;
 
-								numberLabel.SelectionColor = Color.CadetBlue;
+								numberLabel.SelectionColor = Color.Black;
 							}
 						}
 					}
