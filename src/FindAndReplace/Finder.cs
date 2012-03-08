@@ -44,7 +44,8 @@ namespace FindAndReplace
 			public bool FailedToOpen { get; set; }
 			public bool IsBinaryFile { get; set; }
 			public string ErrorMessage { get; set; }
-
+			public List<TooltipLineNumber> LineNumbers { get; set; }
+			
 			public bool IncludeInResultsList
 			{
 				get
@@ -64,6 +65,13 @@ namespace FindAndReplace
 		{
 			public List<FindResultItem> Items { get; set; }
 			public Stats Stats { get; set; }
+		}
+
+		public class TooltipLineNumber
+		{
+			public int LineNumber { get; set; }
+
+			public bool HasMatch { get; set; }
 		}
 
 		public FindResult Find()
@@ -98,7 +106,6 @@ namespace FindAndReplace
 					{
 						fileContent = sr.ReadToEnd();
 					}
-
 				}
 				catch (Exception exception)
 				{
@@ -115,6 +122,8 @@ namespace FindAndReplace
 					if (!Utils.IsBinaryFile(fileContent))
 					{
 						resultItem.Matches = GetMatches(fileContent);
+					resultItem.LineNumbers = GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
+
 						resultItem.NumMatches = resultItem.Matches.Count;
 
 						stats.TotalMatches += resultItem.Matches.Count;
@@ -162,6 +171,73 @@ namespace FindAndReplace
 			var exp = new Regex(FindText, Utils.GetRegExOptions(IsCaseSensitive));
 
 			return exp.Matches(fileContent);
+		}
+
+		private List<TooltipLineNumber> GetLineNumbersForMatchesPreview(string filePath, MatchCollection matches)
+		{
+			string content = string.Empty;
+
+			using (var sr = new StreamReader(filePath))
+			{
+				content = sr.ReadToEnd();
+			}
+			
+			var separator = Environment.NewLine;
+			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
+
+			var result = new List<TooltipLineNumber>();
+			var temp = new List<TooltipLineNumber>();
+
+			foreach (Match match in matches)
+			{
+				var lineIndexStart = DetectMatchLine(lines.ToArray(), match.Index);
+				var lineIndexEnd = DetectMatchLine(lines.ToArray(), match.Index + match.Length);
+
+				for (int i = lineIndexStart - 2; i <= lineIndexEnd + 2; i++)
+				{
+					if (i >= 0 && i < lines.Count())
+					{
+						var lineNumber = new TooltipLineNumber();
+						lineNumber.LineNumber = i;
+						lineNumber.HasMatch = (i >= lineIndexStart && i <= lineIndexEnd) ? true : false;
+						temp.Add(lineNumber);
+					}
+				}
+			}
+
+			result.AddRange(temp.Where(ln=>ln.HasMatch).Distinct(new LineNumberComparer()));
+
+			result.AddRange(temp.Where(ln=>!ln.HasMatch && !result.Select(l=>l.LineNumber).Contains(ln.LineNumber)).Distinct(new LineNumberComparer()));
+
+			return result.OrderBy(ln=>ln.LineNumber).ToList();
+		}
+
+		private int DetectMatchLine(string[] lines, int position)
+		{
+			var separatorLength = 2;
+			int i = 0;
+			int charsCount = lines[0].Length + separatorLength;
+
+			while (charsCount <= position)
+			{
+				i++;
+				charsCount += lines[i].Length + separatorLength;
+			}
+
+			return i;
+		}
+	}
+
+	public class LineNumberComparer : IEqualityComparer<Finder.TooltipLineNumber>
+	{
+		public bool Equals(Finder.TooltipLineNumber x, Finder.TooltipLineNumber y)
+		{
+			return x.LineNumber == y.LineNumber;
+		}
+
+		public int GetHashCode(Finder.TooltipLineNumber obj)
+		{
+			return obj.LineNumber.GetHashCode();
 		}
 	}
 }
