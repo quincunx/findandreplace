@@ -14,7 +14,7 @@ namespace FindAndReplace.Tests
 			replacer.Dir = _tempDir;
 			replacer.FileMask = "*.*";
 			replacer.FindText = "license";
-			replacer.ReplaceText = "aggrement";
+			replacer.ReplaceText = "agreement";
 
 			var resultItems = replacer.Replace().ResultItems;
 
@@ -46,7 +46,7 @@ namespace FindAndReplace.Tests
 			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
+				Assert.Fail("Can't find test files");
 
 			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 			Assert.AreEqual(2, matchedResultItems.Count);
@@ -107,7 +107,7 @@ namespace FindAndReplace.Tests
 			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
+				Assert.Fail("Can't find test files");
 
 			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
@@ -137,7 +137,7 @@ namespace FindAndReplace.Tests
 			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
+				Assert.Fail("Can't find test files");
 
 			Assert.AreEqual(1, resultItems.Count);
 			Assert.AreEqual("test1.test", resultItems[0].FileName);
@@ -163,7 +163,7 @@ namespace FindAndReplace.Tests
 			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
+				Assert.Fail("Can't find test files");
 
 			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
@@ -200,7 +200,7 @@ namespace FindAndReplace.Tests
 			var resultItems = replacer.Replace().ResultItems;
 
 			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
+				Assert.Fail("Can't find test files");
 
 			Assert.AreEqual(1, resultItems.Count);
 			Assert.AreEqual("test2.test", resultItems[0].FileName);
@@ -208,7 +208,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Replace_WhenFileIsReadonly_NoRepacesText()
+		public void Replace_WhenFileIsReadonly_CanNotRepacesText()
 		{
 			Replacer replacer = new Replacer();
 
@@ -220,10 +220,11 @@ namespace FindAndReplace.Tests
 			var resultItems = replacer.Replace().ResultItems.Where(r=>!r.IsSuccess).ToList();
 
 			if (resultItems == null || resultItems.Count == 0)
-				Assert.Fail("Cant find test files");
+				Assert.Fail("Can't find test files");
 
 			Assert.AreEqual(1, resultItems.Count);
 			Assert.AreEqual("test3.test", resultItems[0].FileName);
+			Assert.IsTrue(resultItems[0].FailedToWrite);
 			Assert.IsNotEmpty(resultItems[0].ErrorMessage);
 		}
 	}
