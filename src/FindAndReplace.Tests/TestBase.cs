@@ -8,7 +8,7 @@ using System.IO;
 namespace FindAndReplace.Tests
 {
 	[TestFixture]
-	public class TestBase
+	public abstract class TestBase
 	{
 		protected string _tempDir;
 

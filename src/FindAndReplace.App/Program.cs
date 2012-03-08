@@ -77,18 +77,8 @@ namespace FindAndReplace.App
 
 			}
 		}
-
-		public static void PrintFinderResult(List<Finder.FindResultItem> resultItems)
-		{
-			Console.WriteLine();
-			foreach (var item in resultItems)
-			{
-				PrintFinderResultRow(item);
-			}
-
-		}
-
-		static void PrintFinderResultRow(Finder.FindResultItem item)
+		
+		public static void PrintFinderResultRow(Finder.FindResultItem item)
 		{
 			PrintNameValuePair("File", item.FileRelativePath);
 				
@@ -101,17 +91,7 @@ namespace FindAndReplace.App
 
 		}
 
-		public static void PrintReplacerResult(List<Replacer.ReplaceResultItem> resultItems)
-		{
-			Console.WriteLine();
-
-			foreach (var item in resultItems)
-			{
-				PrintReplacerResultRow(item);
-			}
-		}
-
-		static void PrintReplacerResultRow(Replacer.ReplaceResultItem item)
+		public static void PrintReplacerResultRow(Replacer.ReplaceResultItem item)
 		{
 			PrintNameValuePair("File", item.FileRelativePath);
 				
@@ -196,21 +176,19 @@ namespace FindAndReplace.App
 			var validationResultList = new List<ValidationResult>();
 
 			validationResultList.Add(ValidationUtils.IsDirValid(options.Dir, "dir"));
-
 			validationResultList.Add(ValidationUtils.IsNotEmpty(options.FileMask, "fileMask"));
-
 			validationResultList.Add(ValidationUtils.IsNotEmpty(options.FindText, "find"));
 
 			if (!String.IsNullOrEmpty(options.ReplaceText))
-			{
 				validationResultList.Add(ValidationUtils.IsNotEmpty(options.ReplaceText, "replace"));
-			}
-			if (validationResultList.Any(vr=>!vr.IsSuccess))
+
+			if (validationResultList.Any(vr => !vr.IsSuccess))
 			{
 				Console.WriteLine("");
 				foreach (var validationResult in validationResultList)
 				{
-					if (!validationResult.IsSuccess) Console.WriteLine(String.Format("{0}: {1}", validationResult.FieldName, validationResult.ErrorMessage));
+					if (!validationResult.IsSuccess)
+						Console.WriteLine(String.Format("{0}: {1}", validationResult.FieldName, validationResult.ErrorMessage));
 				}
 				Console.WriteLine("");
 			}
@@ -227,11 +205,9 @@ namespace FindAndReplace.App
 					replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
 					replacer.IsCaseSensitive = options.IsCaseSensitive;
 					replacer.FindTextHasRegEx = options.IsFindTextHasRegEx;
+					replacer.FileProcessed += OnReplacerFileProcessed;
 
-					var result = replacer.Replace();
-					Program.PrintReplacerResult(result.ResultItems);
-
-					Program.PrintStatistics(result.Stats, true);
+					replacer.Replace();
 				}
 				else
 				{
@@ -243,17 +219,38 @@ namespace FindAndReplace.App
 					finder.FindText = CommandLineUtils.DecodeText(options.FindText);
 					finder.IsCaseSensitive = options.IsCaseSensitive;
 					finder.FindTextHasRegEx = options.IsFindTextHasRegEx;
+					finder.FileProcessed += OnFinderFileProcessed;
+					finder.Find();
 
-					var result = finder.Find();
-					Program.PrintFinderResult(result.Items);
-
-					Program.PrintStatistics(result.Stats);
 				}
 			}
 
 			#if (DEBUG)
 				Console.ReadLine();
 			#endif
+		}
+
+		
+
+		private static void OnFinderFileProcessed(object sender, FinderEventArgs e)
+		{
+			if (!e.ResultItem.IsSuccess || e.ResultItem.NumMatches > 0)
+				Program.PrintFinderResultRow(e.ResultItem);
+
+			if (e.Stats.ProcessedFiles == e.Stats.TotalFiles)
+				Program.PrintStatistics(e.Stats);
+			
+		}
+
+
+		private static void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
+		{
+			if (!e.ResultItem.IsSuccess || e.ResultItem.NumMatches > 0)
+				Program.PrintReplacerResultRow(e.ResultItem);
+
+			if (e.Stats.ProcessedFiles == e.Stats.TotalFiles)
+				Program.PrintStatistics(e.Stats, true);
+
 		}
 	}
 }
