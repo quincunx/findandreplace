@@ -5,21 +5,21 @@ using System.Text;
 
 namespace FindAndReplace
 {
-	public class MathLineNumber
+	public class MatchPreviewLineNumber
 	{
 		public int LineNumber { get; set; }
 
 		public bool HasMatch { get; set; }
 	}
 
-	public class LineNumberComparer : IEqualityComparer<MathLineNumber>
+	public class LineNumberComparer : IEqualityComparer<MatchPreviewLineNumber>
 	{
-		public bool Equals(MathLineNumber x, MathLineNumber y)
+		public bool Equals(MatchPreviewLineNumber x, MatchPreviewLineNumber y)
 		{
 			return x.LineNumber == y.LineNumber;
 		}
 
-		public int GetHashCode(MathLineNumber obj)
+		public int GetHashCode(MatchPreviewLineNumber obj)
 		{
 			return obj.LineNumber.GetHashCode();
 		}

@@ -80,9 +80,9 @@ namespace FindAndReplace.App
 			gvResults.Columns.Clear();
 
 			AddResultsColumn("Filename", "Filename", 250);
-			AddResultsColumn("Path", "Path", 450);
+			AddResultsColumn("Path", "Path", 400);
 			AddResultsColumn("NumMatches", "Matches", 50);
-			AddResultsColumn("ErrorMessage", "Error", 150);
+			AddResultsColumn("ErrorMessage", "Error", 200);
 
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns.Add("TooltipLineNums", "");
@@ -276,20 +276,20 @@ namespace FindAndReplace.App
 
 		private void ShowMatchesPreviewPanel()
 		{
-			if (!txtMatches.Visible)
+			if (!txtMatchesPreview.Visible)
 			{
-				txtMatches.Visible = true;
-				this.Height += txtMatches.Height + 50;
+				txtMatchesPreview.Visible = true;
+				this.Height += txtMatchesPreview.Height + 50;
 			}
 
 		}
 
 		private void HideMatchesPreviewPanel()
 		{
-			if (txtMatches.Visible)
+			if (txtMatchesPreview.Visible)
 			{
-				txtMatches.Visible = false;
-				this.Height -= (txtMatches.Height + 50);
+				txtMatchesPreview.Visible = false;
+				this.Height -= (txtMatchesPreview.Height + 50);
 			}
 		}
 
@@ -356,7 +356,7 @@ namespace FindAndReplace.App
 			lblStats.Text = "";
 
 			PrepareReplacerGrid();
-			txtMatches.Visible = false;
+			txtMatchesPreview.Visible = false;
 
 			CreateListener(replacer);
 
@@ -384,8 +384,8 @@ namespace FindAndReplace.App
 			AddResultsColumn("IsSuccess", "Replaced", 60);
 			AddResultsColumn("ErrorMessage", "Error", 150);
 
-			gvResults.Columns.Add("Tooltip", "");
-			gvResults.Columns.Add("TooltipLineNums", "");
+			gvResults.Columns.Add("MatchesPreview", "");
+			gvResults.Columns.Add("MatchesPreviewLineNums", "");
 			gvResults.Columns[5].Visible = false;
 			gvResults.Columns[6].Visible = false;
 
@@ -555,30 +555,30 @@ namespace FindAndReplace.App
 
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
 
-			txtMatches.SelectionLength = 0;
-			txtMatches.Clear();
+			txtMatchesPreview.SelectionLength = 0;
+			txtMatchesPreview.Clear();
 
-			txtMatches.Text = matchesPreviewText;
+			txtMatchesPreview.Text = matchesPreviewText;
 			//txtMatches.ReadOnly = true;
 
 			var font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
 
 			var findText = !_isFindMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
-			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatches.Text, findText) : Regex.Matches(txtMatches.Text, findText, RegexOptions.IgnoreCase);
+			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatchesPreview.Text, findText) : Regex.Matches(txtMatchesPreview.Text, findText, RegexOptions.IgnoreCase);
 
 			foreach (Match match in mathches)
 			{
-				txtMatches.SelectionStart = match.Index;
+				txtMatchesPreview.SelectionStart = match.Index;
 
-				txtMatches.SelectionLength = match.Length;
+				txtMatchesPreview.SelectionLength = match.Length;
 
-				txtMatches.SelectionFont = font;
+				txtMatchesPreview.SelectionFont = font;
 
-				txtMatches.SelectionColor = Color.CadetBlue;
+				txtMatchesPreview.SelectionColor = Color.CadetBlue;
 			}
 
-			txtMatches.SelectionLength = 0;
+			txtMatchesPreview.SelectionLength = 0;
 
 			//UpdateLineNumbersLabel();
 		}

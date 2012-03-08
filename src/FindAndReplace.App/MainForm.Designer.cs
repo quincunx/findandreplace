@@ -54,7 +54,7 @@
 			this.txtNoMatches = new System.Windows.Forms.Label();
 			this.lblStats = new System.Windows.Forms.Label();
 			this.chkIsRegEx = new System.Windows.Forms.CheckBox();
-			this.txtMatches = new System.Windows.Forms.RichTextBox();
+			this.txtMatchesPreview = new System.Windows.Forms.RichTextBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -297,24 +297,24 @@
 			this.chkIsRegEx.Text = " Use regular expressions";
 			this.chkIsRegEx.UseVisualStyleBackColor = true;
 			// 
-			// txtMatches
+			// txtMatchesPreview
 			// 
-			this.txtMatches.BackColor = System.Drawing.SystemColors.Info;
-			this.txtMatches.Location = new System.Drawing.Point(83, 566);
-			this.txtMatches.Name = "txtMatches";
-			this.txtMatches.Size = new System.Drawing.Size(936, 166);
-			this.txtMatches.TabIndex = 24;
-			this.txtMatches.Text = "";
-			this.txtMatches.Visible = false;
+			this.txtMatchesPreview.BackColor = System.Drawing.SystemColors.Info;
+			this.txtMatchesPreview.Location = new System.Drawing.Point(83, 566);
+			this.txtMatchesPreview.Name = "txtMatchesPreview";
+			this.txtMatchesPreview.Size = new System.Drawing.Size(930, 166);
+			this.txtMatchesPreview.TabIndex = 24;
+			this.txtMatchesPreview.Text = "";
+			this.txtMatchesPreview.Visible = false;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(678, 337);
+			this.ClientSize = new System.Drawing.Size(652, 341);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
-			this.Controls.Add(this.txtMatches);
+			this.Controls.Add(this.txtMatchesPreview);
 			this.Controls.Add(this.txtNoMatches);
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);
@@ -372,7 +372,7 @@
 		private System.Windows.Forms.ErrorProvider errorProvider1;
 		private System.Windows.Forms.Label txtNoMatches;
 		//public System.Windows.Forms.RichTextBox txtMatches;
-		private System.Windows.Forms.RichTextBox txtMatches;
+		private System.Windows.Forms.RichTextBox txtMatchesPreview;
 		private System.Windows.Forms.Label lblStats;
 		private System.Windows.Forms.CheckBox chkIsRegEx;
 	}
