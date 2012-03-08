@@ -101,7 +101,7 @@ namespace FindAndReplace.App
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns.Add("TooltipLineNums", "");
 			gvResults.Columns[4].Visible = false;
-			gvResults.Columns[6].Visible = false;
+			gvResults.Columns[5].Visible = false;
 			HideMatchesPreviewPanel();
 
 			progressBar.Value = 0;
@@ -166,7 +166,7 @@ namespace FindAndReplace.App
 							content = sr.ReadToEnd();
 						}
 
-						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, findResultItem.LineNumbers.Select(ln=>ln.LineNumber).ToList());
+						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(content, findResultItem.LineNumbers.Select(ln=>ln.LineNumber).ToList());
 
 						PrepareLineNumbersForTooltip(findResultItem.LineNumbers, currentRow);
 					}
@@ -264,9 +264,7 @@ namespace FindAndReplace.App
 				this.Width -= ExtraWidthWhenResults;
 			}
 		}
-
 		
-
 		private void ShowCommandLinePanel()
 		{
 			HideResultPanel();
@@ -279,7 +277,6 @@ namespace FindAndReplace.App
 				this.Width += ExtraWidthWhenResults;
 			}
 		}
-
 
 		private void HideCommandLinePanel()
 		{
@@ -309,7 +306,6 @@ namespace FindAndReplace.App
 				this.Height -= (txtMatches.Height + 50);
 			}
 		}
-
 
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
@@ -377,13 +373,14 @@ namespace FindAndReplace.App
 			AddResultsColumn("ErrorMessage", "Error", 150);
 
 			gvResults.Columns.Add("Tooltip", "");
+			gvResults.Columns.Add("TooltipLineNums", "");
 			gvResults.Columns[5].Visible = false;
+			gvResults.Columns[6].Visible = false;
 
 			HideMatchesPreviewPanel();
 			progressBar.Value = 0;
 		}
 
-		
 		private void DoReplaceWork()
 		{
 			_replacer.Replace();
@@ -503,8 +500,6 @@ namespace FindAndReplace.App
 			txtCommandLine.Text = s;
 		}
 
-		
-
 		private void txtDir_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			var validationResult = ValidationUtils.IsDirValid(txtDir.Text, "Dir");
@@ -568,7 +563,7 @@ namespace FindAndReplace.App
 				return;
 
 			ShowMatchesPreviewPanel();
-			GenerateLineNumbers(gvResults.Rows[e.RowIndex].Cells[6].Value.ToString());
+			GenerateLineNumbers(gvResults.Rows[e.RowIndex].Cells[gvResults.Columns.Count - 1].Value.ToString());
 			
 
 			//gvResults.Columns[4].Visible ? 5 : 3;
@@ -736,11 +731,14 @@ namespace FindAndReplace.App
 				sb.Append(String.Format("{0} ", lineNumber));
 			}
 
-			gvResults.Rows[gridRowNumber].Cells[6].Value = sb.ToString();
+			
+			
+			gvResults.Rows[gridRowNumber].Cells[gvResults.Columns.Count-1].Value = sb.ToString();
 	}
 
 	public class GVResultEventArgs : EventArgs
 	{
 		public int cellRow { get; set; }
 	}
+}
 }

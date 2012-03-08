@@ -89,9 +89,8 @@ namespace FindAndReplace
 				{
 					using (var sr = new StreamReader(filePath))
 					{
-					resultItem.LineNumbers = GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
+						fileContent = sr.ReadToEnd();
 					}
-
 				}
 				catch (Exception exception)
 				{
@@ -106,6 +105,8 @@ namespace FindAndReplace
 				if (!resultItem.FailedToOpen)
 				{
 					resultItem.Matches = GetMatches(fileContent);
+					resultItem.LineNumbers = GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
+
 					resultItem.NumMatches = resultItem.Matches.Count;
 
 					stats.TotalMatches += resultItem.Matches.Count;
