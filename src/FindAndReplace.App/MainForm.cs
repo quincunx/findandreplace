@@ -332,7 +332,7 @@ namespace FindAndReplace.App
 			if (String.IsNullOrEmpty(txtReplace.Text))
 			{
 				DialogResult dlgResult = MessageBox.Show(this, 
-														"Are you sure you would like to replace with an empty string", null,
+														"Are you sure you would like to replace with an empty string?", "Replace Confirmation",
 				                                         MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				if (dlgResult == DialogResult.No)
 					return;
@@ -551,7 +551,7 @@ namespace FindAndReplace.App
 				return;
 
 			ShowMatchesPreviewPanel();
-			GenerateLineNumbers(gvResults.Rows[e.RowIndex].Cells[gvResults.Columns.Count - 1].Value.ToString());
+			GenerateLineNumbers(gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber + 1].Value.ToString());
 			
 
 			//gvResults.Columns[4].Visible ? 5 : 3;
