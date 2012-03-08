@@ -80,9 +80,9 @@ namespace FindAndReplace.App
 			gvResults.Columns.Clear();
 
 			AddResultsColumn("Filename", "Filename", 250);
-			AddResultsColumn("Path", "Path", 400);
+			AddResultsColumn("Path", "Path", 450);
 			AddResultsColumn("NumMatches", "Matches", 50);
-			AddResultsColumn("ErrorMessage", "Error", 200);
+			AddResultsColumn("ErrorMessage", "Error", 150);
 
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns.Add("TooltipLineNums", "");
