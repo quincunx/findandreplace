@@ -44,7 +44,7 @@ namespace FindAndReplace
 			public bool FailedToOpen { get; set; }
 			public bool IsBinaryFile { get; set; }
 			public string ErrorMessage { get; set; }
-			public List<MathLineNumber> LineNumbers { get; set; }
+			public List<MatchPreviewLineNumber> LineNumbers { get; set; }
 			
 			public bool IncludeInResultsList
 			{
