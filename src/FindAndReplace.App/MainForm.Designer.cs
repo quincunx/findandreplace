@@ -160,8 +160,6 @@
 			// chkIsCaseSensitive
 			// 
 			this.chkIsCaseSensitive.AutoSize = true;
-			this.chkIsCaseSensitive.Checked = true;
-			this.chkIsCaseSensitive.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.chkIsCaseSensitive.Location = new System.Drawing.Point(83, 173);
 			this.chkIsCaseSensitive.Name = "chkIsCaseSensitive";
 			this.chkIsCaseSensitive.Size = new System.Drawing.Size(96, 17);
@@ -196,7 +194,7 @@
 			this.txtCommandLine.Location = new System.Drawing.Point(76, 11);
 			this.txtCommandLine.Multiline = true;
 			this.txtCommandLine.Name = "txtCommandLine";
-			this.txtCommandLine.Size = new System.Drawing.Size(900, 74);
+			this.txtCommandLine.Size = new System.Drawing.Size(930, 74);
 			this.txtCommandLine.TabIndex = 15;
 			// 
 			// lblCommandLine
@@ -214,7 +212,7 @@
 			this.pnlCommandLine.Controls.Add(this.txtCommandLine);
 			this.pnlCommandLine.Location = new System.Drawing.Point(7, 344);
 			this.pnlCommandLine.Name = "pnlCommandLine";
-			this.pnlCommandLine.Size = new System.Drawing.Size(983, 100);
+			this.pnlCommandLine.Size = new System.Drawing.Size(1012, 100);
 			this.pnlCommandLine.TabIndex = 21;
 			this.pnlCommandLine.Visible = false;
 			// 
@@ -229,7 +227,7 @@
 			this.gvResults.ReadOnly = true;
 			this.gvResults.RowHeadersVisible = false;
 			this.gvResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.gvResults.Size = new System.Drawing.Size(900, 129);
+			this.gvResults.Size = new System.Drawing.Size(930, 129);
 			this.gvResults.TabIndex = 18;
 			this.gvResults.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gvResults_CellClick);
 			this.gvResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gvResults_CellDoubleClick);
@@ -247,7 +245,7 @@
 			// 
 			this.progressBar.Location = new System.Drawing.Point(68, 170);
 			this.progressBar.Name = "progressBar";
-			this.progressBar.Size = new System.Drawing.Size(882, 23);
+			this.progressBar.Size = new System.Drawing.Size(939, 23);
 			this.progressBar.TabIndex = 20;
 			// 
 			// lblStatus
@@ -267,7 +265,7 @@
 			this.pnlGridResults.Controls.Add(this.gvResults);
 			this.pnlGridResults.Location = new System.Drawing.Point(6, 345);
 			this.pnlGridResults.Name = "pnlGridResults";
-			this.pnlGridResults.Size = new System.Drawing.Size(984, 196);
+			this.pnlGridResults.Size = new System.Drawing.Size(1013, 196);
 			this.pnlGridResults.TabIndex = 22;
 			this.pnlGridResults.Visible = false;
 			// 
@@ -319,7 +317,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1002, 535);
+			this.ClientSize = new System.Drawing.Size(1054, 535);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatches);
