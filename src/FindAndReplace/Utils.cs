@@ -37,7 +37,7 @@ namespace FindAndReplace
 			return false;
 		}
 
-		public static List<MathLineNumber> GetLineNumbersForMatchesPreview(string filePath, MatchCollection matches)
+		public static List<MatchPreviewLineNumber> GetLineNumbersForMatchesPreview(string filePath, MatchCollection matches)
 		{
 			string content = string.Empty;
 
@@ -49,8 +49,8 @@ namespace FindAndReplace
 			var separator = Environment.NewLine;
 			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
 
-			var result = new List<MathLineNumber>();
-			var temp = new List<MathLineNumber>();
+			var result = new List<MatchPreviewLineNumber>();
+			var temp = new List<MatchPreviewLineNumber>();
 
 			foreach (Match match in matches)
 			{
@@ -61,7 +61,7 @@ namespace FindAndReplace
 				{
 					if (i >= 0 && i < lines.Count())
 					{
-						var lineNumber = new MathLineNumber();
+						var lineNumber = new MatchPreviewLineNumber();
 						lineNumber.LineNumber = i;
 						lineNumber.HasMatch = (i >= lineIndexStart && i <= lineIndexEnd) ? true : false;
 						temp.Add(lineNumber);
