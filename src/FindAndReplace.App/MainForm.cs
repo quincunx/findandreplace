@@ -593,9 +593,16 @@ namespace FindAndReplace.App
 
 			rowNumbers = rowNumbers.Distinct().OrderBy(r => r).ToList();
 			var prevLineIndex = 0;
+			string lineSeparator = ("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
+
 			foreach (var rowNumber in rowNumbers)
 			{
-				if (rowNumber - prevLineIndex > 1 && prevLineIndex != 0) stringBuilder.AppendLine("");
+				if (rowNumber - prevLineIndex > 1 && prevLineIndex != 0)
+				{
+					stringBuilder.AppendLine("");
+					stringBuilder.AppendLine(lineSeparator);
+					stringBuilder.AppendLine("");
+				}
 				stringBuilder.AppendLine(lines[rowNumber]);
 				prevLineIndex = rowNumber;
 			}
