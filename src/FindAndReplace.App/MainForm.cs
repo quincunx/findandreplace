@@ -714,6 +714,7 @@ namespace FindAndReplace.App
 		private ContextMenuStrip CreateContextMenu(int rowNumber)
 		{
 			var contextMenu = new ContextMenuStrip();
+			contextMenu.ShowImageMargin = false;
 
 			var openMenuItem = new ToolStripMenuItem("Open");
 
