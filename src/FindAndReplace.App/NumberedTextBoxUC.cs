@@ -44,7 +44,7 @@ namespace NumberedTextBox
 				numberLabel.Text = "";
 				string format = "D" + MainForm.LineNumbersDigitCount;
 
-				var highLightFont = new Font("Microsoft Sans Serif", 10, FontStyle.Regular);
+				var highLightFont = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
 				var regularFont = new Font("Microsoft Sans Serif", 8, FontStyle.Regular);
 				numberLabel.Font = regularFont;
 
@@ -109,10 +109,12 @@ namespace NumberedTextBox
 		private void richTextBox1_VScroll(object sender, EventArgs e)
 		{
 			//move location of numberLabel for amount of pixels caused by scrollbar
-			int d = richTextBox1.GetPositionFromCharIndex(0).Y % (richTextBox1.Font.Height + 1);
-			numberLabel.Location = new Point(0, d);
+			//int d = richTextBox1.GetPositionFromCharIndex(0).Y % (richTextBox1.Font.Height + 1);
+			//numberLabel.Location = new Point(0, d);
 
-			updateNumberLabel();
+			//updateNumberLabel();
+
+			//numberLabel.VScroll()
 		}
 
 		private void richTextBox1_Resize(object sender, EventArgs e)
@@ -125,9 +127,5 @@ namespace NumberedTextBox
 			//updateNumberLabel();
 			//richTextBox1_VScroll(null, null);
 		}
-
-
-
-
 	}
 }
