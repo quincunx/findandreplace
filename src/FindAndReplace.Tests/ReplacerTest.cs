@@ -206,5 +206,25 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual("test2.test", resultItems[0].FileName);
 			Assert.AreEqual(1, resultItems[0].NumMatches);
 		}
+
+		[Test]
+		public void Replace_WhenFileIsReadonly_NoRepacesText()
+		{
+			Replacer replacer = new Replacer();
+
+			replacer.Dir = _tempDir;
+			replacer.FileMask = "*.*";
+			replacer.FindText = "readonly";
+			replacer.ReplaceText = "I can replace";
+
+			var resultItems = replacer.Replace().ResultItems.Where(r=>!r.IsSuccess).ToList();
+
+			if (resultItems == null || resultItems.Count == 0)
+				Assert.Fail("Cant find test files");
+
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual("test3.test", resultItems[0].FileName);
+			Assert.IsNotEmpty(resultItems[0].ErrorMessage);
+		}
 	}
 }
