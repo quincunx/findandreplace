@@ -38,8 +38,7 @@ namespace FindAndReplace.App
 		{
 			// from http://blogs.msdn.com/b/microsoft_press/archive/2010/02/03/jeffrey-richter-excerpt-2-from-clr-via-c-third-edition.aspx
 			AppDomain.CurrentDomain.AssemblyResolve += ResolveEventHandler;
-
-
+			
 			if (args.Length != 0 && args[0] == "--cl")
 			{
 
@@ -82,84 +81,86 @@ namespace FindAndReplace.App
 		public static void PrintFinderResult(List<Finder.FindResultItem> resultItems)
 		{
 			Console.WriteLine();
-
-			PrintLine();
-			PrintFinderResultRow("File", "Matches", "Error Message");
-			PrintLine();
 			foreach (var item in resultItems)
 			{
-				PrintFinderResultRow(item.FileRelativePath, item.NumMatches.ToString(), String.IsNullOrEmpty(item.ErrorMessage)?"":item.ErrorMessage.Substring(0, 20));
+				PrintFinderResultRow(item);
 			}
-			PrintLine();
+
 		}
 
-		static void PrintFinderResultRow(string path, string matches, string error)
+		static void PrintFinderResultRow(Finder.FindResultItem item)
 		{
-			Console.WriteLine(
-				string.Format("{0} | {1} | {2}",
-							  FormatCell(path, 43),
-							  FormatCell(matches, 10),
-							  FormatCell(error, 20)));
+			PrintNameValuePair("File", item.FileRelativePath);
+				
+			if (item.IsSuccess)
+				PrintNameValuePair("Matches", item.NumMatches.ToString());
+			else
+				PrintNameValuePair("Error", item.ErrorMessage);
+
+			Console.WriteLine();
+
 		}
 
 		public static void PrintReplacerResult(List<Replacer.ReplaceResultItem> resultItems)
 		{
 			Console.WriteLine();
 
-			PrintLine();
-			PrintReplacerResultRow("File", "Matches", "Success", "Error Message");
-			PrintLine();
 			foreach (var item in resultItems)
 			{
-				PrintReplacerResultRow(item.FileRelativePath, item.NumMatches.ToString(), item.IsSuccess.ToString(), String.IsNullOrEmpty(item.ErrorMessage)?"":item.ErrorMessage.Substring(0, 10));
+				PrintReplacerResultRow(item);
 			}
-			PrintLine();
 		}
 
-		static void PrintLine()
+		static void PrintReplacerResultRow(Replacer.ReplaceResultItem item)
 		{
-			Console.WriteLine(new string('-', 79));
+			PrintNameValuePair("File", item.FileRelativePath);
+				
+			if (!item.FailedToOpen)
+				PrintNameValuePair("Matches", item.NumMatches.ToString());
+
+			PrintNameValuePair("Replaced", item.IsSuccess ? "Yes" : "No");
+
+			if (!item.IsSuccess)
+				PrintNameValuePair("Error", item.ErrorMessage);
+
+			Console.WriteLine();
 		}
 
-		static void PrintReplacerResultRow(string path, string matches, string success, string error)
+		static void PrintNameValuePair(string name, string value)
 		{
-			Console.WriteLine(
-				string.Format("{0} | {1} | {2} | {3}",
-					FormatCell(path, 33),
-					FormatCell(matches, 10),
-					FormatCell(success, 10),
-					FormatCell(error, 10)));
+			string label = name + ":";
+			label = label.PadRight(10);
+			Console.WriteLine(label + value);
 		}
 
 		public static void PrintStatistics(Stats stats, bool isReplacerStats=false)
 		{
-			PrintLine();
+			Console.WriteLine("");
 
-			Console.WriteLine("Stats:");
+			Console.WriteLine("====================================");
+			Console.WriteLine("Stats");
+			Console.WriteLine("");
 			Console.WriteLine("Files:");
 			Console.WriteLine("- Total: " + stats.TotalFiles);
 			Console.WriteLine("- With Matches: " + stats.FilesWithMatches);
-			Console.WriteLine("- Without  Matches: " + (stats.TotalFiles - stats.FilesWithMatches));
+			Console.WriteLine("- Without Matches: " + stats.FilesWithoutMatches);
 			Console.WriteLine("- Failed to Open: " + stats.FailedToOpen);
+
 			if (isReplacerStats)
 				Console.WriteLine("- Failed to Write: " + stats.FailedToWrite);
+
 			Console.WriteLine("");
 			Console.WriteLine("Matches:");
 			Console.WriteLine("- Found: " + stats.TotalMatches);
+
 			if (isReplacerStats)
 				Console.WriteLine("- Replaced: " + stats.TotalReplaces);
-
-			PrintLine();
+			Console.WriteLine("====================================");
 		}
 
-		static string FormatCell(string text, int width)
-		{
-			return text.PadRight(width);
-		}
 
 		private static Assembly ResolveEventHandler(Object sender, ResolveEventArgs args)
 		{
-
 			String dllName = new AssemblyName(args.Name).Name + ".dll";
 
 			var assem = Assembly.GetExecutingAssembly();
@@ -170,7 +171,6 @@ namespace FindAndReplace.App
 
 			using (var stream = assem.GetManifestResourceStream(resourceName))
 			{
-
 				Byte[] assemblyData = new Byte[stream.Length];
 
 				stream.Read(assemblyData, 0, assemblyData.Length);

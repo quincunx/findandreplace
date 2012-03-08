@@ -111,6 +111,9 @@ namespace FindAndReplace
 
 			var resultItem = new ReplaceResultItem();
 			resultItem.IsSuccess = true;
+			resultItem.FileName = Path.GetFileName(filePath);
+			resultItem.FilePath = filePath;
+			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
 
 			try
 			{
@@ -143,14 +146,10 @@ namespace FindAndReplace
 				matches = Regex.Matches(content, finderText, regexOptions);
 			}
 
-			resultItem.FileName = Path.GetFileName(filePath);
-			resultItem.FilePath = filePath;
-			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-
+			
 			resultItem.NumMatches = matches.Count;
 			resultItem.Matches = matches;
-			resultItem.IsSuccess = matches.Count > 0;
-
+		
 			if (matches.Count > 0)
 			{
 				try

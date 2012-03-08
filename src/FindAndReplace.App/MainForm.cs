@@ -87,7 +87,7 @@ namespace FindAndReplace.App
 			AddResultsColumn("Filename", "Filename", 250);
 			AddResultsColumn("Path", "Path", 450);
 			AddResultsColumn("NumMatches", "Matches", 50);
-			AddResultsColumn("ErrorMessage", "Error", 140);
+			AddResultsColumn("ErrorMessage", "Error", 150);
 
 			gvResults.Columns.Add("Tooltip", "");
 			
@@ -322,8 +322,8 @@ namespace FindAndReplace.App
 			AddResultsColumn("Filename", "Filename", 250);
 			AddResultsColumn("Path", "Path", 400);
 			AddResultsColumn("NumMatches", "Matches", 50);
-			AddResultsColumn("IsSuccess", "Replaced", 50);
-			AddResultsColumn("ErrorMessage", "Error", 140);
+			AddResultsColumn("IsSuccess", "Replaced", 60);
+			AddResultsColumn("ErrorMessage", "Error", 150);
 
 			gvResults.Columns.Add("Tooltip", "");
 			gvResults.Columns[5].Visible = false;
@@ -540,7 +540,7 @@ namespace FindAndReplace.App
             if (e.RowIndex == -1)   //heading
                 return;
 
-			var matchesPreviewColNumber = 4;
+			var matchesPreviewColNumber = 5;
 
 			if (gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value == null)
 				return;
@@ -661,45 +661,42 @@ namespace FindAndReplace.App
 			if (e.RowIndex == -1)   //heading
 				return;
 
-			var filePath = gvResults.Rows[e.RowIndex].Cells[1].Value.ToString();
+			OpenFileUsingExternalApp(e.RowIndex);
+		}
 
-			//string argument = @"/select, " + txtDir.Text + filePath.TrimStart('.');
-			//Process.Start("explorer.exe", argument);
+		private void OpenFileUsingExternalApp(int rowIndex)
+		{
+			var filePath = gvResults.Rows[rowIndex].Cells[1].Value.ToString();
 
 			string file = txtDir.Text + filePath.TrimStart('.');
 			Process.Start(file);
-
 		}
 
 		private ContextMenuStrip CreateContextMenu(int rowNumber)
 		{
 			var contextMenu = new ContextMenuStrip();
 
-			var menuItem = new ToolStripMenuItem("Open");
+			var openMenuItem = new ToolStripMenuItem("Open");
 
 			var eventArgs = new GVResultEventArgs();
 			eventArgs.cellRow = rowNumber;
-			menuItem.Click += delegate { toolStripClickOpen(this, eventArgs); };
+			openMenuItem.Click += delegate { contextMenu_ClickOpen(this, eventArgs); };
 
-			var openFolderStripItem = new ToolStripMenuItem("Open Containing Folder");
+			var openFolderMenuItem = new ToolStripMenuItem("Open Containing Folder");
+			openFolderMenuItem.Click += delegate { contextMenu_ClickOpenFolder(this, eventArgs); };
 
-			openFolderStripItem.Click += delegate { toolStripClickOpenFolder(this, eventArgs); };
-
-			contextMenu.Items.Add(menuItem);
-			contextMenu.Items.Add(openFolderStripItem);
+			contextMenu.Items.Add(openMenuItem);
+			contextMenu.Items.Add(openFolderMenuItem);
 
 			return contextMenu;
 		}
 
-		private void toolStripClickOpen(object sender, GVResultEventArgs e)
+		private void contextMenu_ClickOpen(object sender, GVResultEventArgs e)
 		{
-			var filePath = gvResults.Rows[e.cellRow].Cells[1].Value.ToString();
-
-			string file = txtDir.Text + filePath.TrimStart('.');
-			Process.Start(file);
+			OpenFileUsingExternalApp(e.cellRow);
 		}
 
-		private void toolStripClickOpenFolder(object sender, GVResultEventArgs e)
+		private void contextMenu_ClickOpenFolder(object sender, GVResultEventArgs e)
 		{
 			var filePath = gvResults.Rows[e.cellRow].Cells[1].Value.ToString();
 
