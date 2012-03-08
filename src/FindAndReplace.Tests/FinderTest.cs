@@ -134,7 +134,7 @@ namespace FindAndReplace.Tests
 			finder.FindText = "ee";
 			finder.IncludeSubDirectories = true;
 
-			var resultItems = finder.Find().Items;
+			var resultItems = finder.Find().Items.Where(f=>f.NumMatches>0).ToList();
 
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");

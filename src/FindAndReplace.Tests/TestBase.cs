@@ -44,6 +44,16 @@ namespace FindAndReplace.Tests
 			sr.Close();
 			fs.Close();
 
+			fs = new FileStream(_tempDir + "\\test3.test", FileMode.Create);
+			sr = new StreamWriter(fs);
+
+			sr.WriteLine("This is a readonly file");
+
+			sr.Close();
+			fs.Close();
+
+			File.SetAttributes(_tempDir + "\\test3.test", FileAttributes.ReadOnly);
+
 			Directory.CreateDirectory(_tempDir + "\\subDir");
 			File.Copy(_tempDir + "\\test1.test", _tempDir + "\\subDir\\test1.test", true);
 			File.Copy(_tempDir + "\\test2.test", _tempDir + "\\subDir\\test2.test", true);
@@ -53,6 +63,9 @@ namespace FindAndReplace.Tests
 		public void TearDown()
 		{
 			var tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
+
+			File.SetAttributes(_tempDir + "\\test3.test", FileAttributes.Normal);
+			
 			Directory.Delete(tempDir, true);
 		}
 
