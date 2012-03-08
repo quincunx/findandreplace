@@ -302,6 +302,7 @@
 			this.txtMatchesPreview.BackColor = System.Drawing.SystemColors.Info;
 			this.txtMatchesPreview.Location = new System.Drawing.Point(83, 566);
 			this.txtMatchesPreview.Name = "txtMatchesPreview";
+			this.txtMatchesPreview.ReadOnly = true;
 			this.txtMatchesPreview.Size = new System.Drawing.Size(930, 166);
 			this.txtMatchesPreview.TabIndex = 24;
 			this.txtMatchesPreview.Text = "";
@@ -331,6 +332,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.txtFind);
 			this.Controls.Add(this.pnlCommandLine);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Name = "MainForm";
 			this.Text = "Find and Replace";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
