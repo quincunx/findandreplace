@@ -1,6 +1,4 @@
-﻿using NumberedTextBox;
-
-namespace FindAndReplace.App
+﻿namespace FindAndReplace.App
 {
 	partial class MainForm
 	{
@@ -56,7 +54,7 @@ namespace FindAndReplace.App
 			this.txtNoMatches = new System.Windows.Forms.Label();
 			this.lblStats = new System.Windows.Forms.Label();
 			this.chkIsRegEx = new System.Windows.Forms.CheckBox();
-			this.txtMatches = new NumberedTextBox.NumberedTextBoxUC();
+			this.txtMatches = new System.Windows.Forms.RichTextBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -281,8 +279,6 @@ namespace FindAndReplace.App
 			this.txtNoMatches.Text = " No matches found";
 			this.txtNoMatches.Visible = false;
 			// 
-			this.txtMatches.Location = new System.Drawing.Point(83, 563);
-			this.txtMatches.Size = new System.Drawing.Size(930, 166);
 			// lblStats
 			// 
 			this.lblStats.AutoSize = true;
@@ -304,17 +300,18 @@ namespace FindAndReplace.App
 			// txtMatches
 			// 
 			this.txtMatches.BackColor = System.Drawing.SystemColors.Info;
-			this.txtMatches.Location = new System.Drawing.Point(74, 563);
+			this.txtMatches.Location = new System.Drawing.Point(83, 566);
 			this.txtMatches.Name = "txtMatches";
-			this.txtMatches.Size = new System.Drawing.Size(729, 166);
+			this.txtMatches.Size = new System.Drawing.Size(936, 166);
 			this.txtMatches.TabIndex = 24;
+			this.txtMatches.Text = "";
 			this.txtMatches.Visible = false;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(649, 338);
+			this.ClientSize = new System.Drawing.Size(678, 337);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatches);
@@ -375,7 +372,7 @@ namespace FindAndReplace.App
 		private System.Windows.Forms.ErrorProvider errorProvider1;
 		private System.Windows.Forms.Label txtNoMatches;
 		//public System.Windows.Forms.RichTextBox txtMatches;
-		public NumberedTextBoxUC txtMatches;
+		private System.Windows.Forms.RichTextBox txtMatches;
 		private System.Windows.Forms.Label lblStats;
 		private System.Windows.Forms.CheckBox chkIsRegEx;
 	}

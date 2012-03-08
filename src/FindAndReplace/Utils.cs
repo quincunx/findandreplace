@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace FindAndReplace
 {
@@ -32,6 +35,60 @@ namespace FindAndReplace
 				return true;
 
 			return false;
+		}
+
+		public static List<MathLineNumber> GetLineNumbersForMatchesPreview(string filePath, MatchCollection matches)
+		{
+			string content = string.Empty;
+
+			using (var sr = new StreamReader(filePath))
+			{
+				content = sr.ReadToEnd();
+			}
+
+			var separator = Environment.NewLine;
+			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
+
+			var result = new List<MathLineNumber>();
+			var temp = new List<MathLineNumber>();
+
+			foreach (Match match in matches)
+			{
+				var lineIndexStart = DetectMatchLine(lines.ToArray(), match.Index);
+				var lineIndexEnd = DetectMatchLine(lines.ToArray(), match.Index + match.Length);
+
+				for (int i = lineIndexStart - 2; i <= lineIndexEnd + 2; i++)
+				{
+					if (i >= 0 && i < lines.Count())
+					{
+						var lineNumber = new MathLineNumber();
+						lineNumber.LineNumber = i;
+						lineNumber.HasMatch = (i >= lineIndexStart && i <= lineIndexEnd) ? true : false;
+						temp.Add(lineNumber);
+					}
+				}
+			}
+
+			result.AddRange(temp.Where(ln => ln.HasMatch).Distinct(new LineNumberComparer()));
+
+			result.AddRange(temp.Where(ln => !ln.HasMatch && !result.Select(l => l.LineNumber).Contains(ln.LineNumber)).Distinct(new LineNumberComparer()));
+
+			return result.OrderBy(ln => ln.LineNumber).ToList();
+		}
+
+		private static int DetectMatchLine(string[] lines, int position)
+		{
+			var separatorLength = 2;
+			int i = 0;
+			int charsCount = lines[0].Length + separatorLength;
+
+			while (charsCount <= position)
+			{
+				i++;
+				charsCount += lines[i].Length + separatorLength;
+			}
+
+			return i;
 		}
 	}
 }
