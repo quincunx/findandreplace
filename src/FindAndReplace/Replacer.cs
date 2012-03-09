@@ -70,7 +70,7 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(Dir, "Dir");
 			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
-			Verify.Argument.IsNotNull(FindText, "ReplaceText");
+			Verify.Argument.IsNotNull(ReplaceText, "ReplaceText");
 
 			var startTime = DateTime.Now;
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
