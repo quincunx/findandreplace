@@ -78,7 +78,7 @@ namespace FindAndReplace.App
 			}
 		}
 		
-		public static void PrintFinderResultRow(Finder.FindResultItem item)
+		public static void PrintFinderResultRow(Finder.FindResultItem item, Stats stats)
 		{
 			PrintNameValuePair("File", item.FileRelativePath);
 				
@@ -87,11 +87,14 @@ namespace FindAndReplace.App
 			else
 				PrintNameValuePair("Error", item.ErrorMessage);
 
+			var passedSecondes = stats.Time.Passed.TotalSeconds;
+			if (passedSecondes >= 1) PrintNameValuePair("Time Passed", Utils.FormatTimeSpan(stats.Time.Passed));
+
 			Console.WriteLine();
 
 		}
 
-		public static void PrintReplacerResultRow(Replacer.ReplaceResultItem item)
+		public static void PrintReplacerResultRow(Replacer.ReplaceResultItem item, Stats stats)
 		{
 			PrintNameValuePair("File", item.FileRelativePath);
 				
@@ -102,6 +105,9 @@ namespace FindAndReplace.App
 
 			if (!item.IsSuccess)
 				PrintNameValuePair("Error", item.ErrorMessage);
+
+			var passedSecondes = stats.Time.Passed.TotalSeconds;
+			if (passedSecondes >= 1) PrintNameValuePair("Time Passed", Utils.FormatTimeSpan(stats.Time.Passed));
 
 			Console.WriteLine();
 		}
@@ -121,21 +127,21 @@ namespace FindAndReplace.App
 			Console.WriteLine("Stats");
 			Console.WriteLine("");
 			Console.WriteLine("Files:");
-			Console.WriteLine("- Total: " + stats.TotalFiles);
-			Console.WriteLine("- Binary: " + stats.BinaryFiles + " (skipped)");
-			Console.WriteLine("- With Matches: " + stats.FilesWithMatches);
-			Console.WriteLine("- Without Matches: " + stats.FilesWithoutMatches);
-			Console.WriteLine("- Failed to Open: " + stats.FailedToOpen);
+			Console.WriteLine("- Total: " + stats.Files.Total);
+			Console.WriteLine("- Binary: " + stats.Files.Binary + " (skipped)");
+			Console.WriteLine("- With Matches: " + stats.Files.WithMatches);
+			Console.WriteLine("- Without Matches: " + stats.Files.WithoutMatches);
+			Console.WriteLine("- Failed to Open: " + stats.Files.FailedToRead);
 
 			if (isReplacerStats)
-				Console.WriteLine("- Failed to Write: " + stats.FailedToWrite);
+				Console.WriteLine("- Failed to Write: " + stats.Files.FailedToWrite);
 
 			Console.WriteLine("");
 			Console.WriteLine("Matches:");
-			Console.WriteLine("- Found: " + stats.TotalMatches);
+			Console.WriteLine("- Found: " + stats.Matches.Found);
 
 			if (isReplacerStats)
-				Console.WriteLine("- Replaced: " + stats.TotalReplaces);
+				Console.WriteLine("- Replaced: " + stats.Matches.Replaced);
 			Console.WriteLine("====================================");
 		}
 
@@ -230,25 +236,22 @@ namespace FindAndReplace.App
 			#endif
 		}
 
-		
-
 		private static void OnFinderFileProcessed(object sender, FinderEventArgs e)
 		{
 			if (e.ResultItem.IncludeInResultsList)
-				Program.PrintFinderResultRow(e.ResultItem);
+				Program.PrintFinderResultRow(e.ResultItem, e.Stats);
 
-			if (e.Stats.ProcessedFiles == e.Stats.TotalFiles)
+			if (e.Stats.Files.Processed == e.Stats.Files.Total)
 				Program.PrintStatistics(e.Stats);
 			
 		}
 
-
 		private static void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
 		{
 			if (e.ResultItem.IncludeInResultsList)
-				Program.PrintReplacerResultRow(e.ResultItem);
+				Program.PrintReplacerResultRow(e.ResultItem, e.Stats);
 
-			if (e.Stats.ProcessedFiles == e.Stats.TotalFiles)
+			if (e.Stats.Files.Processed == e.Stats.Files.Total)
 				Program.PrintStatistics(e.Stats, true);
 
 		}
