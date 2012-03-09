@@ -87,9 +87,6 @@ namespace FindAndReplace.App
 			else
 				PrintNameValuePair("Error", item.ErrorMessage);
 
-			var passedSecondes = stats.Time.Passed.TotalSeconds;
-			if (passedSecondes >= 1) PrintNameValuePair("Time Passed", Utils.FormatTimeSpan(stats.Time.Passed));
-
 			Console.WriteLine();
 
 		}
@@ -105,9 +102,6 @@ namespace FindAndReplace.App
 
 			if (!item.IsSuccess)
 				PrintNameValuePair("Error", item.ErrorMessage);
-
-			var passedSecondes = stats.Time.Passed.TotalSeconds;
-			if (passedSecondes >= 1) PrintNameValuePair("Time Passed", Utils.FormatTimeSpan(stats.Time.Passed));
 
 			Console.WriteLine();
 		}

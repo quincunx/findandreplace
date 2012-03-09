@@ -53,6 +53,7 @@ namespace FindAndReplace.App
 			PrepareFinderGrid();
 
 			lblStats.Text = "";
+			lblStatus.Text = "Getting file list...";
 
 			var finder = new Finder();
 			finder.Dir = txtDir.Text;
@@ -357,6 +358,7 @@ namespace FindAndReplace.App
 			ShowResultPanel();
 
 			lblStats.Text = "";
+			lblStatus.Text = "Getting file list...";
 
 			PrepareReplacerGrid();
 			txtMatchesPreview.Visible = false;
@@ -701,7 +703,7 @@ namespace FindAndReplace.App
 				sb.AppendLine("Time:");
 				sb.AppendLine("- Passed: " + Utils.FormatTimeSpan(stats.Time.Passed));
 
-				if (remainingSeconds >= 3)
+				if (passedSeconds >= 3 && (int)remainingSeconds != 0)
 				{
 					sb.AppendLine("- Remaining: " + Utils.FormatTimeSpan(stats.Time.Remaining) + " (estimated)");
 				}

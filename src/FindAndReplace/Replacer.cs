@@ -72,15 +72,15 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 			Verify.Argument.IsNotNull(FindText, "ReplaceText");
 
+			var startTime = DateTime.Now;
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<ReplaceResultItem>();
 			var stats = new Stats();
 			stats.Files.Total = filesInDirectory.Length;
 
-			//time
-			var startTime = DateTime.Now;
-	
+			var startTimeProcessingFiles = DateTime.Now;
+			
 			foreach (string filePath in filesInDirectory)
 			{
 				var resultItem = ReplaceTextInFile(filePath);
@@ -114,7 +114,7 @@ namespace FindAndReplace
 				if (resultItem.IncludeInResultsList)
 					resultItems.Add(resultItem);
 
-				stats.UpdateTime(DateTime.Now.Subtract(startTime));
+				stats.UpdateTime(startTime, startTimeProcessingFiles);
 				
 				OnFileProcessed(new ReplacerEventArgs(resultItem, stats));
 			}

@@ -78,26 +78,25 @@ namespace FindAndReplace
 
 		public static string FormatTimeSpan(TimeSpan timeSpan)
 		{
+			string result = String.Empty;
 
-			string result=String.Empty;
+			int h = timeSpan.Hours;
+			int m = timeSpan.Minutes;
+			int s = timeSpan.Seconds;
 
-			int h = (int) timeSpan.Hours;
-			int m = (int)timeSpan.Minutes;
-			int s = (int) timeSpan.Seconds;
-
-			if (h>0)
+			if (h > 0)
 			{
 				result += String.Format("{0}h ", h);
 
-				if (m>0)
+				if (m > 0)
 				{
 					result += String.Format("{0}m ", m);
 
-					if (s>0) result += String.Format("{0}s ", s);
+					if (s > 0) result += String.Format("{0}s ", s);
 				}
 				else
 				{
-					if (s>0)
+					if (s > 0)
 					{
 						result += String.Format("{0}m ", m);
 
@@ -108,9 +107,9 @@ namespace FindAndReplace
 			}
 			else
 			{
-				if (m>0) result += String.Format("{0}m ", m);
+				if (m > 0) result += String.Format("{0}m ", m);
 
-				if (s>0) result += String.Format("{0}s ", s);
+				if (s > 0) result += String.Format("{0}s ", s);
 			}
 
 			return result;

@@ -73,17 +73,16 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 
+			//time
+			var startTime = DateTime.Now;
+			
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
 			var resultItems = new List<FindResultItem>();
 			var stats = new Stats();
 			stats.Files.Total = filesInDirectory.Length;
 
-			
-			//time
-			var startTime = DateTime.Now;
-			var proceedTime = startTime;
-
+			var startTimeProcessingFiles = DateTime.Now;
 			
 			//Analyze each file in the directory
 			foreach (string filePath in filesInDirectory)
@@ -143,8 +142,8 @@ namespace FindAndReplace
 				//Skip files that don't have matches
 				if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
 					resultItems.Add(resultItem);
-
-				stats.UpdateTime(DateTime.Now.Subtract(startTime));
+				
+				stats.UpdateTime(startTime, startTimeProcessingFiles);
 				
 				OnFileProcessed(new FinderEventArgs(resultItem, stats));
 			}

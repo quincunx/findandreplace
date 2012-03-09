@@ -53,11 +53,15 @@ namespace FindAndReplace
 			Time = new StatsTime();
 		}
 
-		public void UpdateTime(TimeSpan passed)
+		public void UpdateTime(DateTime startTime, DateTime startTimeProcessingFiles)
 		{
-			Time.Passed = passed;
+			DateTime now = DateTime.Now;
+			Time.Passed = now.Subtract(startTime);
+			
+			//Use startTimeProcessingFiles to figure out remaining time
+			TimeSpan passedProcessingFiles = now.Subtract(startTimeProcessingFiles);
 
-			double passedSeconds = Time.Passed.TotalSeconds;
+			double passedSeconds = passedProcessingFiles.TotalSeconds;
 
 			int remainingFiles = Files.Total - Files.Processed;
 			var remainingSeconds = (passedSeconds / Files.Processed) * remainingFiles;
