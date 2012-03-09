@@ -496,7 +496,7 @@ namespace FindAndReplace.App
 			
 			txtCommandLine.Clear();
 			
-			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5} --find \"{6}\" --replace \"{7}\"",
+			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5} --find \"{6}\" --replace \"{7}\"",
 									 Application.ExecutablePath,
 									 txtDir.Text,
 									 txtFileMask.Text,
