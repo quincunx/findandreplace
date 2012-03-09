@@ -78,11 +78,42 @@ namespace FindAndReplace
 
 		public static string FormatTimeSpan(TimeSpan timeSpan)
 		{
-			return String.Format("{0}h {1}m {2}s", 
-				(int)timeSpan.Hours,
-				((int)timeSpan.Minutes).ToString("D2"),
-				((int)timeSpan.Seconds).ToString("D2")
-				);
+
+			string result=String.Empty;
+
+			int h = (int) timeSpan.Hours;
+			int m = (int)timeSpan.Minutes;
+			int s = (int) timeSpan.Seconds;
+
+			if (h>0)
+			{
+				result += String.Format("{0}h ", h);
+
+				if (m>0)
+				{
+					result += String.Format("{0}m ", m);
+
+					if (s>0) result += String.Format("{0}s ", s);
+				}
+				else
+				{
+					if (s>0)
+					{
+						result += String.Format("{0}m ", m);
+
+						result += String.Format("{0}s ", s);
+					}
+				}
+
+			}
+			else
+			{
+				if (m>0) result += String.Format("{0}m ", m);
+
+				if (s>0) result += String.Format("{0}s ", s);
+			}
+
+			return result;
 		}
 
 		private static int DetectMatchLine(string[] lines, int position)
