@@ -184,22 +184,21 @@ namespace FindAndReplace.App
 			validationResultList.Add(ValidationUtils.IsNotEmpty(options.FileMask, "fileMask"));
 			validationResultList.Add(ValidationUtils.IsNotEmpty(options.FindText, "find"));
 
-			if (!String.IsNullOrEmpty(options.ReplaceText))
-				validationResultList.Add(ValidationUtils.IsNotEmpty(options.ReplaceText, "replace"));
-
+			Console.WriteLine("");
+				
 			if (validationResultList.Any(vr => !vr.IsSuccess))
 			{
-				Console.WriteLine("");
 				foreach (var validationResult in validationResultList)
 				{
 					if (!validationResult.IsSuccess)
 						Console.WriteLine(String.Format("{0}: {1}", validationResult.FieldName, validationResult.ErrorMessage));
 				}
+
 				Console.WriteLine("");
 			}
 			else
 			{
-				if (!String.IsNullOrEmpty(options.ReplaceText))
+				if (options.ReplaceText != null)
 				{
 					var replacer = new Replacer();
 					replacer.Dir = options.Dir;

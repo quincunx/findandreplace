@@ -18,7 +18,7 @@ namespace FindAndReplace.App
 		public string FindText = String.Empty;
 
 		[Option(null, "replace", HelpText = "Replacement text.")]
-		public string ReplaceText = String.Empty;
+		public string ReplaceText = null;
 
 		[Option(null, "caseSensitive", HelpText = "Case Sensitive.")]
 		public bool IsCaseSensitive = false;
