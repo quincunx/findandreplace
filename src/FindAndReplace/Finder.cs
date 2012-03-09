@@ -77,8 +77,14 @@ namespace FindAndReplace
 
 			var resultItems = new List<FindResultItem>();
 			var stats = new Stats();
-			stats.TotalFiles = filesInDirectory.Length;
+			stats.Files.Total = filesInDirectory.Length;
 
+			
+			//time
+			var startTime = DateTime.Now;
+			var proceedTime = startTime;
+
+			
 			//Analyze each file in the directory
 			foreach (string filePath in filesInDirectory)
 			{
@@ -89,7 +95,7 @@ namespace FindAndReplace
 				resultItem.FilePath = filePath;
 				resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
 
-				stats.ProcessedFiles++;
+				stats.Files.Processed++;
 
 				string fileContent = string.Empty;
 				
@@ -106,7 +112,7 @@ namespace FindAndReplace
 					resultItem.FailedToOpen = true;
 					resultItem.ErrorMessage = exception.Message;
 
-					stats.FailedToOpen++;
+					stats.Files.FailedToRead++;
 				}
 
 
@@ -119,17 +125,17 @@ namespace FindAndReplace
 
 						resultItem.NumMatches = resultItem.Matches.Count;
 
-						stats.TotalMatches += resultItem.Matches.Count;
+						stats.Matches.Found += resultItem.Matches.Count;
 
 						if (resultItem.Matches.Count > 0)
-							stats.FilesWithMatches++;
+							stats.Files.WithMatches++;
 						else
-							stats.FilesWithoutMatches++;
+							stats.Files.WithoutMatches++;
 					}
 					else
 					{
 						resultItem.IsSuccess = false;
-						stats.BinaryFiles++;
+						stats.Files.Binary++;
 					}
 				}
 
@@ -137,6 +143,12 @@ namespace FindAndReplace
 				//Skip files that don't have matches
 				if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
 					resultItems.Add(resultItem);
+
+				proceedTime = DateTime.Now;
+
+				stats.UpdateTime(proceedTime.Subtract(startTime));
+
+				startTime = proceedTime;
 				
 				OnFileProcessed(new FinderEventArgs(resultItem, stats));
 			}

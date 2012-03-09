@@ -76,40 +76,50 @@ namespace FindAndReplace
 
 			var resultItems = new List<ReplaceResultItem>();
 			var stats = new Stats();
-			stats.TotalFiles = filesInDirectory.Length;
+			stats.Files.Total = filesInDirectory.Length;
 
+			//time
+			var startTime = DateTime.Now;
+			var proceedTime = startTime;
+			
 			foreach (string filePath in filesInDirectory)
 			{
 				var resultItem = ReplaceTextInFile(filePath);
-				stats.ProcessedFiles++;
-				stats.TotalMatches += resultItem.NumMatches;
+				stats.Files.Processed++;
+				stats.Matches.Found += resultItem.NumMatches;
 
 				if (resultItem.IsSuccess)
 				{
 					if (resultItem.NumMatches > 0)
 					{
-						stats.FilesWithMatches++;
-						stats.TotalReplaces += resultItem.NumMatches;
+						stats.Files.WithMatches++;
+						stats.Matches.Replaced += resultItem.NumMatches;
 					}
 					else
 					{
-						stats.FilesWithoutMatches++;
+						stats.Files.WithoutMatches++;
 					}
 				}
 				else
 				{
 					if (resultItem.FailedToOpen)
-						stats.FailedToOpen++;
+						stats.Files.FailedToRead++;
 		
 					if (resultItem.IsBinaryFile)
-						stats.BinaryFiles++;
+						stats.Files.Binary++;
 
 					if (resultItem.FailedToWrite)
-						stats.FailedToWrite++;
+						stats.Files.FailedToWrite++;
 				}
 				
 				if (resultItem.IncludeInResultsList)
 					resultItems.Add(resultItem);
+
+				proceedTime = DateTime.Now;
+
+				stats.UpdateTime(proceedTime.Subtract(startTime));
+
+				startTime = proceedTime;
 				
 				OnFileProcessed(new ReplacerEventArgs(resultItem, stats));
 			}
@@ -117,6 +127,8 @@ namespace FindAndReplace
 			if (filesInDirectory.Length == 0) 
 				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats));
 
+			
+			
 			return new ReplaceResult() {ResultItems = resultItems, Stats = stats};
 		}
 		

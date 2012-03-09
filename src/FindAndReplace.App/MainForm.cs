@@ -126,7 +126,7 @@ namespace FindAndReplace.App
 
 		private void ShowFindResult(Finder.FindResultItem findResultItem, Stats stats)
 		{
-			if (stats.TotalFiles != 0)
+			if (stats.Files.Total != 0)
 			{
 				if (findResultItem.IncludeInResultsList)
 				{
@@ -164,10 +164,10 @@ namespace FindAndReplace.App
 					
 				}
 
-				progressBar.Maximum = stats.TotalFiles;
-				progressBar.Value = stats.ProcessedFiles;
+				progressBar.Maximum = stats.Files.Total;
+				progressBar.Value = stats.Files.Processed;
 
-				lblStatus.Text = "Processing " + stats.ProcessedFiles + " of " + stats.TotalFiles + " files.  Last file: " +
+				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
 								 findResultItem.FileRelativePath;
 
 			}
@@ -181,9 +181,9 @@ namespace FindAndReplace.App
 			ShowStats(stats);
 
 			//When last file - enable buttons back
-			if (stats.ProcessedFiles == stats.TotalFiles)
+			if (stats.Files.Processed == stats.Files.Total)
 			{
-				lblStatus.Text = "Processed " + stats.ProcessedFiles + " files.";
+				lblStatus.Text = "Processed " + stats.Files.Processed + " files.";
 				EnableButtons();
 			}
 				
@@ -400,7 +400,7 @@ namespace FindAndReplace.App
 
 		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, Stats stats)
 		{
-			if (stats.TotalFiles > 0)
+			if (stats.Files.Total > 0)
 			{
 				if (replaceResultItem.IncludeInResultsList)
 				{
@@ -439,10 +439,10 @@ namespace FindAndReplace.App
 
 				}
 
-				progressBar.Maximum = stats.TotalFiles;
-				progressBar.Value = stats.ProcessedFiles;
+				progressBar.Maximum = stats.Files.Total;
+				progressBar.Value = stats.Files.Processed;
 
-				lblStatus.Text = "Processing " + stats.ProcessedFiles + " of " + stats.TotalFiles + " files.  Last file: " +
+				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
 								 replaceResultItem.FileRelativePath;
 			}
 			else
@@ -456,9 +456,9 @@ namespace FindAndReplace.App
 			ShowStats(stats, true);
 
 			//When last file - enable buttons back
-			if (stats.ProcessedFiles == stats.TotalFiles)
+			if (stats.Files.Processed == stats.Files.Total)
 			{
-				lblStatus.Text = "Processed " + stats.ProcessedFiles + " files.";
+				lblStatus.Text = "Processed " + stats.Files.Processed + " files.";
 				EnableButtons();
 			}
 		}
@@ -669,22 +669,37 @@ namespace FindAndReplace.App
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("Files:");
-			sb.AppendLine("- Total: " + stats.TotalFiles);
-			sb.AppendLine("- Processed: " + stats.ProcessedFiles);
-			sb.AppendLine("- Binary: " + stats.BinaryFiles + " (skipped)");
-			sb.AppendLine("- With Matches: " + stats.FilesWithMatches);
-			sb.AppendLine("- Without Matches: " + stats.FilesWithoutMatches);
-			sb.AppendLine("- Failed to Open: " + stats.FailedToOpen);
+			sb.AppendLine("- Total: " + stats.Files.Total);
+			sb.AppendLine("- Processed: " + stats.Files.Processed);
+			sb.AppendLine("- Binary: " + stats.Files.Binary + " (skipped)");
+			sb.AppendLine("- With Matches: " + stats.Files.WithMatches);
+			sb.AppendLine("- Without Matches: " + stats.Files.WithoutMatches);
+			sb.AppendLine("- Failed to Open: " + stats.Files.FailedToRead);
 			
 			if (showReplaceStats)
-				sb.AppendLine("- Failed to Write: " + stats.FailedToWrite);
+				sb.AppendLine("- Failed to Write: " + stats.Files.FailedToWrite);
 			
 			sb.AppendLine("");
 			sb.AppendLine("Matches:");
-			sb.AppendLine("- Found: " + stats.TotalMatches);
+			sb.AppendLine("- Found: " + stats.Matches.Found);
 
 			if (showReplaceStats)
-				sb.AppendLine("- Replaced: " + stats.TotalReplaces);
+				sb.AppendLine("- Replaced: " + stats.Matches.Replaced);
+
+			var passedSeconds = stats.Time.Passed.TotalSeconds;
+			var remainingSeconds = stats.Time.Remaining.TotalSeconds;
+
+			if (passedSeconds >= 1)
+			{
+				sb.AppendLine("");
+				sb.AppendLine("Time:");
+				sb.AppendLine("- Passed: " + Utils.FormatTimeSpan(stats.Time.Passed));
+
+				if (remainingSeconds >= 3)
+				{
+					sb.AppendLine("- Remaining: " + Utils.FormatTimeSpan(stats.Time.Remaining));
+				}
+			}
 
 			lblStats.Text = sb.ToString();
 		}

@@ -121,21 +121,21 @@ namespace FindAndReplace.App
 			Console.WriteLine("Stats");
 			Console.WriteLine("");
 			Console.WriteLine("Files:");
-			Console.WriteLine("- Total: " + stats.TotalFiles);
-			Console.WriteLine("- Binary: " + stats.BinaryFiles + " (skipped)");
-			Console.WriteLine("- With Matches: " + stats.FilesWithMatches);
-			Console.WriteLine("- Without Matches: " + stats.FilesWithoutMatches);
-			Console.WriteLine("- Failed to Open: " + stats.FailedToOpen);
+			Console.WriteLine("- Total: " + stats.Files.Total);
+			Console.WriteLine("- Binary: " + stats.Files.Binary + " (skipped)");
+			Console.WriteLine("- With Matches: " + stats.Files.WithMatches);
+			Console.WriteLine("- Without Matches: " + stats.Files.WithoutMatches);
+			Console.WriteLine("- Failed to Open: " + stats.Files.FailedToRead);
 
 			if (isReplacerStats)
-				Console.WriteLine("- Failed to Write: " + stats.FailedToWrite);
+				Console.WriteLine("- Failed to Write: " + stats.Files.FailedToWrite);
 
 			Console.WriteLine("");
 			Console.WriteLine("Matches:");
-			Console.WriteLine("- Found: " + stats.TotalMatches);
+			Console.WriteLine("- Found: " + stats.Matches.Found);
 
 			if (isReplacerStats)
-				Console.WriteLine("- Replaced: " + stats.TotalReplaces);
+				Console.WriteLine("- Replaced: " + stats.Matches.Replaced);
 			Console.WriteLine("====================================");
 		}
 
@@ -237,7 +237,7 @@ namespace FindAndReplace.App
 			if (e.ResultItem.IncludeInResultsList)
 				Program.PrintFinderResultRow(e.ResultItem);
 
-			if (e.Stats.ProcessedFiles == e.Stats.TotalFiles)
+			if (e.Stats.Files.Processed == e.Stats.Files.Total)
 				Program.PrintStatistics(e.Stats);
 			
 		}
@@ -248,7 +248,7 @@ namespace FindAndReplace.App
 			if (e.ResultItem.IncludeInResultsList)
 				Program.PrintReplacerResultRow(e.ResultItem);
 
-			if (e.Stats.ProcessedFiles == e.Stats.TotalFiles)
+			if (e.Stats.Files.Processed == e.Stats.Files.Total)
 				Program.PrintStatistics(e.Stats, true);
 
 		}
