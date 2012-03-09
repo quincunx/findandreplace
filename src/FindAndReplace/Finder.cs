@@ -144,11 +144,7 @@ namespace FindAndReplace
 				if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
 					resultItems.Add(resultItem);
 
-				proceedTime = DateTime.Now;
-
-				stats.UpdateTime(proceedTime.Subtract(startTime));
-
-				startTime = proceedTime;
+				stats.UpdateTime(DateTime.Now.Subtract(startTime));
 				
 				OnFileProcessed(new FinderEventArgs(resultItem, stats));
 			}
