@@ -78,7 +78,7 @@ namespace FindAndReplace.App
 			}
 		}
 		
-		public static void PrintFinderResultRow(Finder.FindResultItem item)
+		public static void PrintFinderResultRow(Finder.FindResultItem item, Stats stats)
 		{
 			PrintNameValuePair("File", item.FileRelativePath);
 				
@@ -87,11 +87,14 @@ namespace FindAndReplace.App
 			else
 				PrintNameValuePair("Error", item.ErrorMessage);
 
+			var passedSecondes = stats.Time.Passed.TotalSeconds;
+			if (passedSecondes >= 1) PrintNameValuePair("Time Passed", Utils.FormatTimeSpan(stats.Time.Passed));
+
 			Console.WriteLine();
 
 		}
 
-		public static void PrintReplacerResultRow(Replacer.ReplaceResultItem item)
+		public static void PrintReplacerResultRow(Replacer.ReplaceResultItem item, Stats stats)
 		{
 			PrintNameValuePair("File", item.FileRelativePath);
 				
@@ -102,6 +105,9 @@ namespace FindAndReplace.App
 
 			if (!item.IsSuccess)
 				PrintNameValuePair("Error", item.ErrorMessage);
+
+			var passedSecondes = stats.Time.Passed.TotalSeconds;
+			if (passedSecondes >= 1) PrintNameValuePair("Time Passed", Utils.FormatTimeSpan(stats.Time.Passed));
 
 			Console.WriteLine();
 		}
@@ -230,23 +236,20 @@ namespace FindAndReplace.App
 			#endif
 		}
 
-		
-
 		private static void OnFinderFileProcessed(object sender, FinderEventArgs e)
 		{
 			if (e.ResultItem.IncludeInResultsList)
-				Program.PrintFinderResultRow(e.ResultItem);
+				Program.PrintFinderResultRow(e.ResultItem, e.Stats);
 
 			if (e.Stats.Files.Processed == e.Stats.Files.Total)
 				Program.PrintStatistics(e.Stats);
 			
 		}
 
-
 		private static void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
 		{
 			if (e.ResultItem.IncludeInResultsList)
-				Program.PrintReplacerResultRow(e.ResultItem);
+				Program.PrintReplacerResultRow(e.ResultItem, e.Stats);
 
 			if (e.Stats.Files.Processed == e.Stats.Files.Total)
 				Program.PrintStatistics(e.Stats, true);
