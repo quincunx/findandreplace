@@ -161,6 +161,9 @@ namespace FindAndReplace.App
 						gvResults.Rows[currentRow].Cells[4].Value = findResultItem.ErrorMessage;
 					}
 
+					//Grid likes to select the first row for some reason
+					if (gvResults.Rows.Count == 1)
+						gvResults.ClearSelection();
 					
 				}
 
@@ -437,6 +440,9 @@ namespace FindAndReplace.App
 						gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
 					}
 
+					//Grid likes to select the first row for some reason
+					if (gvResults.Rows.Count == 1)
+						gvResults.ClearSelection();
 				}
 
 				progressBar.Maximum = stats.TotalFiles;
