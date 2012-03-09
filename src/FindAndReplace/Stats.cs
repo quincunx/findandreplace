@@ -55,11 +55,12 @@ namespace FindAndReplace
 
 		public void UpdateTime(TimeSpan passed)
 		{
-			Time.Passed += passed;
+			Time.Passed = passed;
 
-			var passedSeconds = (int) Time.Passed.TotalSeconds;
+			double passedSeconds = Time.Passed.TotalSeconds;
 
-			var remainingSeconds = passedSeconds*Files.Total/Files.Processed;
+			int remainingFiles = Files.Total - Files.Processed;
+			var remainingSeconds = (passedSeconds / Files.Processed) * remainingFiles;
 
 			Time.Remaining = TimeSpan.FromSeconds(remainingSeconds);
 		}

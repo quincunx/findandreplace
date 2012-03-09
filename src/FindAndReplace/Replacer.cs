@@ -80,8 +80,7 @@ namespace FindAndReplace
 
 			//time
 			var startTime = DateTime.Now;
-			var proceedTime = startTime;
-			
+	
 			foreach (string filePath in filesInDirectory)
 			{
 				var resultItem = ReplaceTextInFile(filePath);
@@ -115,11 +114,7 @@ namespace FindAndReplace
 				if (resultItem.IncludeInResultsList)
 					resultItems.Add(resultItem);
 
-				proceedTime = DateTime.Now;
-
-				stats.UpdateTime(proceedTime.Subtract(startTime));
-
-				startTime = proceedTime;
+				stats.UpdateTime(DateTime.Now.Subtract(startTime));
 				
 				OnFileProcessed(new ReplacerEventArgs(resultItem, stats));
 			}

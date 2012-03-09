@@ -703,7 +703,7 @@ namespace FindAndReplace.App
 
 				if (remainingSeconds >= 3)
 				{
-					sb.AppendLine("- Remaining: " + Utils.FormatTimeSpan(stats.Time.Remaining));
+					sb.AppendLine("- Remaining: " + Utils.FormatTimeSpan(stats.Time.Remaining) + " (estimated)");
 				}
 			}
 
