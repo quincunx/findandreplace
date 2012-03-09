@@ -59,7 +59,7 @@ namespace FindAndReplace
 
 			var passedSeconds = (int) Time.Passed.TotalSeconds;
 
-			var remainingSeconds  = passedSeconds*Files.Total/Files.Processed;
+			var remainingSeconds = passedSeconds*Files.Total/Files.Processed;
 
 			Time.Remaining = TimeSpan.FromSeconds(remainingSeconds);
 		}
