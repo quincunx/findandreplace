@@ -413,6 +413,8 @@ namespace FindAndReplace.App
 
 					int currentRow = gvResults.Rows.Count - 1;
 
+					gvResults.Rows[currentRow].ContextMenuStrip = CreateContextMenu(currentRow);
+
 					gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
