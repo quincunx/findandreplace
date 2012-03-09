@@ -492,8 +492,10 @@ namespace FindAndReplace.App
 				return;
 
 			ShowCommandLinePanel();
+			lblStats.Text = "";
+			
 			txtCommandLine.Clear();
-
+			
 			string s = String.Format("{0} --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5} --find \"{6}\" --replace \"{7}\"",
 									 Application.ExecutablePath,
 									 txtDir.Text,
