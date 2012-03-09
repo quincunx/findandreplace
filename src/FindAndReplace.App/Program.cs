@@ -142,6 +142,11 @@ namespace FindAndReplace.App
 
 			if (isReplacerStats)
 				Console.WriteLine("- Replaced: " + stats.Matches.Replaced);
+			
+			Console.WriteLine("");
+			double secs = Math.Round(stats.Time.Passed.TotalSeconds, 3);
+			Console.WriteLine("Duration: " + secs.ToString() + " secs");
+			
 			Console.WriteLine("====================================");
 		}
 
