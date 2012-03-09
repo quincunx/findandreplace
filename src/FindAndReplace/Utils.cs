@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FindAndReplace
 {
-	internal static class Utils
+	public static class Utils
 	{
 		public static RegexOptions GetRegExOptions(bool isCaseSensitive)
 		{
@@ -74,6 +74,15 @@ namespace FindAndReplace
 			result.AddRange(temp.Where(ln => !ln.HasMatch && !result.Select(l => l.LineNumber).Contains(ln.LineNumber)).Distinct(new LineNumberComparer()));
 
 			return result.OrderBy(ln => ln.LineNumber).ToList();
+		}
+
+		public static string FormatTimeSpan(TimeSpan timeSpan)
+		{
+			return String.Format("{0}h {1}m {2}s", 
+				(int)timeSpan.Hours,
+				((int)timeSpan.Minutes).ToString("D2"),
+				((int)timeSpan.Seconds).ToString("D2")
+				);
 		}
 
 		private static int DetectMatchLine(string[] lines, int position)
