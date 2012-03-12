@@ -33,6 +33,8 @@ namespace FindAndReplace
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
 
+		public bool IsCancelRequested { get; set; }
+
 		public class FindResultItem
 		{
 			public string FileName { get; set; }
@@ -114,7 +116,6 @@ namespace FindAndReplace
 					stats.Files.FailedToRead++;
 				}
 
-
 				if (!resultItem.FailedToOpen)
 				{
 					if (!Utils.IsBinaryFile(fileContent))
@@ -146,12 +147,19 @@ namespace FindAndReplace
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
 				
 				OnFileProcessed(new FinderEventArgs(resultItem, stats));
+
+				if (IsCancelRequested) break;
 			}
 
 			if (filesInDirectory.Length == 0)
 				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats));
 
 			return new FindResult() {Items = resultItems, Stats = stats};
+		}
+
+		public void CancelFind()
+		{
+			IsCancelRequested = true;
 		}
 
 		public event FileProcessedEventHandler FileProcessed;
