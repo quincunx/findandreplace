@@ -55,6 +55,7 @@
 			this.lblStats = new System.Windows.Forms.Label();
 			this.chkIsRegEx = new System.Windows.Forms.CheckBox();
 			this.txtMatchesPreview = new System.Windows.Forms.RichTextBox();
+			this.btnCancel = new System.Windows.Forms.Button();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -240,7 +241,7 @@
 			// 
 			this.progressBar.Location = new System.Drawing.Point(77, 170);
 			this.progressBar.Name = "progressBar";
-			this.progressBar.Size = new System.Drawing.Size(930, 23);
+			this.progressBar.Size = new System.Drawing.Size(849, 23);
 			this.progressBar.TabIndex = 20;
 			// 
 			// lblStatus
@@ -254,6 +255,7 @@
 			// 
 			// pnlGridResults
 			// 
+			this.pnlGridResults.Controls.Add(this.btnCancel);
 			this.pnlGridResults.Controls.Add(this.lblStatus);
 			this.pnlGridResults.Controls.Add(this.progressBar);
 			this.pnlGridResults.Controls.Add(this.lblResults);
@@ -308,11 +310,21 @@
 			this.txtMatchesPreview.Text = "";
 			this.txtMatchesPreview.Visible = false;
 			// 
+			// btnCancel
+			// 
+			this.btnCancel.Location = new System.Drawing.Point(932, 170);
+			this.btnCancel.Name = "btnCancel";
+			this.btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.btnCancel.TabIndex = 26;
+			this.btnCancel.Text = "Cancel";
+			this.btnCancel.UseVisualStyleBackColor = true;
+			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(652, 341);
+			this.ClientSize = new System.Drawing.Size(639, 336);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatchesPreview);
@@ -377,6 +389,7 @@
 		private System.Windows.Forms.RichTextBox txtMatchesPreview;
 		private System.Windows.Forms.Label lblStats;
 		private System.Windows.Forms.CheckBox chkIsRegEx;
+		private System.Windows.Forms.Button btnCancel;
 	}
 }
 
