@@ -28,6 +28,8 @@ namespace FindAndReplace
 		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
+
+		public bool IsCancelRequested { get; set; }
 		
 		public class ReplaceResultItem 
 		{
@@ -117,6 +119,8 @@ namespace FindAndReplace
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
 				
 				OnFileProcessed(new ReplacerEventArgs(resultItem, stats));
+
+				if (IsCancelRequested) break;
 			}
 
 			if (filesInDirectory.Length == 0) 
@@ -125,6 +129,11 @@ namespace FindAndReplace
 			
 			
 			return new ReplaceResult() {ResultItems = resultItems, Stats = stats};
+		}
+
+		public void CancelReplace()
+		{
+			IsCancelRequested = true;
 		}
 		
 		private ReplaceResultItem ReplaceTextInFile(string filePath)

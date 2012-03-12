@@ -827,11 +827,12 @@ namespace FindAndReplace.App
 		{
 			if (_currentThread.IsAlive)
 			{
-				_currentThread.Abort();
+				if (_isFindMode)
+					_finder.CancelFind();
+				else
+					_replacer.CancelReplace();
 
 				EnableButtons();
-
-				
 			}
 		}
 	}
