@@ -69,7 +69,7 @@ namespace FindAndReplace.App
 
 			_currentThread = new Thread(DoFindWork);
 			_currentThread.IsBackground = true;
-
+			
 			_currentThread.Start();
 		}
 
@@ -213,6 +213,7 @@ namespace FindAndReplace.App
 			btnFindOnly.Enabled = enabled;
 			btnReplace.Enabled = enabled;
 			btnGenReplaceCommandLine.Enabled = enabled;
+			btnCancel.Enabled = !enabled;
 		}
 
 		private void DoFindWork()
@@ -367,6 +368,7 @@ namespace FindAndReplace.App
 
 			_currentThread = new Thread(DoReplaceWork);
 			_currentThread.IsBackground = true;
+
 			_currentThread.Start();
 		}
 
@@ -819,6 +821,18 @@ namespace FindAndReplace.App
 		public class GVResultEventArgs : EventArgs
 		{
 			public int cellRow { get; set; }
+		}
+
+		private void btnCancel_Click(object sender, EventArgs e)
+		{
+			if (_currentThread.IsAlive)
+			{
+				_currentThread.Abort();
+
+				EnableButtons();
+
+				
+			}
 		}
 	}
 }
