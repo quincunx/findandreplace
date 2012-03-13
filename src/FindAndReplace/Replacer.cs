@@ -137,6 +137,37 @@ namespace FindAndReplace
 			return new ReplaceResult() {ResultItems = resultItems, Stats = stats};
 		}
 
+		void CheckIfBinary(string filePath, ref ReplaceResultItem resultItem)
+		{
+			string shortContent = string.Empty;
+
+			//Check if can read first
+			try
+			{
+				var buffer = new char[1024];
+
+				using (var sr = new StreamReader(filePath))
+				{
+					int k = sr.Read(buffer, 0, 1024);
+
+					shortContent = new string(buffer, 0, k);
+				}
+			}
+			catch (Exception exception)
+			{
+				resultItem.IsSuccess = false;
+				resultItem.FailedToOpen = true;
+				resultItem.ErrorMessage = exception.Message;
+			}
+
+			//Load 1KB or 10KB of data and check for /0/0/0/0
+			if (Utils.IsBinaryFile(shortContent))
+			{
+				resultItem.IsSuccess = false;
+				resultItem.IsBinaryFile = true;
+			}
+		}
+
 		public void CancelReplace()
 		{
 			IsCancelRequested = true;
@@ -152,28 +183,13 @@ namespace FindAndReplace
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
 
-			try
-			{
-				using (StreamReader sr = new StreamReader(filePath))
-				{
-					fileContent = sr.ReadToEnd();
-				}
-			}
-			catch (Exception exception)
-			{
-				resultItem.IsSuccess = false;
-				resultItem.FailedToOpen = true;
-				resultItem.ErrorMessage = exception.Message;
-				
-				return resultItem;
-			}
+			CheckIfBinary(filePath, ref resultItem);
 			
+			if (!resultItem.IsSuccess) return resultItem;
 			
-			if (Utils.IsBinaryFile(fileContent))
+			using (StreamReader sr = new StreamReader(filePath))
 			{
-				resultItem.IsSuccess = false;
-				resultItem.IsBinaryFile = true;
-				return resultItem;
+				fileContent = sr.ReadToEnd();
 			}
 
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);

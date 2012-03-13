@@ -105,46 +105,29 @@ namespace FindAndReplace
 				stats.Files.Processed++;
 
 				string fileContent = string.Empty;
-				
-				try
+
+
+				CheckIfBinary(filePath, ref resultItem, ref stats);
+
+				if (resultItem.IsSuccess)
 				{
 					using (var sr = new StreamReader(filePath))
 					{
 						fileContent = sr.ReadToEnd();
 					}
-				}
-				catch (Exception exception)
-				{
-					resultItem.IsSuccess = false;
-					resultItem.FailedToOpen = true;
-					resultItem.ErrorMessage = exception.Message;
 
-					stats.Files.FailedToRead++;
-				}
+					resultItem.Matches = GetMatches(fileContent);
+					resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
 
-				if (!resultItem.FailedToOpen)
-				{
-					if (!Utils.IsBinaryFile(fileContent))
-					{
-						resultItem.Matches = GetMatches(fileContent);
-						resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
+					resultItem.NumMatches = resultItem.Matches.Count;
 
-						resultItem.NumMatches = resultItem.Matches.Count;
+					stats.Matches.Found += resultItem.Matches.Count;
 
-						stats.Matches.Found += resultItem.Matches.Count;
-
-						if (resultItem.Matches.Count > 0)
-							stats.Files.WithMatches++;
-						else
-							stats.Files.WithoutMatches++;
-					}
+					if (resultItem.Matches.Count > 0)
+						stats.Files.WithMatches++;
 					else
-					{
-						resultItem.IsSuccess = false;
-						stats.Files.Binary++;
-					}
+						stats.Files.WithoutMatches++;
 				}
-
 
 				//Skip files that don't have matches
 				if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
@@ -170,6 +153,39 @@ namespace FindAndReplace
 		public void CancelFind()
 		{
 			IsCancelRequested = true;
+		}
+
+		void CheckIfBinary(string filePath, ref FindResultItem resultItem, ref Stats stats)
+		{
+			string shortContent = string.Empty;
+			
+			//Check if can read first
+			try
+			{
+				var buffer = new char[1024];
+				
+				using (var sr = new StreamReader(filePath))
+				{
+					int k = sr.Read(buffer, 0, 1024);
+
+					shortContent = new string(buffer, 0, k);
+				}
+			}
+			catch (Exception exception)
+			{
+				resultItem.IsSuccess = false;
+				resultItem.FailedToOpen = true;
+				resultItem.ErrorMessage = exception.Message;
+
+				stats.Files.FailedToRead++;
+			}
+
+			//Load 1KB or 10KB of data and check for /0/0/0/0
+			if (Utils.IsBinaryFile(shortContent))
+			{
+				resultItem.IsSuccess = false;
+				stats.Files.Binary++;
+			}
 		}
 
 		public event FileProcessedEventHandler FileProcessed;
