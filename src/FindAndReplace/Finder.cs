@@ -14,10 +14,13 @@ namespace FindAndReplace
 
 		public Stats Stats { get; set; }
 
-		public FinderEventArgs(Finder.FindResultItem resultItem, Stats stats)
+		public Status Status { get; set; }
+
+		public FinderEventArgs(Finder.FindResultItem resultItem, Stats stats, Status status)
 		{
 			ResultItem = resultItem;
 			Stats = stats;
+			Status = status;
 		}
 	}
 
@@ -75,6 +78,8 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 
+			Status finderStatus = Status.Processing;
+			
 			//time
 			var startTime = DateTime.Now;
 			
@@ -146,13 +151,17 @@ namespace FindAndReplace
 				
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
 				
-				OnFileProcessed(new FinderEventArgs(resultItem, stats));
-
+				if (IsCancelRequested) finderStatus = Status.Cancelled;
+				
+				OnFileProcessed(new FinderEventArgs(resultItem, stats, finderStatus));
+				
 				if (IsCancelRequested) break;
 			}
 
+			finderStatus = Status.Completed;
+
 			if (filesInDirectory.Length == 0)
-				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats));
+				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats, finderStatus));
 
 			return new FindResult() {Items = resultItems, Stats = stats};
 		}

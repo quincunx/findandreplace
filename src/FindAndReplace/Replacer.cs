@@ -9,11 +9,13 @@ namespace FindAndReplace
 	{
 		public Replacer.ReplaceResultItem ResultItem { get; set; }
 		public Stats Stats { get; set; }
+		public Status Status { get; set; }
 
-		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, Stats stats)
+		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, Stats stats, Status status)
 		{
 			ResultItem = resultItem;
 			Stats = stats;
+			Status = status;
 		}
 	}
 
@@ -74,6 +76,8 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 			Verify.Argument.IsNotNull(ReplaceText, "ReplaceText");
 
+			Status replacerStatus = Status.Processing;
+
 			var startTime = DateTime.Now;
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
 
@@ -117,17 +121,19 @@ namespace FindAndReplace
 					resultItems.Add(resultItem);
 
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
+
+				if (IsCancelRequested) replacerStatus = Status.Cancelled;
 				
-				OnFileProcessed(new ReplacerEventArgs(resultItem, stats));
+				OnFileProcessed(new ReplacerEventArgs(resultItem, stats, replacerStatus));
 
 				if (IsCancelRequested) break;
 			}
 
+			replacerStatus = Status.Completed;
+			
 			if (filesInDirectory.Length == 0) 
-				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats));
+				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats, replacerStatus));
 
-			
-			
 			return new ReplaceResult() {ResultItems = resultItems, Stats = stats};
 		}
 

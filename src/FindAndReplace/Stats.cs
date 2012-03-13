@@ -5,6 +5,13 @@ using System.Text;
 
 namespace FindAndReplace
 {
+	public enum Status
+	{
+		Processing,
+		Completed,
+		Cancelled
+	}
+	
 	public class Stats
 	{
 		public class StatsFiles
