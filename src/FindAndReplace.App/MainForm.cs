@@ -24,9 +24,9 @@ namespace FindAndReplace.App
 		private Thread _currentThread;
 		private bool _isFindMode;
 
-		private delegate void SetFindResultCallback(Finder.FindResultItem resultItem, Stats stats);
+		private delegate void SetFindResultCallback(Finder.FindResultItem resultItem, Stats stats, Status status);
 		
-		private delegate void SetReplaceResultCallback(Replacer.ReplaceResultItem resultItem, Stats stats);
+		private delegate void SetReplaceResultCallback(Replacer.ReplaceResultItem resultItem, Stats stats, Status status);
 
 		public MainForm()
 		{
@@ -116,16 +116,16 @@ namespace FindAndReplace.App
 		{
 			if (!this.gvResults.InvokeRequired)
 			{
-				ShowFindResult(e.ResultItem, e.Stats);
+				ShowFindResult(e.ResultItem, e.Stats, e.Status);
 			}
 			else
 			{
 				SetFindResultCallback findResultCallback = ShowFindResult;
-				this.Invoke(findResultCallback, new object[] { e.ResultItem, e.Stats });
+				this.Invoke(findResultCallback, new object[] { e.ResultItem, e.Stats, e.Status });
 			}
 		}
 
-		private void ShowFindResult(Finder.FindResultItem findResultItem, Stats stats)
+		private void ShowFindResult(Finder.FindResultItem findResultItem, Stats stats, Status status)
 		{
 			if (stats.Files.Total != 0)
 			{
@@ -171,9 +171,10 @@ namespace FindAndReplace.App
 				progressBar.Maximum = stats.Files.Total;
 				progressBar.Value = stats.Files.Processed;
 
-				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
-								 findResultItem.FileRelativePath;
-
+				lblStatus.Text = status != Status.Cancelled
+				                 	? "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
+				                 	  findResultItem.FileRelativePath
+				                 	: "Operation was cancelled.";
 			}
 			else
 			{
@@ -405,7 +406,7 @@ namespace FindAndReplace.App
 			_replacer.Replace();
 		}
 
-		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, Stats stats)
+		private void ShowReplaceResult(Replacer.ReplaceResultItem replaceResultItem, Stats stats, Status status)
 		{
 			if (stats.Files.Total > 0)
 			{
@@ -454,8 +455,10 @@ namespace FindAndReplace.App
 				progressBar.Maximum = stats.Files.Total;
 				progressBar.Value = stats.Files.Processed;
 
-				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
-								 replaceResultItem.FileRelativePath;
+				lblStatus.Text = status != Status.Cancelled
+				                 	? "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
+				                 	  replaceResultItem.FileRelativePath
+				                 	: "Operation was cancelled.";
 			}
 			else
 			{
@@ -479,12 +482,12 @@ namespace FindAndReplace.App
 		{
 			if (!this.gvResults.InvokeRequired)
 			{
-				ShowReplaceResult(e.ResultItem,  e.Stats);
+				ShowReplaceResult(e.ResultItem,  e.Stats, e.Status);
 			}
 			else
 			{
 				var replaceResultCallback = new SetReplaceResultCallback(ShowReplaceResult);
-				this.Invoke(replaceResultCallback, new object[] { e.ResultItem, e.Stats });
+				this.Invoke(replaceResultCallback, new object[] { e.ResultItem, e.Stats, e.Status });
 			}
 		}
 
