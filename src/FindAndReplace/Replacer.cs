@@ -30,7 +30,7 @@ namespace FindAndReplace
 		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
-
+		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
 		
 		public class ReplaceResultItem 
@@ -79,7 +79,7 @@ namespace FindAndReplace
 			Status replacerStatus = Status.Processing;
 
 			var startTime = DateTime.Now;
-			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
+			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask);
 
 			var resultItems = new List<ReplaceResultItem>();
 			var stats = new Stats();

@@ -50,12 +50,14 @@
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.lblStatus = new System.Windows.Forms.Label();
 			this.pnlGridResults = new System.Windows.Forms.Panel();
+			this.btnCancel = new System.Windows.Forms.Button();
 			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
 			this.txtNoMatches = new System.Windows.Forms.Label();
 			this.lblStats = new System.Windows.Forms.Label();
 			this.chkIsRegEx = new System.Windows.Forms.CheckBox();
 			this.txtMatchesPreview = new System.Windows.Forms.RichTextBox();
-			this.btnCancel = new System.Windows.Forms.Button();
+			this.label3 = new System.Windows.Forms.Label();
+			this.txtExcludefileMask = new System.Windows.Forms.TextBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -138,7 +140,7 @@
 			// 
 			this.txtFileMask.Location = new System.Drawing.Point(83, 64);
 			this.txtFileMask.Name = "txtFileMask";
-			this.txtFileMask.Size = new System.Drawing.Size(274, 20);
+			this.txtFileMask.Size = new System.Drawing.Size(225, 20);
 			this.txtFileMask.TabIndex = 4;
 			this.txtFileMask.Text = "*.*";
 			this.txtFileMask.Validating += new System.ComponentModel.CancelEventHandler(this.txtFileMask_Validating);
@@ -266,6 +268,16 @@
 			this.pnlGridResults.TabIndex = 22;
 			this.pnlGridResults.Visible = false;
 			// 
+			// btnCancel
+			// 
+			this.btnCancel.Location = new System.Drawing.Point(932, 170);
+			this.btnCancel.Name = "btnCancel";
+			this.btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.btnCancel.TabIndex = 26;
+			this.btnCancel.Text = "Cancel";
+			this.btnCancel.UseVisualStyleBackColor = true;
+			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+			// 
 			// errorProvider1
 			// 
 			this.errorProvider1.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
@@ -310,21 +322,29 @@
 			this.txtMatchesPreview.Text = "";
 			this.txtMatchesPreview.Visible = false;
 			// 
-			// btnCancel
+			// label3
 			// 
-			this.btnCancel.Location = new System.Drawing.Point(932, 170);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.btnCancel.TabIndex = 26;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.UseVisualStyleBackColor = true;
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(346, 67);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(45, 13);
+			this.label3.TabIndex = 26;
+			this.label3.Text = "Exclude";
+			// 
+			// txtExcludefileMask
+			// 
+			this.txtExcludefileMask.Location = new System.Drawing.Point(397, 64);
+			this.txtExcludefileMask.Name = "txtExcludefileMask";
+			this.txtExcludefileMask.Size = new System.Drawing.Size(225, 20);
+			this.txtExcludefileMask.TabIndex = 27;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(639, 336);
+			this.Controls.Add(this.txtExcludefileMask);
+			this.Controls.Add(this.label3);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatchesPreview);
@@ -391,6 +411,8 @@
 		private System.Windows.Forms.Label lblStats;
 		private System.Windows.Forms.CheckBox chkIsRegEx;
 		private System.Windows.Forms.Button btnCancel;
+		private System.Windows.Forms.TextBox txtExcludefileMask;
+		private System.Windows.Forms.Label label3;
 	}
 }
 
