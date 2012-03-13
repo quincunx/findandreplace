@@ -35,6 +35,7 @@ namespace FindAndReplace
 		public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
+		public string ExcludeFileMask { get; set; }
 
 		public bool IsCancelRequested { get; set; }
 
@@ -82,8 +83,8 @@ namespace FindAndReplace
 			
 			//time
 			var startTime = DateTime.Now;
-			
-			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories);
+
+			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask);
 
 			var resultItems = new List<FindResultItem>();
 			var stats = new Stats();

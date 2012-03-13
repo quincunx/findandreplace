@@ -21,7 +21,7 @@ namespace FindAndReplace
 			return options;
 		}
 
-		public static string[] GetFilesInDirectory(string dir, string fileMask, bool includeSubDirectories)
+		public static string[] GetFilesInDirectory(string dir, string fileMask, bool includeSubDirectories, string excludeMask)
 		{
 			SearchOption searchOption = includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
@@ -32,7 +32,15 @@ namespace FindAndReplace
 				filesInDirectory.AddRange(Directory.GetFiles(dir, mask.Trim(), searchOption));
 			}
 
-			return filesInDirectory.Distinct().ToArray();
+			filesInDirectory = filesInDirectory.Distinct().ToList();
+
+			if (!String.IsNullOrEmpty(excludeMask))
+			{
+				var excludeFileMasks = excludeMask.Split(',');
+				filesInDirectory = excludeFileMasks.Select(excludeFileMask => WildcardToRegex(excludeFileMask.Trim())).Aggregate(filesInDirectory, (current, excludeMaskRegEx) => current.Where(f => !Regex.IsMatch(f, excludeMaskRegEx)).ToList());
+			}
+
+			return filesInDirectory.ToArray();
 		}
 
 		public static bool IsBinaryFile(string fileContent)
@@ -135,6 +143,12 @@ namespace FindAndReplace
 			}
 
 			return i;
+		}
+
+		//from http://www.roelvanlisdonk.nl/?p=259
+		private static string WildcardToRegex(string pattern)
+		{
+			return string.Format("^{0}$", Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", "."));
 		}
 	}
 }

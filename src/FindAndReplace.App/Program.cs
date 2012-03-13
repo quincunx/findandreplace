@@ -210,6 +210,7 @@ namespace FindAndReplace.App
 					replacer.IsCaseSensitive = options.IsCaseSensitive;
 					replacer.FindTextHasRegEx = options.IsFindTextHasRegEx;
 					replacer.FileProcessed += OnReplacerFileProcessed;
+					replacer.ExcludeFileMask = options.ExcludeFileMask;
 
 					replacer.Replace();
 				}
@@ -224,6 +225,7 @@ namespace FindAndReplace.App
 					finder.IsCaseSensitive = options.IsCaseSensitive;
 					finder.FindTextHasRegEx = options.IsFindTextHasRegEx;
 					finder.FileProcessed += OnFinderFileProcessed;
+					finder.ExcludeFileMask = options.ExcludeFileMask;
 					finder.Find();
 
 				}

@@ -35,6 +35,9 @@ namespace FindAndReplace.App
 		[Option(null, "includeSubDirectories", HelpText = "Include files in SubDirectories.")]
 		public bool IncludeSubDirectories = false;
 
+		[Option(null, "excludeFileMask", HelpText = "Exclude file mask.")]
+		public string ExcludeFileMask = String.Empty;
+
 		#endregion
 
 		#region Specialized Option Attribute

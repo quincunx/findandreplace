@@ -63,6 +63,8 @@ namespace FindAndReplace.App
 			finder.FindTextHasRegEx = chkIsRegEx.Checked;
 			finder.FindText = txtFind.Text;
 			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
+			finder.ExcludeFileMask = txtExcludefileMask.Text;
+
 			CreateListener(finder);
 
 			ShowResultPanel();
@@ -356,6 +358,7 @@ namespace FindAndReplace.App
 			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
 			replacer.ReplaceText = txtReplace.Text;
+			replacer.ExcludeFileMask = txtExcludefileMask.Text;
 
 			ShowResultPanel();
 
@@ -501,7 +504,7 @@ namespace FindAndReplace.App
 			
 			txtCommandLine.Clear();
 			
-			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5} --find \"{6}\" --replace \"{7}\"",
+			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5} --find \"{6}\" --replace \"{7}\" {8}",
 									 Application.ExecutablePath,
 									 txtDir.Text,
 									 txtFileMask.Text,
@@ -509,7 +512,8 @@ namespace FindAndReplace.App
 									 chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
 									 chkIsRegEx.Checked ? " --useRegEx" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
-									 CommandLineUtils.EncodeText(txtReplace.Text)
+									 CommandLineUtils.EncodeText(txtReplace.Text),
+									 String.IsNullOrEmpty(txtExcludefileMask.Text) ? "" : String.Format("--excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludefileMask.Text))
 									 );
 
 			txtCommandLine.Text = s;
