@@ -24,8 +24,15 @@ namespace FindAndReplace
 		public static string[] GetFilesInDirectory(string dir, string fileMask, bool includeSubDirectories)
 		{
 			SearchOption searchOption = includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-			string[] filesInDirectory = Directory.GetFiles(dir, fileMask, searchOption);
-			return filesInDirectory;
+
+			var filesInDirectory = new List<string>();
+			var fileMasks = fileMask.Split(',');
+			foreach (var mask in fileMasks)
+			{
+				filesInDirectory.AddRange(Directory.GetFiles(dir, mask.Trim(), searchOption));
+			}
+
+			return filesInDirectory.Distinct().ToArray();
 		}
 
 		public static bool IsBinaryFile(string fileContent)
