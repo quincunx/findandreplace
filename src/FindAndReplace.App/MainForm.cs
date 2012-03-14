@@ -69,9 +69,11 @@ namespace FindAndReplace.App
 
 			ShowResultPanel();
 
+			RegistryUtils.SaveToRegistry(finder);
+			
 			_currentThread = new Thread(DoFindWork);
 			_currentThread.IsBackground = true;
-			
+
 			_currentThread.Start();
 		}
 
@@ -370,6 +372,8 @@ namespace FindAndReplace.App
 
 			CreateListener(replacer);
 
+			RegistryUtils.SaveToRegistry(replacer);
+
 			_currentThread = new Thread(DoReplaceWork);
 			_currentThread.IsBackground = true;
 
@@ -633,7 +637,9 @@ namespace FindAndReplace.App
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
+			var registryData = RegistryUtils.LoadFromRegistry();
 
+			DisplayRegistryData(registryData);
 		}
 
 		//from http://stackoverflow.com/questions/334630/c-open-folder-and-select-the-file
@@ -841,6 +847,18 @@ namespace FindAndReplace.App
 
 				EnableButtons();
 			}
+		}
+
+		private void DisplayRegistryData(RegistryData data)
+		{
+			txtFind.Text = data.FindText;
+			txtFileMask.Text = data.FileMask;
+			txtExcludefileMask.Text = data.ExcludeFileMask;
+			txtReplace.Text = data.ReplaceText;
+			txtDir.Text = data.Dir;
+			chkIncludeSubDirectories.Checked = data.IncludeSubDirectories;
+			chkIsCaseSensitive.Checked = data.IsCaseSensitive;
+			chkIsRegEx.Checked = data.FindTextHasRegEx;
 		}
 	}
 }
