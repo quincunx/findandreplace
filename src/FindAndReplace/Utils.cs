@@ -37,9 +37,12 @@ namespace FindAndReplace
 			if (!String.IsNullOrEmpty(excludeMask))
 			{
 				var excludeFileMasks = excludeMask.Split(',');
-				filesInDirectory = excludeFileMasks.Select(excludeFileMask => WildcardToRegex(excludeFileMask.Trim())).Aggregate(filesInDirectory, (current, excludeMaskRegEx) => current.Where(f => !Regex.IsMatch(f, excludeMaskRegEx)).ToList());
+				filesInDirectory = excludeFileMasks
+									.Select(excludeFileMask => WildcardToRegex(excludeFileMask.Trim()))
+									.Aggregate(filesInDirectory, (current, excludeMaskRegEx) => current.Where(f => !Regex.IsMatch(f, excludeMaskRegEx)).ToList());
 			}
 
+			filesInDirectory.Sort();
 			return filesInDirectory.ToArray();
 		}
 

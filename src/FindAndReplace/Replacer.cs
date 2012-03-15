@@ -76,7 +76,7 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 			Verify.Argument.IsNotNull(ReplaceText, "ReplaceText");
 
-			Status replacerStatus = Status.Processing;
+			Status status = Status.Processing;
 
 			var startTime = DateTime.Now;
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask);
@@ -122,19 +122,25 @@ namespace FindAndReplace
 
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
 
-				if (IsCancelRequested) replacerStatus = Status.Cancelled;
-				
-				OnFileProcessed(new ReplacerEventArgs(resultItem, stats, replacerStatus));
+				if (IsCancelRequested) 
+					status = Status.Cancelled;
 
-				if (IsCancelRequested) break;
+				if (stats.Files.Total == stats.Files.Processed)
+					status = Status.Completed;
+				
+				OnFileProcessed(new ReplacerEventArgs(resultItem, stats, status));
+
+				if (status == Status.Cancelled)
+					break;
+			}
+	
+			if (filesInDirectory.Length == 0)
+			{
+				status = Status.Completed;
+				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats, status));
 			}
 
-			replacerStatus = Status.Completed;
-			
-			if (filesInDirectory.Length == 0) 
-				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats, replacerStatus));
-
-			return new ReplaceResult() {ResultItems = resultItems, Stats = stats};
+			return new ReplaceResult {ResultItems = resultItems, Stats = stats};
 		}
 
 		void CheckIfBinary(string filePath, ref ReplaceResultItem resultItem)

@@ -79,7 +79,7 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FileMask, "FileMask");
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 
-			Status finderStatus = Status.Processing;
+			Status status = Status.Processing;
 			
 			//time
 			var startTime = DateTime.Now;
@@ -135,19 +135,26 @@ namespace FindAndReplace
 				
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
 				
-				if (IsCancelRequested) finderStatus = Status.Cancelled;
+				if (IsCancelRequested) 
+					status = Status.Cancelled;
 				
-				OnFileProcessed(new FinderEventArgs(resultItem, stats, finderStatus));
-				
-				if (IsCancelRequested) break;
+				if (stats.Files.Total == stats.Files.Processed)
+					status = Status.Completed;
+
+				OnFileProcessed(new FinderEventArgs(resultItem, stats, status));
+
+				if (status == Status.Cancelled) 
+					break;
 			}
 
-			finderStatus = Status.Completed;
-
+			
 			if (filesInDirectory.Length == 0)
-				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats, finderStatus));
+			{
+				status = Status.Completed;
+				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats, status));
+			}
 
-			return new FindResult() {Items = resultItems, Stats = stats};
+			return new FindResult {Items = resultItems, Stats = stats};
 		}
 
 		public void CancelFind()
@@ -162,13 +169,14 @@ namespace FindAndReplace
 			//Check if can read first
 			try
 			{
-				var buffer = new char[1024];
+				var buffer = new char[10240];
 				
 				using (var sr = new StreamReader(filePath))
 				{
-					int k = sr.Read(buffer, 0, 1024);
+					int k = sr.Read(buffer, 0, 10240);
 
 					shortContent = new string(buffer, 0, k);
+					//shortContent = sr.ReadToEnd();
 				}
 			}
 			catch (Exception exception)
