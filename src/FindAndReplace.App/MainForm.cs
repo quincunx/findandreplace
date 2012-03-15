@@ -63,19 +63,38 @@ namespace FindAndReplace.App
 			finder.FindTextHasRegEx = chkIsRegEx.Checked;
 			finder.FindText = txtFind.Text;
 			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
-			finder.ExcludeFileMask = txtExcludefileMask.Text;
+			finder.ExcludeFileMask = txtExcludeFileMask.Text;
 
 			CreateListener(finder);
 
 			ShowResultPanel();
 
-			RegistryUtils.SaveToRegistry(finder);
-			
+			SaveToRegistry();
+
 			_currentThread = new Thread(DoFindWork);
 			_currentThread.IsBackground = true;
 
 			_currentThread.Start();
 		}
+
+		private void SaveToRegistry()
+		{
+			var data = new RegistryData();
+
+			data.Dir = txtDir.Text;
+			data.FileMask = txtFileMask.Text;
+			data.ExcludeFileMask = txtExcludeFileMask.Text;
+			data.FindText = txtFind.Text;
+			data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
+			data.IsCaseSensitive = chkIsCaseSensitive.Checked;
+			data.IsRegEx = chkIsRegEx.Checked;
+
+			if (_isFindMode)
+				data.ReplaceText =txtReplace.Text;
+
+			data.Save();
+		}
+
 
 		private void PrepareFinderGrid()
 		{
@@ -175,10 +194,7 @@ namespace FindAndReplace.App
 				progressBar.Maximum = stats.Files.Total;
 				progressBar.Value = stats.Files.Processed;
 
-				lblStatus.Text = status != Status.Cancelled
-				                 	? "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
-				                 	  findResultItem.FileRelativePath
-				                 	: "Operation was cancelled.";
+				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +  findResultItem.FileRelativePath;
 			}
 			else
 			{
@@ -190,13 +206,17 @@ namespace FindAndReplace.App
 			ShowStats(stats);
 
 			//When last file - enable buttons back
-			if (stats.Files.Processed == stats.Files.Total)
+			if (status == Status.Completed || status == Status.Cancelled)
 			{
-				lblStatus.Text = "Processed " + stats.Files.Processed + " files.";
+				if (status == Status.Completed)
+					lblStatus.Text = "Processed " + stats.Files.Processed + " files.";
+				
+				if (status == Status.Cancelled)
+					lblStatus.Text = "Operation was cancelled.";
+
 				EnableButtons();
 			}
 				
-			
 		}
 
 		private void DisableButtons()
@@ -360,7 +380,7 @@ namespace FindAndReplace.App
 			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
 			replacer.ReplaceText = txtReplace.Text;
-			replacer.ExcludeFileMask = txtExcludefileMask.Text;
+			replacer.ExcludeFileMask = txtExcludeFileMask.Text;
 
 			ShowResultPanel();
 
@@ -372,7 +392,7 @@ namespace FindAndReplace.App
 
 			CreateListener(replacer);
 
-			RegistryUtils.SaveToRegistry(replacer);
+			SaveToRegistry();
 
 			_currentThread = new Thread(DoReplaceWork);
 			_currentThread.IsBackground = true;
@@ -462,10 +482,7 @@ namespace FindAndReplace.App
 				progressBar.Maximum = stats.Files.Total;
 				progressBar.Value = stats.Files.Processed;
 
-				lblStatus.Text = status != Status.Cancelled
-				                 	? "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
-				                 	  replaceResultItem.FileRelativePath
-				                 	: "Operation was cancelled.";
+				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " + replaceResultItem.FileRelativePath;;
 			}
 			else
 			{
@@ -478,9 +495,14 @@ namespace FindAndReplace.App
 			ShowStats(stats, true);
 
 			//When last file - enable buttons back
-			if (stats.Files.Processed == stats.Files.Total)
+			if (status == Status.Completed || status == Status.Cancelled)
 			{
-				lblStatus.Text = "Processed " + stats.Files.Processed + " files.";
+				if (status == Status.Completed)
+					lblStatus.Text = "Processed " + stats.Files.Processed + " files.";
+
+				if (status == Status.Cancelled)
+					lblStatus.Text = "Operation was cancelled.";
+
 				EnableButtons();
 			}
 		}
@@ -517,7 +539,7 @@ namespace FindAndReplace.App
 									 chkIsRegEx.Checked ? " --useRegEx" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
 									 CommandLineUtils.EncodeText(txtReplace.Text),
-									 String.IsNullOrEmpty(txtExcludefileMask.Text) ? "" : String.Format("--excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludefileMask.Text))
+									 String.IsNullOrEmpty(txtExcludeFileMask.Text) ? "" : String.Format("--excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludeFileMask.Text))
 									 );
 
 			txtCommandLine.Text = s;
@@ -637,9 +659,7 @@ namespace FindAndReplace.App
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
-			var registryData = RegistryUtils.LoadFromRegistry();
-
-			DisplayRegistryData(registryData);
+			InitWithRegistryData();
 		}
 
 		//from http://stackoverflow.com/questions/334630/c-open-folder-and-select-the-file
@@ -844,21 +864,26 @@ namespace FindAndReplace.App
 					_finder.CancelFind();
 				else
 					_replacer.CancelReplace();
-
-				EnableButtons();
 			}
 		}
 
-		private void DisplayRegistryData(RegistryData data)
+		private void InitWithRegistryData()
 		{
-			txtFind.Text = data.FindText;
-			txtFileMask.Text = data.FileMask;
-			txtExcludefileMask.Text = data.ExcludeFileMask;
-			txtReplace.Text = data.ReplaceText;
+			var data = new RegistryData();
+			if (data.IsEmpty()) //Keep defaults
+				return;
+			
+
+			data.Load();
+
 			txtDir.Text = data.Dir;
+			txtFileMask.Text = data.FileMask;
+			txtExcludeFileMask.Text = data.ExcludeFileMask;
+			txtFind.Text = data.FindText;
+			txtReplace.Text = data.ReplaceText;
 			chkIncludeSubDirectories.Checked = data.IncludeSubDirectories;
 			chkIsCaseSensitive.Checked = data.IsCaseSensitive;
-			chkIsRegEx.Checked = data.FindTextHasRegEx;
+			chkIsRegEx.Checked = data.IsRegEx;
 		}
 	}
 }

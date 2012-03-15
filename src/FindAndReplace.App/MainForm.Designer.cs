@@ -57,7 +57,7 @@
 			this.chkIsRegEx = new System.Windows.Forms.CheckBox();
 			this.txtMatchesPreview = new System.Windows.Forms.RichTextBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.txtExcludefileMask = new System.Windows.Forms.TextBox();
+			this.txtExcludeFileMask = new System.Windows.Forms.TextBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -327,23 +327,24 @@
 			this.label3.AutoSize = true;
 			this.label3.Location = new System.Drawing.Point(346, 67);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(45, 13);
+			this.label3.Size = new System.Drawing.Size(48, 13);
 			this.label3.TabIndex = 26;
-			this.label3.Text = "Exclude";
+			this.label3.Text = "Exclude:";
 			// 
 			// txtExcludefileMask
 			// 
-			this.txtExcludefileMask.Location = new System.Drawing.Point(397, 64);
-			this.txtExcludefileMask.Name = "txtExcludefileMask";
-			this.txtExcludefileMask.Size = new System.Drawing.Size(225, 20);
-			this.txtExcludefileMask.TabIndex = 27;
+			this.txtExcludeFileMask.Location = new System.Drawing.Point(397, 64);
+			this.txtExcludeFileMask.Name = "txtExcludeFileMask";
+			this.txtExcludeFileMask.Size = new System.Drawing.Size(225, 20);
+			this.txtExcludeFileMask.TabIndex = 27;
+			this.txtExcludeFileMask.Text = "*.dll, *.exe";
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(639, 336);
-			this.Controls.Add(this.txtExcludefileMask);
+			this.Controls.Add(this.txtExcludeFileMask);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
@@ -411,7 +412,7 @@
 		private System.Windows.Forms.Label lblStats;
 		private System.Windows.Forms.CheckBox chkIsRegEx;
 		private System.Windows.Forms.Button btnCancel;
-		private System.Windows.Forms.TextBox txtExcludefileMask;
+		private System.Windows.Forms.TextBox txtExcludeFileMask;
 		private System.Windows.Forms.Label label3;
 	}
 }
