@@ -89,8 +89,8 @@ namespace FindAndReplace.App
 			data.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			data.IsRegEx = chkIsRegEx.Checked;
 
-			if (_isFindMode)
-				data.ReplaceText =txtReplace.Text;
+			if (!_isFindMode)
+				data.ReplaceText = txtReplace.Text;
 
 			data.Save();
 		}
@@ -873,7 +873,6 @@ namespace FindAndReplace.App
 			if (data.IsEmpty()) //Keep defaults
 				return;
 			
-
 			data.Load();
 
 			txtDir.Text = data.Dir;
