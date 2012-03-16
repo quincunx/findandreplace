@@ -140,7 +140,7 @@
 			// 
 			this.txtFileMask.Location = new System.Drawing.Point(83, 64);
 			this.txtFileMask.Name = "txtFileMask";
-			this.txtFileMask.Size = new System.Drawing.Size(225, 20);
+			this.txtFileMask.Size = new System.Drawing.Size(218, 20);
 			this.txtFileMask.TabIndex = 4;
 			this.txtFileMask.Text = "*.*";
 			this.txtFileMask.Validating += new System.ComponentModel.CancelEventHandler(this.txtFileMask_Validating);
@@ -325,17 +325,17 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(346, 67);
+			this.label3.Location = new System.Drawing.Point(330, 67);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(48, 13);
+			this.label3.Size = new System.Drawing.Size(77, 13);
 			this.label3.TabIndex = 26;
-			this.label3.Text = "Exclude:";
+			this.label3.Text = "Exclude Mask:";
 			// 
-			// txtExcludefileMask
+			// txtExcludeFileMask
 			// 
-			this.txtExcludeFileMask.Location = new System.Drawing.Point(397, 64);
+			this.txtExcludeFileMask.Location = new System.Drawing.Point(408, 64);
 			this.txtExcludeFileMask.Name = "txtExcludeFileMask";
-			this.txtExcludeFileMask.Size = new System.Drawing.Size(225, 20);
+			this.txtExcludeFileMask.Size = new System.Drawing.Size(214, 20);
 			this.txtExcludeFileMask.TabIndex = 27;
 			this.txtExcludeFileMask.Text = "*.dll, *.exe";
 			// 
