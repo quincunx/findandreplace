@@ -88,9 +88,7 @@ namespace FindAndReplace.App
 			data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			data.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			data.IsRegEx = chkIsRegEx.Checked;
-
-			if (!_isFindMode)
-				data.ReplaceText = txtReplace.Text;
+			data.ReplaceText = txtReplace.Text;
 
 			data.Save();
 		}
@@ -166,17 +164,18 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[3].Value = findResultItem.ErrorMessage;
 					
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
-					
+
 					if (findResultItem.IsSuccess)
 					{
 						string content = string.Empty;
 
-						using (var sr = new StreamReader(findResultItem.FilePath))
+						using (var sr = new StreamReader(findResultItem.FilePath, findResultItem.FileEncoding))
 						{
 							content = sr.ReadToEnd();
 						}
 
-						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(content, findResultItem.LineNumbers.Select(ln=>ln.LineNumber).ToList());
+						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(content,
+						                                                                       findResultItem.LineNumbers.Select(ln => ln.LineNumber).ToList());
 
 						//PrepareLineNumbersForTooltip(findResultItem.LineNumbers, currentRow);
 					}
@@ -375,13 +374,13 @@ namespace FindAndReplace.App
 			replacer.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 
 			replacer.FileMask = txtFileMask.Text;
+			replacer.ExcludeFileMask = txtExcludeFileMask.Text;
 
 			replacer.FindText = txtFind.Text;
 			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
 			replacer.ReplaceText = txtReplace.Text;
-			replacer.ExcludeFileMask = txtExcludeFileMask.Text;
-
+		
 			ShowResultPanel();
 
 			lblStats.Text = "";
@@ -457,7 +456,7 @@ namespace FindAndReplace.App
 					{
 						string content = string.Empty;
 
-						using (var sr = new StreamReader(replaceResultItem.FilePath))
+						using (var sr = new StreamReader(replaceResultItem.FilePath, replaceResultItem.FileEncoding))
 						{
 							content = sr.ReadToEnd();
 						}
@@ -530,16 +529,16 @@ namespace FindAndReplace.App
 			
 			txtCommandLine.Clear();
 			
-			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5} --find \"{6}\" --replace \"{7}\" {8}",
+			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5}{6} --find \"{7}\" --replace \"{8}\"",
 									 Application.ExecutablePath,
 									 txtDir.Text,
 									 txtFileMask.Text,
+									 String.IsNullOrEmpty(txtExcludeFileMask.Text) ? "" : String.Format(" --excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludeFileMask.Text)),
 									 chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
 									 chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
 									 chkIsRegEx.Checked ? " --useRegEx" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
-									 CommandLineUtils.EncodeText(txtReplace.Text),
-									 String.IsNullOrEmpty(txtExcludeFileMask.Text) ? "" : String.Format("--excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludeFileMask.Text))
+									 CommandLineUtils.EncodeText(txtReplace.Text)
 									 );
 
 			txtCommandLine.Text = s;
