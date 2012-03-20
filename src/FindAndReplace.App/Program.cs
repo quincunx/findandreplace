@@ -202,30 +202,34 @@ namespace FindAndReplace.App
 				{
 					var replacer = new Replacer();
 					replacer.Dir = options.Dir;
-					replacer.FileMask = options.FileMask;
 					replacer.IncludeSubDirectories = options.IncludeSubDirectories;
 
-					replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
-					replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
-					replacer.IsCaseSensitive = options.IsCaseSensitive;
-					replacer.FindTextHasRegEx = options.IsFindTextHasRegEx;
-					replacer.FileProcessed += OnReplacerFileProcessed;
+					replacer.FileMask = options.FileMask;
 					replacer.ExcludeFileMask = options.ExcludeFileMask;
 
+					replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
+					replacer.IsCaseSensitive = options.IsCaseSensitive;
+					replacer.FindTextHasRegEx = options.IsFindTextHasRegEx;
+					replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
+					
+					replacer.FileProcessed += OnReplacerFileProcessed;
+					
 					replacer.Replace();
 				}
 				else
 				{
 					var finder = new Finder();
 					finder.Dir = options.Dir;
-					finder.FileMask = options.FileMask;
 					finder.IncludeSubDirectories = options.IncludeSubDirectories;
-
+					finder.FileMask = options.FileMask;
+					finder.ExcludeFileMask = options.ExcludeFileMask;
+					
 					finder.FindText = CommandLineUtils.DecodeText(options.FindText);
 					finder.IsCaseSensitive = options.IsCaseSensitive;
 					finder.FindTextHasRegEx = options.IsFindTextHasRegEx;
+					
 					finder.FileProcessed += OnFinderFileProcessed;
-					finder.ExcludeFileMask = options.ExcludeFileMask;
+
 					finder.Find();
 
 				}

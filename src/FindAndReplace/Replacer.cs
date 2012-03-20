@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace FindAndReplace
@@ -33,33 +34,9 @@ namespace FindAndReplace
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
 		
-		public class ReplaceResultItem 
+		public class ReplaceResultItem : ResultItem
 		{
-			public string FileName { get; set; }
-			public string FilePath { get; set; }
-			public string FileRelativePath { get; set; }
-			public int NumMatches { get; set; }
-			public MatchCollection Matches { get; set; }
-			public bool IsSuccess { get; set; }
-			public bool IsBinaryFile { get; set; }
-			public bool FailedToOpen { get; set; }
 			public bool FailedToWrite { get; set; }
-			public string ErrorMessage { get; set; }
-			public List<MatchPreviewLineNumber> LineNumbers { get; set; }
-
-			public bool IncludeInResultsList
-			{
-				get
-				{
-					if (IsSuccess && NumMatches > 0)
-						return true;
-
-					if (!IsSuccess && !String.IsNullOrEmpty(ErrorMessage))
-						return true;
-
-					return false;
-				}
-			}
 		}
 
 		public class ReplaceResult
@@ -143,21 +120,14 @@ namespace FindAndReplace
 			return new ReplaceResult {ResultItems = resultItems, Stats = stats};
 		}
 
-		void CheckIfBinary(string filePath, ref ReplaceResultItem resultItem)
+		private void CheckIfBinary(string filePath, ReplaceResultItem resultItem)
 		{
 			string shortContent = string.Empty;
 
 			//Check if can read first
 			try
 			{
-				var buffer = new char[1024];
-
-				using (var sr = new StreamReader(filePath))
-				{
-					int k = sr.Read(buffer, 0, 1024);
-
-					shortContent = new string(buffer, 0, k);
-				}
+				shortContent = Utils.GetFileContentSample(filePath);
 			}
 			catch (Exception exception)
 			{
@@ -166,11 +136,15 @@ namespace FindAndReplace
 				resultItem.ErrorMessage = exception.Message;
 			}
 
-			//Load 1KB or 10KB of data and check for /0/0/0/0
-			if (Utils.IsBinaryFile(shortContent))
+
+			if (resultItem.IsSuccess)
 			{
-				resultItem.IsSuccess = false;
-				resultItem.IsBinaryFile = true;
+				// check for /0/0/0/0
+				if (Utils.IsBinaryFile(shortContent))
+				{
+					resultItem.IsSuccess = false;
+					resultItem.IsBinaryFile = true;
+				}
 			}
 		}
 
@@ -189,11 +163,15 @@ namespace FindAndReplace
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
 
-			CheckIfBinary(filePath, ref resultItem);
+			CheckIfBinary(filePath, resultItem);
 			
-			if (!resultItem.IsSuccess) return resultItem;
-			
-			using (StreamReader sr = new StreamReader(filePath))
+			if (!resultItem.IsSuccess) 
+				return resultItem;
+
+			Encoding encoding = Utils.DetectFileEncoding(filePath);
+			resultItem.FileEncoding = encoding;
+
+			using (StreamReader sr = new StreamReader(filePath, encoding))
 			{
 				fileContent = sr.ReadToEnd();
 			}
@@ -222,7 +200,7 @@ namespace FindAndReplace
 				{
 					string newContent = Regex.Replace(fileContent, finderText, ReplaceText, regexOptions);
 
-					using (var sw = new StreamWriter(filePath))
+					using (var sw = new StreamWriter(filePath, false, encoding))
 					{
 						sw.Write(newContent);
 					}

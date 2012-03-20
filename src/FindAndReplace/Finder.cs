@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using href.Utils;
 
 namespace FindAndReplace
 {
@@ -36,35 +37,10 @@ namespace FindAndReplace
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
 		public string ExcludeFileMask { get; set; }
-
 		public bool IsCancelRequested { get; set; }
 
-		public class FindResultItem
+		public class FindResultItem : ResultItem
 		{
-			public string FileName { get; set; }
-			public string FilePath { get; set; }
-			public string FileRelativePath { get; set; }
-			public int NumMatches { get; set; }
-			public MatchCollection Matches { get; set; }
-			public bool IsSuccess { get; set; }
-			public bool FailedToOpen { get; set; }
-			public bool IsBinaryFile { get; set; }
-			public string ErrorMessage { get; set; }
-			public List<MatchPreviewLineNumber> LineNumbers { get; set; }
-			
-			public bool IncludeInResultsList
-			{
-				get
-				{
-					if (IsSuccess && NumMatches > 0)
-						return true;
-
-					if (!IsSuccess && !String.IsNullOrEmpty(ErrorMessage))
-						return true;
-
-					return false;
-				}
-			}
 		}
 
 		public class FindResult
@@ -105,13 +81,20 @@ namespace FindAndReplace
 				stats.Files.Processed++;
 
 				string fileContent = string.Empty;
+				
+				//Load 1KB or 10KB of data and check for /0/0/0/0
+				CheckIfBinary(filePath, resultItem);
 
-
-				CheckIfBinary(filePath, ref resultItem, ref stats);
+				if (!resultItem.IsSuccess && resultItem.IsBinaryFile)
+					stats.Files.Binary++;
+				
 
 				if (resultItem.IsSuccess)
 				{
-					using (var sr = new StreamReader(filePath))
+					Encoding encoding = Utils.DetectFileEncoding(filePath);
+					resultItem.FileEncoding = encoding;
+
+					using (var sr = new StreamReader(filePath, encoding))
 					{
 						fileContent = sr.ReadToEnd();
 					}
@@ -162,40 +145,35 @@ namespace FindAndReplace
 			IsCancelRequested = true;
 		}
 
-		void CheckIfBinary(string filePath, ref FindResultItem resultItem, ref Stats stats)
+		private void CheckIfBinary(string filePath, FindResultItem resultItem)
 		{
 			string shortContent = string.Empty;
-			
+
 			//Check if can read first
 			try
 			{
-				var buffer = new char[10240];
-				
-				using (var sr = new StreamReader(filePath))
-				{
-					int k = sr.Read(buffer, 0, 10240);
-
-					shortContent = new string(buffer, 0, k);
-					//shortContent = sr.ReadToEnd();
-				}
+				shortContent = Utils.GetFileContentSample(filePath);
 			}
 			catch (Exception exception)
 			{
 				resultItem.IsSuccess = false;
 				resultItem.FailedToOpen = true;
 				resultItem.ErrorMessage = exception.Message;
-
-				stats.Files.FailedToRead++;
 			}
 
-			//Load 1KB or 10KB of data and check for /0/0/0/0
-			if (Utils.IsBinaryFile(shortContent))
+
+			if (resultItem.IsSuccess)
 			{
-				resultItem.IsSuccess = false;
-				stats.Files.Binary++;
+				// check for /0/0/0/0
+				if (Utils.IsBinaryFile(shortContent))
+				{
+					resultItem.IsSuccess = false;
+					resultItem.IsBinaryFile = true;
+				}
 			}
 		}
 
+		
 		public event FileProcessedEventHandler FileProcessed;
 
 		protected virtual void OnFileProcessed(FinderEventArgs e)

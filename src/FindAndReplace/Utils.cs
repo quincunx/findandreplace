@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using href.Utils;
 
 namespace FindAndReplace
 {
@@ -152,6 +155,55 @@ namespace FindAndReplace
 		private static string WildcardToRegex(string pattern)
 		{
 			return string.Format("^{0}$", Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", "."));
+		}
+
+		public static string GetFileContentSample(string filePath, int size = 10240)
+		{
+			var buffer = new char[10240];
+			string shortContent;
+
+			using (var sr = new StreamReader(filePath))
+			{
+				int k = sr.Read(buffer, 0, 10240);
+
+				shortContent = new string(buffer, 0, k);
+				//shortContent = sr.ReadToEnd();
+			}
+
+			return shortContent;
+		}
+
+		public static Encoding DetectFileEncoding(string filePath)
+		{
+			Encoding encoding = Encoding.UTF8;
+			using (Stream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+			{
+				// seek to stream start
+				stream.Seek(0, SeekOrigin.Begin);
+
+				// buffer for preamble and up to 512b sample text for dection
+				byte[] buf = new byte[System.Math.Min(stream.Length, 512)];
+				stream.Read(buf, 0, buf.Length);
+           
+				try
+				{
+					Encoding[] detected = EncodingTools.DetectInputCodepages(buf, 1);
+					if (detected.Length > 0)
+					{
+						encoding = detected[0];
+						return encoding;
+					}
+
+					encoding = Encoding.UTF8;
+				}
+				catch (COMException)
+				{
+					// return default codepage on error
+					encoding = Encoding.UTF8;
+				}
+			}
+
+			return encoding;
 		}
 	}
 }
