@@ -72,7 +72,7 @@
 			this.txtFind.Multiline = true;
 			this.txtFind.Name = "txtFind";
 			this.txtFind.Size = new System.Drawing.Size(539, 74);
-			this.txtFind.TabIndex = 6;
+			this.txtFind.TabIndex = 9;
 			this.txtFind.Validating += new System.ComponentModel.CancelEventHandler(this.txtFind_Validating);
 			// 
 			// label1
@@ -81,7 +81,7 @@
 			this.label1.Location = new System.Drawing.Point(32, 93);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(30, 13);
-			this.label1.TabIndex = 5;
+			this.label1.TabIndex = 8;
 			this.label1.Text = "Find:";
 			// 
 			// label2
@@ -90,7 +90,7 @@
 			this.label2.Location = new System.Drawing.Point(12, 200);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(50, 13);
-			this.label2.TabIndex = 10;
+			this.label2.TabIndex = 13;
 			this.label2.Text = "Replace:";
 			// 
 			// txtReplace
@@ -100,14 +100,14 @@
 			this.txtReplace.Multiline = true;
 			this.txtReplace.Name = "txtReplace";
 			this.txtReplace.Size = new System.Drawing.Size(539, 74);
-			this.txtReplace.TabIndex = 11;
+			this.txtReplace.TabIndex = 14;
 			// 
 			// btnReplace
 			// 
 			this.btnReplace.Location = new System.Drawing.Point(547, 280);
 			this.btnReplace.Name = "btnReplace";
 			this.btnReplace.Size = new System.Drawing.Size(75, 23);
-			this.btnReplace.TabIndex = 12;
+			this.btnReplace.TabIndex = 15;
 			this.btnReplace.Text = "Replace";
 			this.btnReplace.UseVisualStyleBackColor = true;
 			this.btnReplace.Click += new System.EventHandler(this.btnReplace_Click);
@@ -136,7 +136,7 @@
 			this.label5.Location = new System.Drawing.Point(7, 67);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(55, 13);
-			this.label5.TabIndex = 3;
+			this.label5.TabIndex = 4;
 			this.label5.Text = "File Mask:";
 			// 
 			// txtFileMask
@@ -144,7 +144,7 @@
 			this.txtFileMask.Location = new System.Drawing.Point(83, 64);
 			this.txtFileMask.Name = "txtFileMask";
 			this.txtFileMask.Size = new System.Drawing.Size(218, 20);
-			this.txtFileMask.TabIndex = 4;
+			this.txtFileMask.TabIndex = 5;
 			this.txtFileMask.Text = "*.*";
 			this.txtFileMask.Validating += new System.ComponentModel.CancelEventHandler(this.txtFileMask_Validating);
 			// 
@@ -153,7 +153,7 @@
 			this.btnFindOnly.Location = new System.Drawing.Point(547, 171);
 			this.btnFindOnly.Name = "btnFindOnly";
 			this.btnFindOnly.Size = new System.Drawing.Size(75, 23);
-			this.btnFindOnly.TabIndex = 9;
+			this.btnFindOnly.TabIndex = 12;
 			this.btnFindOnly.Text = "Find Only";
 			this.btnFindOnly.UseVisualStyleBackColor = true;
 			this.btnFindOnly.Click += new System.EventHandler(this.btnFindOnly_Click);
@@ -164,7 +164,7 @@
 			this.chkIsCaseSensitive.Location = new System.Drawing.Point(83, 173);
 			this.chkIsCaseSensitive.Name = "chkIsCaseSensitive";
 			this.chkIsCaseSensitive.Size = new System.Drawing.Size(94, 17);
-			this.chkIsCaseSensitive.TabIndex = 7;
+			this.chkIsCaseSensitive.TabIndex = 10;
 			this.chkIsCaseSensitive.Text = "Case sensitive";
 			this.chkIsCaseSensitive.UseVisualStyleBackColor = true;
 			// 
@@ -176,7 +176,7 @@
 			this.chkIncludeSubDirectories.Location = new System.Drawing.Point(83, 41);
 			this.chkIncludeSubDirectories.Name = "chkIncludeSubDirectories";
 			this.chkIncludeSubDirectories.Size = new System.Drawing.Size(132, 17);
-			this.chkIncludeSubDirectories.TabIndex = 2;
+			this.chkIncludeSubDirectories.TabIndex = 3;
 			this.chkIncludeSubDirectories.Text = "Include sub-directories";
 			this.chkIncludeSubDirectories.UseVisualStyleBackColor = true;
 			// 
@@ -185,7 +185,7 @@
 			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(448, 308);
 			this.btnGenReplaceCommandLine.Name = "btnGenReplaceCommandLine";
 			this.btnGenReplaceCommandLine.Size = new System.Drawing.Size(174, 23);
-			this.btnGenReplaceCommandLine.TabIndex = 13;
+			this.btnGenReplaceCommandLine.TabIndex = 16;
 			this.btnGenReplaceCommandLine.Text = "Gen Replace Command Line";
 			this.btnGenReplaceCommandLine.UseVisualStyleBackColor = true;
 			this.btnGenReplaceCommandLine.Click += new System.EventHandler(this.btnGenReplaceCommandLine_Click);
@@ -292,7 +292,7 @@
 			this.txtNoMatches.Location = new System.Drawing.Point(80, 317);
 			this.txtNoMatches.Name = "txtNoMatches";
 			this.txtNoMatches.Size = new System.Drawing.Size(97, 13);
-			this.txtNoMatches.TabIndex = 14;
+			this.txtNoMatches.TabIndex = 17;
 			this.txtNoMatches.Text = " No matches found";
 			this.txtNoMatches.Visible = false;
 			// 
@@ -310,7 +310,7 @@
 			this.chkIsRegEx.Location = new System.Drawing.Point(200, 173);
 			this.chkIsRegEx.Name = "chkIsRegEx";
 			this.chkIsRegEx.Size = new System.Drawing.Size(141, 17);
-			this.chkIsRegEx.TabIndex = 8;
+			this.chkIsRegEx.TabIndex = 11;
 			this.chkIsRegEx.Text = " Use regular expressions";
 			this.chkIsRegEx.UseVisualStyleBackColor = true;
 			// 
@@ -331,7 +331,7 @@
 			this.label3.Location = new System.Drawing.Point(330, 67);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(77, 13);
-			this.label3.TabIndex = 26;
+			this.label3.TabIndex = 6;
 			this.label3.Text = "Exclude Mask:";
 			// 
 			// txtExcludeFileMask
@@ -339,7 +339,7 @@
 			this.txtExcludeFileMask.Location = new System.Drawing.Point(408, 64);
 			this.txtExcludeFileMask.Name = "txtExcludeFileMask";
 			this.txtExcludeFileMask.Size = new System.Drawing.Size(214, 20);
-			this.txtExcludeFileMask.TabIndex = 27;
+			this.txtExcludeFileMask.TabIndex = 7;
 			this.txtExcludeFileMask.Text = "*.dll, *.exe";
 			// 
 			// btnSelectDir
@@ -348,7 +348,7 @@
 			this.btnSelectDir.Margin = new System.Windows.Forms.Padding(0);
 			this.btnSelectDir.Name = "btnSelectDir";
 			this.btnSelectDir.Size = new System.Drawing.Size(24, 23);
-			this.btnSelectDir.TabIndex = 28;
+			this.btnSelectDir.TabIndex = 2;
 			this.btnSelectDir.Text = "...";
 			this.btnSelectDir.UseVisualStyleBackColor = true;
 			this.btnSelectDir.Click += new System.EventHandler(this.btnSelectDir_Click);
