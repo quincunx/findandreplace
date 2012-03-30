@@ -58,6 +58,8 @@
 			this.txtMatchesPreview = new System.Windows.Forms.RichTextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.txtExcludeFileMask = new System.Windows.Forms.TextBox();
+			this.btnSelectDir = new System.Windows.Forms.Button();
+			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -121,6 +123,7 @@
 			// 
 			// txtDir
 			// 
+			this.errorProvider1.SetIconPadding(this.txtDir, 30);
 			this.txtDir.Location = new System.Drawing.Point(83, 19);
 			this.txtDir.Name = "txtDir";
 			this.txtDir.Size = new System.Drawing.Size(539, 20);
@@ -339,11 +342,27 @@
 			this.txtExcludeFileMask.TabIndex = 27;
 			this.txtExcludeFileMask.Text = "*.dll, *.exe";
 			// 
+			// btnSelectDir
+			// 
+			this.btnSelectDir.Location = new System.Drawing.Point(626, 17);
+			this.btnSelectDir.Margin = new System.Windows.Forms.Padding(0);
+			this.btnSelectDir.Name = "btnSelectDir";
+			this.btnSelectDir.Size = new System.Drawing.Size(24, 23);
+			this.btnSelectDir.TabIndex = 28;
+			this.btnSelectDir.Text = "...";
+			this.btnSelectDir.UseVisualStyleBackColor = true;
+			this.btnSelectDir.Click += new System.EventHandler(this.btnSelectDir_Click);
+			// 
+			// folderBrowserDialog1
+			// 
+			this.folderBrowserDialog1.Description = "Select folder with files to find and replace.";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(639, 336);
+			this.ClientSize = new System.Drawing.Size(676, 336);
+			this.Controls.Add(this.btnSelectDir);
 			this.Controls.Add(this.txtExcludeFileMask);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.chkIsRegEx);
@@ -414,6 +433,8 @@
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.TextBox txtExcludeFileMask;
 		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Button btnSelectDir;
+		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
 	}
 }
 

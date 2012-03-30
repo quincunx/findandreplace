@@ -15,7 +15,7 @@ namespace FindAndReplace.App
 
 	public partial class MainForm : Form
 	{
-		public const int ExtraWidthWhenResults = 400;
+		public const int ExtraWidthWhenResults = 350;
 		//public static List<string> RichTextBoxLinNumbers { get; set; }
 		//public static int LineNumbersDigitCount { get; set; }
 
@@ -883,5 +883,15 @@ namespace FindAndReplace.App
 			chkIsCaseSensitive.Checked = data.IsCaseSensitive;
 			chkIsRegEx.Checked = data.IsRegEx;
 		}
+
+		private void btnSelectDir_Click(object sender, EventArgs e)
+		{
+			folderBrowserDialog1.SelectedPath = txtDir.Text;
+			if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+			{
+				txtDir.Text = folderBrowserDialog1.SelectedPath;
+			}
+		}
 	}
 }
+ 
