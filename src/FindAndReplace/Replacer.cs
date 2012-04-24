@@ -171,7 +171,7 @@ namespace FindAndReplace
 			Encoding encoding = Utils.DetectFileEncoding(filePath);
 			resultItem.FileEncoding = encoding;
 
-			using (StreamReader sr = new StreamReader(filePath, encoding))
+			using (var sr = new StreamReader(filePath, encoding))
 			{
 				fileContent = sr.ReadToEnd();
 			}

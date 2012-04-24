@@ -173,37 +173,114 @@ namespace FindAndReplace
 			return shortContent;
 		}
 
+
 		public static Encoding DetectFileEncoding(string filePath)
 		{
-			Encoding encoding = Encoding.UTF8;
-			using (Stream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+			Encoding encoding = null;
+			string method = "Default";
+
+			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
 			{
-				// seek to stream start
+				//First read only what we need for BOM detection
 				stream.Seek(0, SeekOrigin.Begin);
+				encoding = DetectEncodingUsingBom(stream);
+				if (encoding != null)
+					method = "BOM";
 
-				// buffer for preamble and up to 512b sample text for dection
-				byte[] buf = new byte[System.Math.Min(stream.Length, 512)];
-				stream.Read(buf, 0, buf.Length);
-           
-				try
+				if (encoding == null)
 				{
-					Encoding[] detected = EncodingTools.DetectInputCodepages(buf, 1);
-					if (detected.Length > 0)
-					{
-						encoding = detected[0];
-						return encoding;
-					}
+					stream.Seek(0, SeekOrigin.Begin);
+					encoding = DetectEncodingUsingMLang(stream);
 
-					encoding = Encoding.UTF8;
-				}
-				catch (COMException)
+					if (encoding != null)
+						method = "MLang";
+				}	
+			}
+			
+
+			if (encoding == null)
+				encoding = Encoding.UTF8; //Use UTF8 by default
+			
+			Console.WriteLine(method.PadRight(10, ' ') + " | "+  filePath.PadRight(100, ' ') + " | " + encoding.EncodingName);
+			return encoding;
+		}
+
+		//From http://www.architectshack.com/TextFileEncodingDetector.ashx
+		private static Encoding DetectEncodingUsingBom(Stream fileStream)
+		{
+			byte[] bomBytes = new byte[fileStream.Length > 4 ? 4 : fileStream.Length];
+			fileStream.Read(bomBytes, 0, bomBytes.Length);
+
+			Encoding encoding = DetectBOMBytes(bomBytes);
+			return encoding;
+		}
+
+
+		public static Encoding DetectBOMBytes(byte[] BOMBytes)
+		{
+			if (BOMBytes == null)
+				throw new ArgumentNullException("BOMBytes");
+
+			if (BOMBytes.Length < 2)
+				return null;
+
+			if (BOMBytes[0] == 0xff
+				&& BOMBytes[1] == 0xfe
+				&& (BOMBytes.Length < 4
+					|| BOMBytes[2] != 0
+					|| BOMBytes[3] != 0
+					)
+				)
+				return Encoding.Unicode;
+
+			if (BOMBytes[0] == 0xfe
+				&& BOMBytes[1] == 0xff
+				)
+				return Encoding.BigEndianUnicode;
+
+			if (BOMBytes.Length < 3)
+				return null;
+
+			if (BOMBytes[0] == 0xef && BOMBytes[1] == 0xbb && BOMBytes[2] == 0xbf)
+				return Encoding.UTF8;
+
+			if (BOMBytes[0] == 0x2b && BOMBytes[1] == 0x2f && BOMBytes[2] == 0x76)
+				return Encoding.UTF7;
+
+			if (BOMBytes.Length < 4)
+				return null;
+
+			if (BOMBytes[0] == 0xff && BOMBytes[1] == 0xfe && BOMBytes[2] == 0 && BOMBytes[3] == 0)
+				return Encoding.UTF32;
+
+			if (BOMBytes[0] == 0 && BOMBytes[1] == 0 && BOMBytes[2] == 0xfe && BOMBytes[3] == 0xff)
+				return Encoding.GetEncoding(12001);
+
+			return null;
+		}
+
+
+
+		private static Encoding DetectEncodingUsingMLang(Stream fileStream)
+		{
+			long length = fileStream.Length;
+			var buf = new byte[length];
+			fileStream.Read(buf, 0, buf.Length);
+
+			try
+			{
+				Encoding[] detected = EncodingTools.DetectInputCodepages(buf, 1);
+				if (detected.Length > 0)
 				{
-					// return default codepage on error
-					encoding = Encoding.UTF8;
+					return detected[0];
 				}
 			}
+			catch (COMException)
+			{
+				// return default codepage on error
+			}
 
-			return encoding;
+			return null;
 		}
 	}
 }
