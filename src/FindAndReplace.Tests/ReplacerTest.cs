@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using System.Text;
 using NUnit.Framework;
 
 namespace FindAndReplace.Tests
@@ -226,6 +228,86 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual("test3.test", resultItems[0].FileName);
 			Assert.IsTrue(resultItems[0].FailedToWrite);
 			Assert.IsNotEmpty(resultItems[0].ErrorMessage);
+		}
+
+
+		[Test]
+		public void Replace_WhenSpanish_KeepsEncoding()
+		{
+			string filePath = _tempDir + "\\test_spanish.txt";
+			string fileContent = @"Line1
+								Line2
+								Hammam Cinili,Hydrotherapy,Baths,sauna, hidro, esfoliação211112, hidratação (1 1/2 créditos)";
+			WriteFile(filePath, fileContent);
+
+			Replacer replacer = new Replacer();
+
+			replacer.Dir = _tempDir;
+			replacer.FileMask = "test_spanish.txt";
+			replacer.FindText = "Hammam Cinili";
+			replacer.ReplaceText = "Hammam Cinili1";
+
+			var resultItems = replacer.Replace().ResultItems.Where(r => r.IsSuccess).ToList();
+			Assert.AreEqual(1, resultItems.Count);
+
+			string expectedFileContent = @"Line1
+								Line2
+								Hammam Cinili1,Hydrotherapy,Baths,sauna, hidro, esfoliação211112, hidratação (1 1/2 créditos)";
+			string actualFileContent = ReadFile(filePath);
+			
+			Assert.AreEqual(expectedFileContent, actualFileContent);
+		}
+
+
+		[Test]
+		public void Replace_WhenNonAsciiSymbols_KeepsEncoding()
+		{
+			string filePath = _tempDir + "\\test_symbols.txt";
+			string fileContent = @"Line1
+								Line2
+								©[assembly: AssemblyCopyright(Copyright © 2009-2011 My Company)]";
+			WriteFile(filePath, fileContent, Encoding.Default);
+
+			Replacer replacer = new Replacer();
+
+			replacer.Dir = _tempDir;
+			replacer.FileMask = "test_symbols.txt";
+			replacer.FindText = "©[assembly:";
+			replacer.ReplaceText = "©[assembly:123";
+
+			var resultItems = replacer.Replace().ResultItems.Where(r => r.IsSuccess).ToList();
+			Assert.AreEqual(1, resultItems.Count);
+
+			string expectedFileContent = @"Line1
+								Line2
+								©[assembly:123 AssemblyCopyright(Copyright © 2009-2011 My Company)]";
+			string actualFileContent = ReadFile(filePath, Encoding.Default);
+
+			Assert.AreEqual(expectedFileContent, actualFileContent);
+		}
+
+
+		private string ReadFile(string filePath, Encoding encoding = null)
+		{
+			if (encoding == null)
+				encoding = Encoding.UTF8;
+
+			using (var sr = new StreamReader(filePath, encoding))
+			{
+				return sr.ReadToEnd();
+			}
+		}
+
+		private void WriteFile(string filePath, string fileContent, Encoding encoding = null)
+		{
+			if (encoding == null)
+				encoding = Encoding.UTF8;
+
+			using (var fs = new FileStream(filePath, FileMode.Create))
+			{
+				using (var sr = new StreamWriter(fs, encoding))
+					sr.Write(fileContent);
+			}			
 		}
 	}
 }
