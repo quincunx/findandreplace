@@ -181,12 +181,13 @@ namespace FindAndReplace
 
 			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
 			{
-				//First read only what we need for BOM detection
+				//First try BOM detection
 				stream.Seek(0, SeekOrigin.Begin);
 				encoding = DetectEncodingUsingBom(stream);
 				if (encoding != null)
 					method = "BOM";
 
+				//If file doesn't have BOM bytes, use MLang
 				if (encoding == null)
 				{
 					stream.Seek(0, SeekOrigin.Begin);
@@ -215,44 +216,44 @@ namespace FindAndReplace
 		}
 
 
-		public static Encoding DetectBOMBytes(byte[] BOMBytes)
+		public static Encoding DetectBOMBytes(byte[] bomBytes)
 		{
-			if (BOMBytes == null)
-				throw new ArgumentNullException("BOMBytes");
+			if (bomBytes == null)
+				throw new ArgumentNullException("bomBytes");
 
-			if (BOMBytes.Length < 2)
+			if (bomBytes.Length < 2)
 				return null;
 
-			if (BOMBytes[0] == 0xff
-				&& BOMBytes[1] == 0xfe
-				&& (BOMBytes.Length < 4
-					|| BOMBytes[2] != 0
-					|| BOMBytes[3] != 0
+			if (bomBytes[0] == 0xff
+				&& bomBytes[1] == 0xfe
+				&& (bomBytes.Length < 4
+					|| bomBytes[2] != 0
+					|| bomBytes[3] != 0
 					)
 				)
 				return Encoding.Unicode;
 
-			if (BOMBytes[0] == 0xfe
-				&& BOMBytes[1] == 0xff
+			if (bomBytes[0] == 0xfe
+				&& bomBytes[1] == 0xff
 				)
 				return Encoding.BigEndianUnicode;
 
-			if (BOMBytes.Length < 3)
+			if (bomBytes.Length < 3)
 				return null;
 
-			if (BOMBytes[0] == 0xef && BOMBytes[1] == 0xbb && BOMBytes[2] == 0xbf)
+			if (bomBytes[0] == 0xef && bomBytes[1] == 0xbb && bomBytes[2] == 0xbf)
 				return Encoding.UTF8;
 
-			if (BOMBytes[0] == 0x2b && BOMBytes[1] == 0x2f && BOMBytes[2] == 0x76)
+			if (bomBytes[0] == 0x2b && bomBytes[1] == 0x2f && bomBytes[2] == 0x76)
 				return Encoding.UTF7;
 
-			if (BOMBytes.Length < 4)
+			if (bomBytes.Length < 4)
 				return null;
 
-			if (BOMBytes[0] == 0xff && BOMBytes[1] == 0xfe && BOMBytes[2] == 0 && BOMBytes[3] == 0)
+			if (bomBytes[0] == 0xff && bomBytes[1] == 0xfe && bomBytes[2] == 0 && bomBytes[3] == 0)
 				return Encoding.UTF32;
 
-			if (BOMBytes[0] == 0 && BOMBytes[1] == 0 && BOMBytes[2] == 0xfe && BOMBytes[3] == 0xff)
+			if (bomBytes[0] == 0 && bomBytes[1] == 0 && bomBytes[2] == 0xfe && bomBytes[3] == 0xff)
 				return Encoding.GetEncoding(12001);
 
 			return null;
