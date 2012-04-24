@@ -197,11 +197,10 @@ namespace FindAndReplace
 				}	
 			}
 			
-
 			if (encoding == null)
 				encoding = Encoding.UTF8; //Use UTF8 by default
 			
-			Console.WriteLine(method.PadRight(10, ' ') + " | "+  filePath.PadRight(100, ' ') + " | " + encoding.EncodingName);
+			//Console.WriteLine(method.PadRight(10, ' ') + " | "+  filePath.PadRight(100, ' ') + " | " + encoding.EncodingName);
 			return encoding;
 		}
 
