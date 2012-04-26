@@ -41,8 +41,9 @@ namespace FindAndReplace
 			{
 				var excludeFileMasks = excludeMask.Split(',');
 				filesInDirectory = excludeFileMasks
-									.Select(excludeFileMask => WildcardToRegex(excludeFileMask.Trim()))
-									.Aggregate(filesInDirectory, (current, excludeMaskRegEx) => current.Where(f => !Regex.IsMatch(f, excludeMaskRegEx)).ToList());
+					.Select(excludeFileMask => WildcardToRegex(excludeFileMask.Trim()))
+					.Aggregate(filesInDirectory,
+					           (current, excludeMaskRegEx) => current.Where(f => !Regex.IsMatch(f, excludeMaskRegEx)).ToList());
 			}
 
 			filesInDirectory.Sort();
@@ -68,7 +69,7 @@ namespace FindAndReplace
 			}
 
 			var separator = Environment.NewLine;
-			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
+			var lines = content.Split(new string[] {separator}, StringSplitOptions.None);
 
 			var result = new List<MatchPreviewLineNumber>();
 			var temp = new List<MatchPreviewLineNumber>();
@@ -92,7 +93,9 @@ namespace FindAndReplace
 
 			result.AddRange(temp.Where(ln => ln.HasMatch).Distinct(new LineNumberComparer()));
 
-			result.AddRange(temp.Where(ln => !ln.HasMatch && !result.Select(l => l.LineNumber).Contains(ln.LineNumber)).Distinct(new LineNumberComparer()));
+			result.AddRange(
+				temp.Where(ln => !ln.HasMatch && !result.Select(l => l.LineNumber).Contains(ln.LineNumber)).Distinct(
+					new LineNumberComparer()));
 
 			return result.OrderBy(ln => ln.LineNumber).ToList();
 		}
@@ -177,88 +180,40 @@ namespace FindAndReplace
 		public static Encoding DetectFileEncoding(string filePath)
 		{
 			Encoding encoding = null;
-			string method = "Default";
+			string method = "";
+
 
 			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
 			{
-				//First try BOM detection
+				//First try BOM detection and Unicode detection using Klerks Soft encoder
 				stream.Seek(0, SeekOrigin.Begin);
-				encoding = DetectEncodingUsingBom(stream);
-				if (encoding != null)
-					method = "BOM";
+				encoding = DetectEncodingUsingKlerksSoft(stream);
 
-				//If file doesn't have BOM bytes, use MLang
+				if (encoding != null)
+					method += " Klerks Soft: " + encoding.EncodingName;
+
+				//If encoding is not dected, use MLang
 				if (encoding == null)
 				{
 					stream.Seek(0, SeekOrigin.Begin);
 					encoding = DetectEncodingUsingMLang(stream);
 
 					if (encoding != null)
-						method = "MLang";
-				}	
+						method += " MLang: " + encoding.EncodingName;
+				}
 			}
-			
+
 			if (encoding == null)
 				encoding = Encoding.UTF8; //Use UTF8 by default
-			
-			//Console.WriteLine(method.PadRight(10, ' ') + " | "+  filePath.PadRight(100, ' ') + " | " + encoding.EncodingName);
+
+			//Console.WriteLine(method.PadRight(80, ' ') + " | " + filePath.PadRight(100, ' '));
 			return encoding;
 		}
 
-		//From http://www.architectshack.com/TextFileEncodingDetector.ashx
-		private static Encoding DetectEncodingUsingBom(Stream fileStream)
+		private static Encoding DetectEncodingUsingKlerksSoft(FileStream stream)
 		{
-			byte[] bomBytes = new byte[fileStream.Length > 4 ? 4 : fileStream.Length];
-			fileStream.Read(bomBytes, 0, bomBytes.Length);
-
-			Encoding encoding = DetectBOMBytes(bomBytes);
-			return encoding;
+			return KlerksSoftEncodingDetector.DetectTextFileEncoding(stream, null);
 		}
-
-
-		public static Encoding DetectBOMBytes(byte[] bomBytes)
-		{
-			if (bomBytes == null)
-				throw new ArgumentNullException("bomBytes");
-
-			if (bomBytes.Length < 2)
-				return null;
-
-			if (bomBytes[0] == 0xff
-				&& bomBytes[1] == 0xfe
-				&& (bomBytes.Length < 4
-					|| bomBytes[2] != 0
-					|| bomBytes[3] != 0
-					)
-				)
-				return Encoding.Unicode;
-
-			if (bomBytes[0] == 0xfe
-				&& bomBytes[1] == 0xff
-				)
-				return Encoding.BigEndianUnicode;
-
-			if (bomBytes.Length < 3)
-				return null;
-
-			if (bomBytes[0] == 0xef && bomBytes[1] == 0xbb && bomBytes[2] == 0xbf)
-				return Encoding.UTF8;
-
-			if (bomBytes[0] == 0x2b && bomBytes[1] == 0x2f && bomBytes[2] == 0x76)
-				return Encoding.UTF7;
-
-			if (bomBytes.Length < 4)
-				return null;
-
-			if (bomBytes[0] == 0xff && bomBytes[1] == 0xfe && bomBytes[2] == 0 && bomBytes[3] == 0)
-				return Encoding.UTF32;
-
-			if (bomBytes[0] == 0 && bomBytes[1] == 0 && bomBytes[2] == 0xfe && bomBytes[3] == 0xff)
-				return Encoding.GetEncoding(12001);
-
-			return null;
-		}
-
 
 
 		private static Encoding DetectEncodingUsingMLang(Stream fileStream)

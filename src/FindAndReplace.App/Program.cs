@@ -65,7 +65,8 @@ namespace FindAndReplace.App
 					AllocConsole();
 				}
 
-				CommandLineRunner.Run(args);
+				var clRunner = new CommandLineRunner();
+				clRunner.Run(args);
 
 				FreeConsole();
 			}
@@ -76,72 +77,6 @@ namespace FindAndReplace.App
 				Application.Run(new MainForm());
 
 			}
-		}
-		
-		public static void PrintFinderResultRow(Finder.FindResultItem item, Stats stats)
-		{
-			PrintNameValuePair("File", item.FileRelativePath);
-				
-			if (item.IsSuccess)
-				PrintNameValuePair("Matches", item.NumMatches.ToString());
-			else
-				PrintNameValuePair("Error", item.ErrorMessage);
-
-			Console.WriteLine();
-
-		}
-
-		public static void PrintReplacerResultRow(Replacer.ReplaceResultItem item, Stats stats)
-		{
-			PrintNameValuePair("File", item.FileRelativePath);
-				
-			if (!item.FailedToOpen)
-				PrintNameValuePair("Matches", item.NumMatches.ToString());
-
-			PrintNameValuePair("Replaced", item.IsSuccess ? "Yes" : "No");
-
-			if (!item.IsSuccess)
-				PrintNameValuePair("Error", item.ErrorMessage);
-
-			Console.WriteLine();
-		}
-
-		static void PrintNameValuePair(string name, string value)
-		{
-			string label = name + ":";
-			label = label.PadRight(10);
-			Console.WriteLine(label + value);
-		}
-
-		public static void PrintStatistics(Stats stats, bool isReplacerStats=false)
-		{
-			Console.WriteLine("");
-
-			Console.WriteLine("====================================");
-			Console.WriteLine("Stats");
-			Console.WriteLine("");
-			Console.WriteLine("Files:");
-			Console.WriteLine("- Total: " + stats.Files.Total);
-			Console.WriteLine("- Binary: " + stats.Files.Binary + " (skipped)");
-			Console.WriteLine("- With Matches: " + stats.Files.WithMatches);
-			Console.WriteLine("- Without Matches: " + stats.Files.WithoutMatches);
-			Console.WriteLine("- Failed to Open: " + stats.Files.FailedToRead);
-
-			if (isReplacerStats)
-				Console.WriteLine("- Failed to Write: " + stats.Files.FailedToWrite);
-
-			Console.WriteLine("");
-			Console.WriteLine("Matches:");
-			Console.WriteLine("- Found: " + stats.Matches.Found);
-
-			if (isReplacerStats)
-				Console.WriteLine("- Replaced: " + stats.Matches.Replaced);
-			
-			Console.WriteLine("");
-			double secs = Math.Round(stats.Time.Passed.TotalSeconds, 3);
-			Console.WriteLine("Duration: " + secs.ToString() + " secs");
-			
-			Console.WriteLine("====================================");
 		}
 
 		private static Assembly ResolveEventHandler(Object sender, ResolveEventArgs args)
@@ -166,13 +101,15 @@ namespace FindAndReplace.App
 		}
 	}
 
-	static class CommandLineRunner
+	public class CommandLineRunner
 	{
-		public static void Run(string[] args)
+		private CommandLineOptions _options;
+
+		public void Run(string[] args)
 		{
-			var options = new CommandLineOptions();
+			_options = new CommandLineOptions();
 			ICommandLineParser parser = new CommandLineParser(new CommandLineParserSettings(System.Console.Error));
-			if (!parser.ParseArguments(args, options, System.Console.Error))
+			if (!parser.ParseArguments(args, _options, System.Console.Error))
 			{
 				Console.ReadKey();
 				Environment.Exit(1);
@@ -180,9 +117,9 @@ namespace FindAndReplace.App
 
 			var validationResultList = new List<ValidationResult>();
 
-			validationResultList.Add(ValidationUtils.IsDirValid(options.Dir, "dir"));
-			validationResultList.Add(ValidationUtils.IsNotEmpty(options.FileMask, "fileMask"));
-			validationResultList.Add(ValidationUtils.IsNotEmpty(options.FindText, "find"));
+			validationResultList.Add(ValidationUtils.IsDirValid(_options.Dir, "dir"));
+			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FileMask, "fileMask"));
+			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FindText, "find"));
 
 			Console.WriteLine("");
 				
@@ -198,19 +135,19 @@ namespace FindAndReplace.App
 			}
 			else
 			{
-				if (options.ReplaceText != null)
+				if (_options.ReplaceText != null)
 				{
 					var replacer = new Replacer();
-					replacer.Dir = options.Dir;
-					replacer.IncludeSubDirectories = options.IncludeSubDirectories;
+					replacer.Dir = _options.Dir;
+					replacer.IncludeSubDirectories = _options.IncludeSubDirectories;
 
-					replacer.FileMask = options.FileMask;
-					replacer.ExcludeFileMask = options.ExcludeFileMask;
+					replacer.FileMask = _options.FileMask;
+					replacer.ExcludeFileMask = _options.ExcludeFileMask;
 
-					replacer.FindText = CommandLineUtils.DecodeText(options.FindText);
-					replacer.IsCaseSensitive = options.IsCaseSensitive;
-					replacer.FindTextHasRegEx = options.IsFindTextHasRegEx;
-					replacer.ReplaceText = CommandLineUtils.DecodeText(options.ReplaceText);
+					replacer.FindText = CommandLineUtils.DecodeText(_options.FindText);
+					replacer.IsCaseSensitive = _options.IsCaseSensitive;
+					replacer.FindTextHasRegEx = _options.IsFindTextHasRegEx;
+					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText);
 					
 					replacer.FileProcessed += OnReplacerFileProcessed;
 					
@@ -219,14 +156,14 @@ namespace FindAndReplace.App
 				else
 				{
 					var finder = new Finder();
-					finder.Dir = options.Dir;
-					finder.IncludeSubDirectories = options.IncludeSubDirectories;
-					finder.FileMask = options.FileMask;
-					finder.ExcludeFileMask = options.ExcludeFileMask;
+					finder.Dir = _options.Dir;
+					finder.IncludeSubDirectories = _options.IncludeSubDirectories;
+					finder.FileMask = _options.FileMask;
+					finder.ExcludeFileMask = _options.ExcludeFileMask;
 					
-					finder.FindText = CommandLineUtils.DecodeText(options.FindText);
-					finder.IsCaseSensitive = options.IsCaseSensitive;
-					finder.FindTextHasRegEx = options.IsFindTextHasRegEx;
+					finder.FindText = CommandLineUtils.DecodeText(_options.FindText);
+					finder.IsCaseSensitive = _options.IsCaseSensitive;
+					finder.FindTextHasRegEx = _options.IsFindTextHasRegEx;
 					
 					finder.FileProcessed += OnFinderFileProcessed;
 
@@ -240,24 +177,98 @@ namespace FindAndReplace.App
 			#endif
 		}
 
-		private static void OnFinderFileProcessed(object sender, FinderEventArgs e)
+		private void OnFinderFileProcessed(object sender, FinderEventArgs e)
 		{
 			if (e.ResultItem.IncludeInResultsList)
-				Program.PrintFinderResultRow(e.ResultItem, e.Stats);
+				PrintFinderResultRow(e.ResultItem, e.Stats);
 
 			if (e.Stats.Files.Processed == e.Stats.Files.Total)
-				Program.PrintStatistics(e.Stats);
+				PrintStatistics(e.Stats);
 			
 		}
 
-		private static void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
+		private void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
 		{
 			if (e.ResultItem.IncludeInResultsList)
-				Program.PrintReplacerResultRow(e.ResultItem, e.Stats);
+				PrintReplacerResultRow(e.ResultItem, e.Stats);
 
 			if (e.Stats.Files.Processed == e.Stats.Files.Total)
-				Program.PrintStatistics(e.Stats, true);
-
+				PrintStatistics(e.Stats, true);
 		}
+
+
+		public void PrintFinderResultRow(Finder.FindResultItem item, Stats stats)
+		{
+			PrintFileAndEncoding(item);
+
+			if (item.IsSuccess)
+				PrintNameValuePair("Matches", item.NumMatches.ToString());
+			else
+				PrintNameValuePair("Error", item.ErrorMessage);
+
+			Console.WriteLine();
+		}
+
+		private void PrintFileAndEncoding(ResultItem item)
+		{
+			PrintNameValuePair("File", item.FileRelativePath);
+
+			if (_options.ShowEncoding && item.FileEncoding != null)
+				PrintNameValuePair("Encoding", item.FileEncoding.EncodingName);
+		}
+
+		public void PrintReplacerResultRow(Replacer.ReplaceResultItem item, Stats stats)
+		{
+			PrintFileAndEncoding(item);
+
+			if (!item.FailedToOpen)
+				PrintNameValuePair("Matches", item.NumMatches.ToString());
+
+			PrintNameValuePair("Replaced", item.IsSuccess ? "Yes" : "No");
+
+			if (!item.IsSuccess)
+				PrintNameValuePair("Error", item.ErrorMessage);
+
+			Console.WriteLine();
+		}
+
+		static void PrintNameValuePair(string name, string value)
+		{
+			string label = name + ":";
+			label = label.PadRight(10);
+			Console.WriteLine(label + value);
+		}
+
+		public void PrintStatistics(Stats stats, bool isReplacerStats = false)
+		{
+			Console.WriteLine("");
+
+			Console.WriteLine("====================================");
+			Console.WriteLine("Stats");
+			Console.WriteLine("");
+			Console.WriteLine("Files:");
+			Console.WriteLine("- Total: " + stats.Files.Total);
+			Console.WriteLine("- Binary: " + stats.Files.Binary + " (skipped)");
+			Console.WriteLine("- With Matches: " + stats.Files.WithMatches);
+			Console.WriteLine("- Without Matches: " + stats.Files.WithoutMatches);
+			Console.WriteLine("- Failed to Open: " + stats.Files.FailedToRead);
+
+			if (isReplacerStats)
+				Console.WriteLine("- Failed to Write: " + stats.Files.FailedToWrite);
+
+			Console.WriteLine("");
+			Console.WriteLine("Matches:");
+			Console.WriteLine("- Found: " + stats.Matches.Found);
+
+			if (isReplacerStats)
+				Console.WriteLine("- Replaced: " + stats.Matches.Replaced);
+
+			Console.WriteLine("");
+			double secs = Math.Round(stats.Time.Passed.TotalSeconds, 3);
+			Console.WriteLine("Duration: " + secs.ToString() + " secs");
+
+			Console.WriteLine("====================================");
+		}
+
 	}
 }
