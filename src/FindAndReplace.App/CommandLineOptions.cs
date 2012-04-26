@@ -37,6 +37,9 @@ namespace FindAndReplace.App
 
 		[Option(null, "includeSubDirectories", HelpText = "Include files in SubDirectories.")]
 		public bool IncludeSubDirectories = false;
+
+		[Option(null, "showEncoding", HelpText = "Display detected encoding information for each fle.")]
+		public bool ShowEncoding = false;
 		
 		#endregion
 

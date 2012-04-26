@@ -135,8 +135,7 @@ namespace FindAndReplace
 				resultItem.FailedToOpen = true;
 				resultItem.ErrorMessage = exception.Message;
 			}
-
-
+			
 			if (resultItem.IsSuccess)
 			{
 				// check for /0/0/0/0

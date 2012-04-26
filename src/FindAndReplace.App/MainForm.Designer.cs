@@ -138,7 +138,7 @@
 			this.label5.Size = new System.Drawing.Size(55, 13);
 			this.label5.TabIndex = 4;
 			this.label5.Text = "File Mask:";
-			// 
+
 			// txtFileMask
 			// 
 			this.txtFileMask.Location = new System.Drawing.Point(83, 64);
@@ -179,6 +179,7 @@
 			this.chkIncludeSubDirectories.TabIndex = 3;
 			this.chkIncludeSubDirectories.Text = "Include sub-directories";
 			this.chkIncludeSubDirectories.UseVisualStyleBackColor = true;
+
 			// 
 			// btnGenReplaceCommandLine
 			// 
