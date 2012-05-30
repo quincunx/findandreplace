@@ -266,7 +266,7 @@ namespace FindAndReplace.Tests
 			string fileContent = @"Line1
 								Line2
 								©[assembly: AssemblyCopyright(Copyright © 2009-2011 My Company)]";
-			WriteFile(filePath, fileContent, Encoding.Default);
+			WriteFile(filePath, fileContent);
 
 			Replacer replacer = new Replacer();
 
