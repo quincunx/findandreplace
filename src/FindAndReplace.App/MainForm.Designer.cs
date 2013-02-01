@@ -199,6 +199,7 @@
 			this.txtCommandLine.Name = "txtCommandLine";
 			this.txtCommandLine.Size = new System.Drawing.Size(930, 74);
 			this.txtCommandLine.TabIndex = 15;
+			this.txtCommandLine.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtCommandLine_KeyDown);
 			// 
 			// lblCommandLine
 			// 
