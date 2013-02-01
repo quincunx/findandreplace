@@ -892,6 +892,26 @@ namespace FindAndReplace.App
 				txtDir.Text = folderBrowserDialog1.SelectedPath;
 			}
 		}
+
+		private void txtReplace_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && (e.KeyCode == System.Windows.Forms.Keys.A))
+			{
+				txtReplace.SelectAll();
+				e.SuppressKeyPress = true;
+				e.Handled = true;
+			}
+		}
+
+		private void txtFind_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && (e.KeyCode == System.Windows.Forms.Keys.A))
+			{
+				txtFind.SelectAll();
+				e.SuppressKeyPress = true;
+				e.Handled = true;
+			}
+		}
 	}
 }
  
