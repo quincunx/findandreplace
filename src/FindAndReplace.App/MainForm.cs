@@ -914,6 +914,16 @@ namespace FindAndReplace.App
 				e.Handled = true;
 			}
 		}
+
+		private void txtCommandLine_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && (e.KeyCode == System.Windows.Forms.Keys.A))
+			{
+				txtCommandLine.SelectAll();
+				e.SuppressKeyPress = true;
+				e.Handled = true;
+			}
+		}
 	}
 }
  
