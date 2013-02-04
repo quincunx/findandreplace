@@ -40,6 +40,9 @@ namespace FindAndReplace.App
 
 		[Option(null, "showEncoding", HelpText = "Display detected encoding information for each fle.")]
 		public bool ShowEncoding = false;
+
+		[Option(null, "silent", HelpText = "Supress the command window output.")]
+		public bool Silent = false;
 		
 		#endregion
 

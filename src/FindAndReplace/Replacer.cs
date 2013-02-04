@@ -11,12 +11,14 @@ namespace FindAndReplace
 		public Replacer.ReplaceResultItem ResultItem { get; set; }
 		public Stats Stats { get; set; }
 		public Status Status { get; set; }
+		public bool Silent { get; set; }
 
-		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, Stats stats, Status status)
+		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, Stats stats, Status status, bool silent = false)
 		{
 			ResultItem = resultItem;
 			Stats = stats;
 			Status = status;
+			Silent = silent;
 		}
 	}
 
@@ -33,7 +35,9 @@ namespace FindAndReplace
 		public bool FindTextHasRegEx { get; set; }
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
-		
+		public bool IsSupressOutput { get; set; }
+		public bool Silent { get; set; }
+
 		public class ReplaceResultItem : ResultItem
 		{
 			public bool FailedToWrite { get; set; }
@@ -105,7 +109,7 @@ namespace FindAndReplace
 				if (stats.Files.Total == stats.Files.Processed)
 					status = Status.Completed;
 				
-				OnFileProcessed(new ReplacerEventArgs(resultItem, stats, status));
+				OnFileProcessed(new ReplacerEventArgs(resultItem, stats, status, Silent));
 
 				if (status == Status.Cancelled)
 					break;
@@ -114,7 +118,7 @@ namespace FindAndReplace
 			if (filesInDirectory.Length == 0)
 			{
 				status = Status.Completed;
-				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats, status));
+				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats, status, Silent));
 			}
 
 			return new ReplaceResult {ResultItems = resultItems, Stats = stats};
