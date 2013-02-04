@@ -67,7 +67,8 @@ OF SUCH DAMAGE.
          * 
          */
 
-		private const long _defaultHeuristicSampleSize = 0x10000;
+		//private const long _defaultHeuristicSampleSize = 0x10000;
+		private const long _defaultHeuristicSampleSize = 10240;
 		//completely arbitrary - inappropriate for high numbers of files / high speed requirements
 
 		public static Encoding DetectTextFileEncoding(string InputFilename, Encoding DefaultEncoding)
@@ -80,6 +81,7 @@ OF SUCH DAMAGE.
 
 		public static Encoding DetectTextFileEncoding(FileStream InputFileStream, Encoding DefaultEncoding)
 		{
+			//return DetectTextFileEncoding(InputFileStream, DefaultEncoding, InputFileStream.Length);
 			return DetectTextFileEncoding(InputFileStream, DefaultEncoding, _defaultHeuristicSampleSize);
 		}
 
@@ -352,7 +354,7 @@ OF SUCH DAMAGE.
 		{
 			int lengthFound = 0;
 
-			if (SampleBytes.Length >= currentPos + 1
+			if (SampleBytes.Length > currentPos + 1
 			    && SampleBytes[currentPos] == 0xC2
 				)
 			{
@@ -370,7 +372,7 @@ OF SUCH DAMAGE.
 					)
 					lengthFound = 2;
 			}
-			else if (SampleBytes.Length >= currentPos + 1
+			else if (SampleBytes.Length > currentPos + 1
 			         && SampleBytes[currentPos] == 0xC3
 				)
 			{
@@ -379,7 +381,7 @@ OF SUCH DAMAGE.
 					)
 					lengthFound = 2;
 			}
-			else if (SampleBytes.Length >= currentPos + 1
+			else if (SampleBytes.Length > currentPos + 1
 			         && SampleBytes[currentPos] == 0xC5
 				)
 			{
@@ -397,14 +399,14 @@ OF SUCH DAMAGE.
 					)
 					lengthFound = 2;
 			}
-			else if (SampleBytes.Length >= currentPos + 1
+			else if (SampleBytes.Length > currentPos + 1
 			         && SampleBytes[currentPos] == 0xC6
 				)
 			{
 				if (SampleBytes[currentPos + 1] == 0x92)
 					lengthFound = 2;
 			}
-			else if (SampleBytes.Length >= currentPos + 1
+			else if (SampleBytes.Length > currentPos + 1
 			         && SampleBytes[currentPos] == 0xCB
 				)
 			{
@@ -413,7 +415,7 @@ OF SUCH DAMAGE.
 					)
 					lengthFound = 2;
 			}
-			else if (SampleBytes.Length >= currentPos + 2
+			else if (SampleBytes.Length > currentPos + 2
 			         && SampleBytes[currentPos] == 0xE2
 				)
 			{
