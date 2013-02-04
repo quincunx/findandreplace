@@ -611,7 +611,9 @@ namespace FindAndReplace.App
 
 			var findText = !_isFindMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
-			var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatchesPreview.Text, findText) : Regex.Matches(txtMatchesPreview.Text, findText, RegexOptions.IgnoreCase);
+			//var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatchesPreview.Text, findText) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), RegexOptions.IgnoreCase);
+			var mathches = chkIsRegEx.Checked ? Regex.Matches(txtMatchesPreview.Text, findText, Utils.GetRegExOptions(chkIsCaseSensitive.Checked)) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), Utils.GetRegExOptions(chkIsCaseSensitive.Checked));
+
 
 			foreach (Match match in mathches)
 			{
@@ -890,6 +892,36 @@ namespace FindAndReplace.App
 			if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
 			{
 				txtDir.Text = folderBrowserDialog1.SelectedPath;
+			}
+		}
+
+		private void txtReplace_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && (e.KeyCode == System.Windows.Forms.Keys.A))
+			{
+				txtReplace.SelectAll();
+				e.SuppressKeyPress = true;
+				e.Handled = true;
+			}
+		}
+
+		private void txtFind_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && (e.KeyCode == System.Windows.Forms.Keys.A))
+			{
+				txtFind.SelectAll();
+				e.SuppressKeyPress = true;
+				e.Handled = true;
+			}
+		}
+
+		private void txtCommandLine_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && (e.KeyCode == System.Windows.Forms.Keys.A))
+			{
+				txtCommandLine.SelectAll();
+				e.SuppressKeyPress = true;
+				e.Handled = true;
 			}
 		}
 	}

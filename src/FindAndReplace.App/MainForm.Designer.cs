@@ -73,6 +73,7 @@
 			this.txtFind.Name = "txtFind";
 			this.txtFind.Size = new System.Drawing.Size(539, 74);
 			this.txtFind.TabIndex = 9;
+			this.txtFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFind_KeyDown);
 			this.txtFind.Validating += new System.ComponentModel.CancelEventHandler(this.txtFind_Validating);
 			// 
 			// label1
@@ -101,6 +102,7 @@
 			this.txtReplace.Name = "txtReplace";
 			this.txtReplace.Size = new System.Drawing.Size(539, 74);
 			this.txtReplace.TabIndex = 14;
+			this.txtReplace.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtReplace_KeyDown);
 			// 
 			// btnReplace
 			// 
@@ -138,7 +140,7 @@
 			this.label5.Size = new System.Drawing.Size(55, 13);
 			this.label5.TabIndex = 4;
 			this.label5.Text = "File Mask:";
-
+			// 
 			// txtFileMask
 			// 
 			this.txtFileMask.Location = new System.Drawing.Point(83, 64);
@@ -179,7 +181,6 @@
 			this.chkIncludeSubDirectories.TabIndex = 3;
 			this.chkIncludeSubDirectories.Text = "Include sub-directories";
 			this.chkIncludeSubDirectories.UseVisualStyleBackColor = true;
-
 			// 
 			// btnGenReplaceCommandLine
 			// 
@@ -198,6 +199,7 @@
 			this.txtCommandLine.Name = "txtCommandLine";
 			this.txtCommandLine.Size = new System.Drawing.Size(930, 74);
 			this.txtCommandLine.TabIndex = 15;
+			this.txtCommandLine.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtCommandLine_KeyDown);
 			// 
 			// lblCommandLine
 			// 
