@@ -148,6 +148,8 @@ namespace FindAndReplace.App
 					replacer.IsCaseSensitive = _options.IsCaseSensitive;
 					replacer.FindTextHasRegEx = _options.IsFindTextHasRegEx;
 					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText);
+
+					replacer.Silent = _options.Silent;
 					
 					replacer.FileProcessed += OnReplacerFileProcessed;
 					
@@ -164,6 +166,7 @@ namespace FindAndReplace.App
 					finder.FindText = CommandLineUtils.DecodeText(_options.FindText);
 					finder.IsCaseSensitive = _options.IsCaseSensitive;
 					finder.FindTextHasRegEx = _options.IsFindTextHasRegEx;
+					finder.Silent = _options.Silent;
 					
 					finder.FileProcessed += OnFinderFileProcessed;
 
@@ -179,7 +182,7 @@ namespace FindAndReplace.App
 
 		private void OnFinderFileProcessed(object sender, FinderEventArgs e)
 		{
-			if (e.ResultItem.IncludeInResultsList)
+			if (e.ResultItem.IncludeInResultsList && !e.Silent)
 				PrintFinderResultRow(e.ResultItem, e.Stats);
 
 			if (e.Stats.Files.Processed == e.Stats.Files.Total)
@@ -189,7 +192,7 @@ namespace FindAndReplace.App
 
 		private void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
 		{
-			if (e.ResultItem.IncludeInResultsList)
+			if (e.ResultItem.IncludeInResultsList && !e.Silent)
 				PrintReplacerResultRow(e.ResultItem, e.Stats);
 
 			if (e.Stats.Files.Processed == e.Stats.Files.Total)

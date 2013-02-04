@@ -17,11 +17,14 @@ namespace FindAndReplace
 
 		public Status Status { get; set; }
 
-		public FinderEventArgs(Finder.FindResultItem resultItem, Stats stats, Status status)
+		public bool Silent { get; set; }
+
+		public FinderEventArgs(Finder.FindResultItem resultItem, Stats stats, Status status, bool silent = false)
 		{
 			ResultItem = resultItem;
 			Stats = stats;
 			Status = status;
+			Silent = silent;
 		}
 	}
 
@@ -38,6 +41,7 @@ namespace FindAndReplace
 		public bool FindTextHasRegEx { get; set; }
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
+		public bool Silent { get; set; }
 
 		public class FindResultItem : ResultItem
 		{
@@ -124,7 +128,7 @@ namespace FindAndReplace
 				if (stats.Files.Total == stats.Files.Processed)
 					status = Status.Completed;
 
-				OnFileProcessed(new FinderEventArgs(resultItem, stats, status));
+				OnFileProcessed(new FinderEventArgs(resultItem, stats, status, Silent));
 
 				if (status == Status.Cancelled) 
 					break;
@@ -134,7 +138,7 @@ namespace FindAndReplace
 			if (filesInDirectory.Length == 0)
 			{
 				status = Status.Completed;
-				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats, status));
+				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats, status, Silent));
 			}
 
 			return new FindResult {Items = resultItems, Stats = stats};
@@ -172,7 +176,6 @@ namespace FindAndReplace
 				}
 			}
 		}
-
 		
 		public event FileProcessedEventHandler FileProcessed;
 
