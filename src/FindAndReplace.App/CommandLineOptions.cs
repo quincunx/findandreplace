@@ -43,6 +43,9 @@ namespace FindAndReplace.App
 
 		[Option(null, "silent", HelpText = "Supress the command window output.")]
 		public bool Silent = false;
+
+		[Option(null, "logFile", HelpText = "Log filename.")]
+		public string LogFile = null;
 		
 		#endregion
 
