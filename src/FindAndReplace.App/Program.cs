@@ -121,6 +121,12 @@ namespace FindAndReplace.App
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FileMask, "fileMask"));
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FindText, "find"));
 
+			if (!String.IsNullOrEmpty(_options.LogFile))
+			{
+				var fs1 = new FileStream(_options.LogFile, FileMode.Create);
+				var sw1 = new StreamWriter(fs1);
+				Console.SetOut(sw1);
+			}
 			Console.WriteLine("");
 				
 			if (validationResultList.Any(vr => !vr.IsSuccess))
@@ -173,6 +179,11 @@ namespace FindAndReplace.App
 					finder.Find();
 
 				}
+			}
+
+			if (!String.IsNullOrEmpty(_options.LogFile))
+			{
+				Console.Out.Close();
 			}
 
 			#if (DEBUG)
