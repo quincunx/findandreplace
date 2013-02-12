@@ -196,7 +196,7 @@ namespace FindAndReplace.App
 			if (e.ResultItem.IncludeInResultsList && !e.Silent)
 				PrintFinderResultRow(e.ResultItem, e.Stats);
 
-			if (e.Stats.Files.Processed == e.Stats.Files.Total)
+			if (e.Stats.Files.Processed == e.Stats.Files.Total && !e.Silent)
 				PrintStatistics(e.Stats);
 			
 		}
@@ -206,7 +206,7 @@ namespace FindAndReplace.App
 			if (e.ResultItem.IncludeInResultsList && !e.Silent)
 				PrintReplacerResultRow(e.ResultItem, e.Stats);
 
-			if (e.Stats.Files.Processed == e.Stats.Files.Total)
+			if (e.Stats.Files.Processed == e.Stats.Files.Total && !e.Silent)
 				PrintStatistics(e.Stats, true);
 		}
 
