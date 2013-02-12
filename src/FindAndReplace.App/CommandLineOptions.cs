@@ -20,7 +20,7 @@ namespace FindAndReplace.App
 		[Option(null, "replace", HelpText = "Replacement text.")]
 		public string ReplaceText = null;
 
-		[Option(null, "caseSensitive", HelpText = "Case Sensitive.")]
+		[Option(null, "caseSensitive", HelpText = "Case-sensitive.")]
 		public bool IsCaseSensitive = false;
 
 		[Option(null, "useRegEx", HelpText = "Find text has Regular Expression.")]
@@ -44,7 +44,7 @@ namespace FindAndReplace.App
 		[Option(null, "silent", HelpText = "Supress the command window output.")]
 		public bool Silent = false;
 
-		[Option(null, "logFile", HelpText = "Log filename.")]
+		[Option(null, "logFile", HelpText = "Path to log file where to save command output.")]
 		public string LogFile = null;
 		
 		#endregion
