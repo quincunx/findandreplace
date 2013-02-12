@@ -121,6 +121,12 @@ namespace FindAndReplace.App
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FileMask, "fileMask"));
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FindText, "find"));
 
+			if (!String.IsNullOrEmpty(_options.LogFile))
+			{
+				var fs1 = new FileStream(_options.LogFile, FileMode.Create);
+				var sw1 = new StreamWriter(fs1);
+				Console.SetOut(sw1);
+			}
 			Console.WriteLine("");
 				
 			if (validationResultList.Any(vr => !vr.IsSuccess))
@@ -148,6 +154,8 @@ namespace FindAndReplace.App
 					replacer.IsCaseSensitive = _options.IsCaseSensitive;
 					replacer.FindTextHasRegEx = _options.IsFindTextHasRegEx;
 					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText);
+
+					replacer.Silent = _options.Silent;
 					
 					replacer.FileProcessed += OnReplacerFileProcessed;
 					
@@ -164,12 +172,18 @@ namespace FindAndReplace.App
 					finder.FindText = CommandLineUtils.DecodeText(_options.FindText);
 					finder.IsCaseSensitive = _options.IsCaseSensitive;
 					finder.FindTextHasRegEx = _options.IsFindTextHasRegEx;
+					finder.Silent = _options.Silent;
 					
 					finder.FileProcessed += OnFinderFileProcessed;
 
 					finder.Find();
 
 				}
+			}
+
+			if (!String.IsNullOrEmpty(_options.LogFile))
+			{
+				Console.Out.Close();
 			}
 
 			#if (DEBUG)
@@ -179,7 +193,7 @@ namespace FindAndReplace.App
 
 		private void OnFinderFileProcessed(object sender, FinderEventArgs e)
 		{
-			if (e.ResultItem.IncludeInResultsList)
+			if (e.ResultItem.IncludeInResultsList && !e.Silent)
 				PrintFinderResultRow(e.ResultItem, e.Stats);
 
 			if (e.Stats.Files.Processed == e.Stats.Files.Total)
@@ -189,7 +203,7 @@ namespace FindAndReplace.App
 
 		private void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
 		{
-			if (e.ResultItem.IncludeInResultsList)
+			if (e.ResultItem.IncludeInResultsList && !e.Silent)
 				PrintReplacerResultRow(e.ResultItem, e.Stats);
 
 			if (e.Stats.Files.Processed == e.Stats.Files.Total)
