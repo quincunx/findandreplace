@@ -43,7 +43,7 @@ namespace FindAndReplace
 				filesInDirectory = excludeFileMasks
 					.Select(excludeFileMask => WildcardToRegex(excludeFileMask.Trim()))
 					.Aggregate(filesInDirectory,
-					           (current, excludeMaskRegEx) => current.Where(f => !Regex.IsMatch(f, excludeMaskRegEx)).ToList());
+							   (current, excludeMaskRegEx) => current.Where(f => !Regex.IsMatch(f, excludeMaskRegEx)).ToList());
 			}
 
 			filesInDirectory.Sort();
@@ -69,7 +69,7 @@ namespace FindAndReplace
 			}
 
 			var separator = Environment.NewLine;
-			var lines = content.Split(new string[] {separator}, StringSplitOptions.None);
+			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
 
 			var result = new List<MatchPreviewLineNumber>();
 			var temp = new List<MatchPreviewLineNumber>();
@@ -144,10 +144,15 @@ namespace FindAndReplace
 			var separatorLength = 2;
 			int i = 0;
 			int charsCount = lines[0].Length + separatorLength;
+			int linesCount = lines.Count();
 
 			while (charsCount <= position)
 			{
 				i++;
+				if (i == linesCount)
+				{
+					break;
+				}
 				charsCount += lines[i].Length + separatorLength;
 			}
 
