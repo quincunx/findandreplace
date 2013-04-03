@@ -149,10 +149,10 @@ namespace FindAndReplace
 			while (charsCount <= position)
 			{
 				i++;
-				if (i == linesCount)
-				{
-					break;
-				}
+				//if (i == linesCount)
+				//{
+				//    break;
+				//}
 				charsCount += lines[i].Length + separatorLength;
 			}
 
