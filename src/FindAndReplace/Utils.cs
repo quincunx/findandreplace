@@ -59,7 +59,7 @@ namespace FindAndReplace
 			return false;
 		}
 
-		public static List<MatchPreviewLineNumber> GetLineNumbersForMatchesPreview(string filePath, MatchCollection matches)
+		public static List<MatchPreviewLineNumber> GetLineNumbersForMatchesPreview(string filePath, MatchCollection matches, int replaceStrLength = 0, bool isReplace = false)
 		{
 			string content = string.Empty;
 
@@ -74,10 +74,15 @@ namespace FindAndReplace
 			var result = new List<MatchPreviewLineNumber>();
 			var temp = new List<MatchPreviewLineNumber>();
 
+			//int matchNumber = 0;
+			int replacedTextLength = 0;
+
 			foreach (Match match in matches)
 			{
-				var lineIndexStart = DetectMatchLine(lines.ToArray(), match.Index);
-				var lineIndexEnd = DetectMatchLine(lines.ToArray(), match.Index + match.Length);
+				var lineIndexStart = DetectMatchLine(lines.ToArray(), GetMathcIndex(match.Index, replacedTextLength, isReplace));
+				var lineIndexEnd = DetectMatchLine(lines.ToArray(), GetMathcIndex(match.Index + replaceStrLength, replacedTextLength, isReplace));
+
+				replacedTextLength += match.Length;
 
 				for (int i = lineIndexStart - 2; i <= lineIndexEnd + 2; i++)
 				{
@@ -89,6 +94,9 @@ namespace FindAndReplace
 						temp.Add(lineNumber);
 					}
 				}
+
+				//matchNumber++;
+				
 			}
 
 			result.AddRange(temp.Where(ln => ln.HasMatch).Distinct(new LineNumberComparer()));
@@ -144,15 +152,10 @@ namespace FindAndReplace
 			var separatorLength = 2;
 			int i = 0;
 			int charsCount = lines[0].Length + separatorLength;
-			int linesCount = lines.Count();
 
 			while (charsCount <= position)
 			{
 				i++;
-				//if (i == linesCount)
-				//{
-				//    break;
-				//}
 				charsCount += lines[i].Length + separatorLength;
 			}
 
@@ -220,7 +223,6 @@ namespace FindAndReplace
 			return KlerksSoftEncodingDetector.DetectTextFileEncoding(stream, null);
 		}
 
-
 		private static Encoding DetectEncodingUsingMLang(Stream fileStream)
 		{
 			//long length = Math.Min(fileStream.Length, 10240);
@@ -244,6 +246,15 @@ namespace FindAndReplace
 			}
 
 			return null;
+		}
+
+		private static int GetMathcIndex(int originalIndex, int replacedTextLength, bool isReplace = false)
+		{
+			if (!isReplace) return originalIndex;
+
+			var newIndex = originalIndex - replacedTextLength;
+
+			return newIndex;
 		}
 	}
 }

@@ -208,7 +208,7 @@ namespace FindAndReplace
 						sw.Write(newContent);
 					}
 
-					resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, matches);
+					resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, matches, ReplaceText.Length, true);
 				}
 				catch (Exception ex)
 				{
