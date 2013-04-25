@@ -225,12 +225,12 @@ namespace FindAndReplace
 
 		private static Encoding DetectEncodingUsingMLang(Stream fileStream)
 		{
-			//long length = Math.Min(fileStream.Length, 10240);
-			long length = 10240;
-			//long length = fileStream.Length;
-
+			int length = 10240;
+			if (fileStream.Length < 10240)
+				length = (int) fileStream.Length;
+			
 			var buf = new byte[length];
-			fileStream.Read(buf, 0, buf.Length);
+			fileStream.Read(buf, 0, length);
 
 			try
 			{
