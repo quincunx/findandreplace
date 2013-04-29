@@ -121,6 +121,8 @@ namespace FindAndReplace.App
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FileMask, "fileMask"));
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FindText, "find"));
 
+			if (_options.IsFindTextHasRegEx) validationResultList.Add(ValidationUtils.IsValidRegExp(_options.FindText, "find"));
+
 			if (!String.IsNullOrEmpty(_options.LogFile))
 			{
 				var fs1 = new FileStream(_options.LogFile, FileMode.Create);
