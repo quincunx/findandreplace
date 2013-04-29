@@ -580,6 +580,14 @@ namespace FindAndReplace.App
 				return;
 			}
 
+			validationResult = ValidationUtils.IsValidRegExp(txtFind.Text, "Find");
+
+			if (chkIsRegEx.Checked && !validationResult.IsSuccess)
+			{
+				errorProvider1.SetError(txtFind, validationResult.ErrorMessage);
+				return;
+			}
+
 			errorProvider1.SetError(txtFind, "");
 		}
 
