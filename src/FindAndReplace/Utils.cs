@@ -190,7 +190,6 @@ namespace FindAndReplace
 			Encoding encoding = null;
 			string method = "";
 
-
 			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
 			{
 				//First try BOM detection and Unicode detection using Klerks Soft encoder
@@ -225,10 +224,7 @@ namespace FindAndReplace
 
 		private static Encoding DetectEncodingUsingMLang(Stream fileStream)
 		{
-			int length = 10240;
-			if (fileStream.Length < 10240)
-				length = (int) fileStream.Length;
-			
+			long length = 1024 * 6;
 			var buf = new byte[length];
 			fileStream.Read(buf, 0, length);
 
