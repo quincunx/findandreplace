@@ -60,5 +60,23 @@ namespace FindAndReplace.App
 
 			return result;
 		}
+
+		public static ValidationResult IsValidRegExp(string text, string itemName)
+		{
+			var result = new ValidationResult() { IsSuccess = true, FieldName = itemName };
+
+			try
+			{
+				Regex.Match("", text);
+			}
+			catch (ArgumentException)
+			{
+				result.IsSuccess = false;
+				result.ErrorMessage = "Incorrect regular expression";
+			}
+
+			return result;
+		}
+
 	}
 }
