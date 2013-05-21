@@ -71,10 +71,8 @@ namespace FindAndReplace
 			var separator = Environment.NewLine;
 			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
 
-			var result = new List<MatchPreviewLineNumber>();
 			var temp = new List<MatchPreviewLineNumber>();
 
-			//int matchNumber = 0;
 			int replacedTextLength = 0;
 
 			foreach (Match match in matches)
@@ -94,18 +92,9 @@ namespace FindAndReplace
 						temp.Add(lineNumber);
 					}
 				}
-
-				//matchNumber++;
-				
 			}
 
-			result.AddRange(temp.Where(ln => ln.HasMatch).Distinct(new LineNumberComparer()));
-
-			result.AddRange(
-				temp.Where(ln => !ln.HasMatch && !result.Select(l => l.LineNumber).Contains(ln.LineNumber)).Distinct(
-					new LineNumberComparer()));
-
-			return result.OrderBy(ln => ln.LineNumber).ToList();
+			return temp.Distinct(new LineNumberComparer()).OrderBy(ln => ln.LineNumber).ToList();
 		}
 
 		public static string FormatTimeSpan(TimeSpan timeSpan)
