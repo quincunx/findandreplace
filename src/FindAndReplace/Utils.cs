@@ -71,10 +71,8 @@ namespace FindAndReplace
 			var separator = Environment.NewLine;
 			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
 
-			var result = new List<MatchPreviewLineNumber>();
 			var temp = new List<MatchPreviewLineNumber>();
 
-			//int matchNumber = 0;
 			int replacedTextLength = 0;
 
 			foreach (Match match in matches)
@@ -94,18 +92,9 @@ namespace FindAndReplace
 						temp.Add(lineNumber);
 					}
 				}
-
-				//matchNumber++;
-				
 			}
 
-			result.AddRange(temp.Where(ln => ln.HasMatch).Distinct(new LineNumberComparer()));
-
-			result.AddRange(
-				temp.Where(ln => !ln.HasMatch && !result.Select(l => l.LineNumber).Contains(ln.LineNumber)).Distinct(
-					new LineNumberComparer()));
-
-			return result.OrderBy(ln => ln.LineNumber).ToList();
+			return temp.Distinct(new LineNumberComparer()).OrderBy(ln => ln.LineNumber).ToList();
 		}
 
 		public static string FormatTimeSpan(TimeSpan timeSpan)
@@ -203,6 +192,7 @@ namespace FindAndReplace
 				if (encoding == null)
 				{
 					stream.Seek(0, SeekOrigin.Begin);
+					
 					encoding = DetectEncodingUsingMLang(stream);
 
 					if (encoding != null)
@@ -224,7 +214,7 @@ namespace FindAndReplace
 
 		private static Encoding DetectEncodingUsingMLang(Stream fileStream)
 		{
-			long length = 1024 * 6;
+			long length = 1024*10;
 			var buf = new byte[length];
 			fileStream.Read(buf, 0, length);
 
@@ -236,7 +226,7 @@ namespace FindAndReplace
 					return detected[0];
 				}
 			}
-			catch (COMException)
+			catch (COMException ex)
 			{
 				// return default codepage on error
 			}
