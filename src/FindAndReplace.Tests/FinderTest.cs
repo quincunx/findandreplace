@@ -174,5 +174,26 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual("test2.test", resultItems[0].FileName);
 			Assert.AreEqual(1, resultItems[0].NumMatches);
 		}
+
+		[Test]
+		public void Find_WhenSearchStartManyTimes_FindsTextInFourFiles()
+		{
+			Finder finder = new Finder();
+
+			finder.Dir = _tempDir;
+			finder.FileMask = "*.*";
+			finder.FindText = "a+";
+			finder.IncludeSubDirectories = true;
+			finder.FindTextHasRegEx = true;
+
+			Finder.FindResult result = null;
+			
+			for(int i = 0; i<10; i++)
+			{
+				result = finder.Find();
+			}
+
+			Assert.IsNotNull(result);
+		}
 	}
 }

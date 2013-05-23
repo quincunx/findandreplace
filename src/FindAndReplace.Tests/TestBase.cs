@@ -54,6 +54,39 @@ namespace FindAndReplace.Tests
 
 			File.SetAttributes(_tempDir + "\\test3.test", FileAttributes.ReadOnly);
 
+			fs = new FileStream(_tempDir + "\\test4.test", FileMode.Create);
+			sr = new StreamWriter(fs);
+
+			sr.WriteLine(
+				"2012-12-17T00:05:28+00:00 info: Thank you for contacting Norton One Member Support, your support agent will be with you within the next 2 minutes.  </b><br><br>    If you need help to download and install a Norton product, we have an online tutorial with step by step instructions available from <a href=\" http://one.norton.com/support\" target=\"_blank\"> one.norton.com/support </a></b><br> Please feel free to check it out at your convenience.");
+			sr.WriteLine("2012-12-17T00:05:32+00:00 info: You are now chatting with Jayakaran Y E.");
+			sr.WriteLine("2012-12-17T00:05:46+00:00 Jayakaran Y E: <span dir=\"ltr\">Hi Mary, Welcome to Norton One Support, My name is Jayakaran, How can I help you today ? </span>");
+			sr.WriteLine("2012-12-17T00:05:59+00:00 Mary Starnes: Hello, I spoke with you yesterday about this computer, Jayakaran... and");
+			sr.WriteLine("2012-12-17T00:06:58+00:00 Mary Starnes: I have decided to return it to amazon.  However, I want to discontinue Norton 360 and Norton One from this computer but not my other one... can you help me?");
+			sr.WriteLine("2012-12-17T00:07:36+00:00 Jayakaran Y E: <span dir=\"ltr\">Sure I will</span>");
+			sr.WriteLine("2012-12-17T00:07:37+00:00 Mary Starnes: This computer is WAY out of date and not worth the money I paid.  There are even drivers that are totally out of date.");
+			sr.WriteLine("2012-12-17T00:08:17+00:00 Jayakaran Y E: <span dir=\"ltr\">On the Norton One web page Please go to my account</span>");
+			sr.WriteLine("2012-12-17T00:08:38+00:00 Mary Starnes: I do not understand what you mean");
+			sr.WriteLine("2012-12-17T00:08:51+00:00 Jayakaran Y E: <span dir=\"ltr\">Your Norton one website</span>");
+			sr.WriteLine("2012-12-17T00:09:10+00:00 Jayakaran Y E: <span dir=\"ltr\">You should already be logged in to it.</span>");
+			sr.WriteLine("2012-12-17T00:09:36+00:00 Mary Starnes: I see, I am logged in!");
+			sr.WriteLine("2012-12-17T00:09:38+00:00 Mary Starnes: sorry");
+			sr.WriteLine("2012-12-17T00:09:47+00:00 Jayakaran Y E: <span dir=\"ltr\">Thats Okay</span>");
+			sr.WriteLine("2012-12-17T00:09:58+00:00 Jayakaran Y E: <span dir=\"ltr\">you will find my account, on the top</span>");
+			sr.WriteLine("2012-12-17T00:10:02+00:00 Jayakaran Y E: <span dir=\"ltr\">Please click on it</span>");
+			sr.WriteLine("2012-12-17T00:10:13+00:00 Mary Starnes: I see it ... and am clicking");
+			sr.WriteLine("2012-12-17T00:10:23+00:00 Jayakaran Y E: <span dir=\"ltr\">Under My account you will see products and Norton One Highlighted</span>");
+			sr.WriteLine("2012-12-17T00:10:56+00:00 Mary Starnes: Yes, I see that");
+			sr.WriteLine("2012-12-17T00:11:01+00:00 Jayakaran Y E: <span dir=\"ltr\">You will see the licenses used.  You will find the name of the computer that you wish to remove</span>");
+			sr.WriteLine("2012-12-17T00:11:16+00:00 Jayakaran Y E: <span dir=\"ltr\">Please click on the trash can next to it and remove it</span>");
+			sr.WriteLine("2012-12-17T00:11:17+00:00 Mary Starnes: the product key?");
+			sr.WriteLine("2012-12-17T00:11:29+00:00 Mary Starnes: serial number?");
+			sr.WriteLine("2012-12-17T00:11:38+00:00 Jayakaran Y E: <span dir=\"ltr\">Below that</span>");
+			sr.WriteLine("2012-12-17T00:12:03+00:00 Mary Starnes: just a second");
+
+			sr.Close();
+			fs.Close();
+
 			Directory.CreateDirectory(_tempDir + "\\subDir");
 			File.Copy(_tempDir + "\\test1.test", _tempDir + "\\subDir\\test1.test", true);
 			File.Copy(_tempDir + "\\test2.test", _tempDir + "\\subDir\\test2.test", true);
