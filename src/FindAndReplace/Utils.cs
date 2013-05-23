@@ -192,6 +192,7 @@ namespace FindAndReplace
 				if (encoding == null)
 				{
 					stream.Seek(0, SeekOrigin.Begin);
+					
 					encoding = DetectEncodingUsingMLang(stream);
 
 					if (encoding != null)
@@ -214,7 +215,7 @@ namespace FindAndReplace
 		private static Encoding DetectEncodingUsingMLang(Stream fileStream)
 		{
 			//long length = Math.Min(fileStream.Length, 10240);
-			long length = 1024 * 6;
+			long length = 1024*10;
 			//long length = fileStream.Length;
 
 			var buf = new byte[length];
@@ -228,7 +229,7 @@ namespace FindAndReplace
 					return detected[0];
 				}
 			}
-			catch (COMException)
+			catch (COMException ex)
 			{
 				// return default codepage on error
 			}
