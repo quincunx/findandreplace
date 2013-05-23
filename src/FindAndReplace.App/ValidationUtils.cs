@@ -72,7 +72,7 @@ namespace FindAndReplace.App
 			catch (ArgumentException)
 			{
 				result.IsSuccess = false;
-				result.ErrorMessage = "Incorrect regular expression";
+				result.ErrorMessage = "Invalid regular expression";
 			}
 
 			return result;
