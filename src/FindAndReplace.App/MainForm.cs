@@ -620,7 +620,7 @@ namespace FindAndReplace.App
 			var findText = !_isFindMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
 
 			//var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatchesPreview.Text, findText) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), RegexOptions.IgnoreCase);
-			var mathches = chkIsRegEx.Checked ? Regex.Matches(txtMatchesPreview.Text, findText, Utils.GetRegExOptions(chkIsCaseSensitive.Checked)) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), Utils.GetRegExOptions(chkIsCaseSensitive.Checked));
+			var mathches = (chkIsRegEx.Checked && _isFindMode) ? Regex.Matches(txtMatchesPreview.Text, findText, Utils.GetRegExOptions(chkIsCaseSensitive.Checked)) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), Utils.GetRegExOptions(chkIsCaseSensitive.Checked));
 
 			int count = 0;
 			int maxCount = 1000;
