@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EncodingTools">
-      <HintPath>..\..\lib\EncodingTools.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,6 +49,12 @@
     <Compile Include="Stats.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VerifyArgument.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EncodingTools\EncodingTools.csproj">
+      <Project>{CA19D4DE-B232-491A-92BF-7BF3A2758694}</Project>
+      <Name>EncodingTools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
