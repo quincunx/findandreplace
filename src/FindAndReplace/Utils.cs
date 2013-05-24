@@ -214,7 +214,8 @@ namespace FindAndReplace
 
 		private static Encoding DetectEncodingUsingMLang(Stream fileStream)
 		{
-			long length = 1024*10;
+			int length = 1024 * 10;
+
 			var buf = new byte[length];
 			fileStream.Read(buf, 0, length);
 
@@ -226,7 +227,7 @@ namespace FindAndReplace
 					return detected[0];
 				}
 			}
-			catch (COMException ex)
+			catch //(COMException ex)
 			{
 				// return default codepage on error
 			}
