@@ -20,7 +20,7 @@ namespace FindAndReplace.Tests
 			if (resultItems == null || resultItems.Count == 0)
 				Assert.Fail("Cant find test files");
 
-			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual(2, resultItems.Count);
 			Assert.AreEqual("test1.test", resultItems[0].FileName);
 			Assert.AreEqual(3, resultItems[0].NumMatches);
 		}
@@ -41,7 +41,7 @@ namespace FindAndReplace.Tests
 
 			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 
-			Assert.AreEqual(2, matchedResultItems.Count);
+			Assert.AreEqual(3, matchedResultItems.Count);
 
 			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
 
@@ -140,7 +140,7 @@ namespace FindAndReplace.Tests
 				Assert.Fail("Cant find test files");
 
 
-			Assert.AreEqual(4, resultItems.Count);
+			Assert.AreEqual(5, resultItems.Count);
 
 			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
 
