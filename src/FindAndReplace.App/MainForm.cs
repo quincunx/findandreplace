@@ -531,7 +531,7 @@ namespace FindAndReplace.App
 			
 			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5}{6} --find \"{7}\" --replace \"{8}\"",
 									 Application.ExecutablePath,
-									 txtDir.Text,
+									 txtDir.Text.TrimEnd('\\'),
 									 txtFileMask.Text,
 									 String.IsNullOrEmpty(txtExcludeFileMask.Text) ? "" : String.Format(" --excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludeFileMask.Text)),
 									 chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
