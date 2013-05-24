@@ -51,7 +51,7 @@ namespace FindAndReplace.App
 
 		#region Specialized Option Attribute
 
-		[HelpOption(null, "help", HelpText = "Dispaly this help screen.")]
+		[HelpOption(null, "help", HelpText = "Display this help screen.")]
 		public string GetUsage()
 		{
 			var help = new HelpText("Find And Replace");
