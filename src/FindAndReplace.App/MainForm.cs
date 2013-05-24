@@ -622,6 +622,8 @@ namespace FindAndReplace.App
 			//var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatchesPreview.Text, findText) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), RegexOptions.IgnoreCase);
 			var mathches = chkIsRegEx.Checked ? Regex.Matches(txtMatchesPreview.Text, findText, Utils.GetRegExOptions(chkIsCaseSensitive.Checked)) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), Utils.GetRegExOptions(chkIsCaseSensitive.Checked));
 
+			int count = 0;
+			int maxCount = 1000;
 
 			foreach (Match match in mathches)
 			{
@@ -632,6 +634,11 @@ namespace FindAndReplace.App
 				txtMatchesPreview.SelectionFont = font;
 
 				txtMatchesPreview.SelectionColor = Color.CadetBlue;
+
+				//Limit highlighted matches, otherwise may lock up the app .  Happened with 65K+
+				count++;
+				if (count > maxCount)
+					break;
 			}
 
 			txtMatchesPreview.SelectionLength = 0;
