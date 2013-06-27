@@ -60,6 +60,8 @@
 			this.txtExcludeFileMask = new System.Windows.Forms.TextBox();
 			this.btnSelectDir = new System.Windows.Forms.Button();
 			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+			this.btnSwap = new System.Windows.Forms.Button();
+			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -360,11 +362,24 @@
 			// 
 			this.folderBrowserDialog1.Description = "Select folder with files to find and replace.";
 			// 
+			// btnSwap
+			// 
+			this.btnSwap.AccessibleDescription = "";
+			this.btnSwap.Location = new System.Drawing.Point(385, 171);
+			this.btnSwap.Name = "btnSwap";
+			this.btnSwap.Size = new System.Drawing.Size(32, 23);
+			this.btnSwap.TabIndex = 26;
+			this.btnSwap.Text = "↑ ↓";
+			this.toolTip.SetToolTip(this.btnSwap, "Swap find text and replace text");
+			this.btnSwap.UseVisualStyleBackColor = true;
+			this.btnSwap.Click += new System.EventHandler(this.btnSwap_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(676, 336);
+			this.Controls.Add(this.btnSwap);
 			this.Controls.Add(this.btnSelectDir);
 			this.Controls.Add(this.txtExcludeFileMask);
 			this.Controls.Add(this.label3);
@@ -438,6 +453,8 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Button btnSelectDir;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+		private System.Windows.Forms.Button btnSwap;
+		private System.Windows.Forms.ToolTip toolTip;
 	}
 }
 
