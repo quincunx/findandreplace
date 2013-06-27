@@ -11,6 +11,9 @@ namespace FindAndReplace.App
 	{
 		#region Standard Option Attribute
 
+		[ParserState]
+		public IParserState LastParserState { get; set; }
+		
 		[Option("cl", HelpText = "Required to run on command line.")]
 		public bool UseCommandLine { get; set; } 
 
@@ -44,7 +47,7 @@ namespace FindAndReplace.App
 		[Option("silent", HelpText = "Supress the command window output.")]
 		public bool Silent { get; set; }
 
-		[Option("logFile", DefaultValue = null, HelpText = "Path to log file where to save command output.")]
+		[Option("logFile", HelpText = "Path to log file where to save command output.")]
 		public string LogFile { get; set; }
 		
 		#endregion
@@ -56,31 +59,36 @@ namespace FindAndReplace.App
 		{
 			var help = new HelpText("Find And Replace");
 
-			help.Copyright = new CopyrightInfo("Entech Solutions", 2011);
-			//HandleParsingErrorsInHelp();
-			help.AddPreOptionsLine("Usage: \n\nfnr.exe --cl --find \"Text To Find\" --replace \"Text To Replace\"  --caseSensitive  --dir \"Directory Path\" --fileMask \"*.*\"  --includeSubDirectories --useRegEx");
-			help.AddPreOptionsLine("\n");
-			help.AddPreOptionsLine("Mask new line and quote characters using \\n and \\\".");
+			help.Copyright = new CopyrightInfo("ENTech Solutions", DateTime.Now.Year);
 
+			 if (this.LastParserState != null && this.LastParserState.Errors.Count > 0)
+			 {
+				 HandleParsingErrorsInHelp(help);
+			 }
+			 else
+			 {
+				 help.AddPreOptionsLine("Usage: \n\nfnr.exe --cl --find \"Text To Find\" --replace \"Text To Replace\"  --caseSensitive  --dir \"Directory Path\" --fileMask \"*.*\"  --includeSubDirectories --useRegEx");
+				 help.AddPreOptionsLine("\n");
+				 help.AddPreOptionsLine("Mask new line and quote characters using \\n and \\\".");
 
-			help.AddOptions(this);
-
+				 help.AddOptions(this);
+			 }	
+			
 			return help;
 		}
 
 
-		//private void HandleParsingErrorsInHelp()
-		//{
-		//	if (this.LastPostParsingState.Errors.Count > 0)
-		//	{
-		//		var errors = help.RenderParsingErrorsText(this, 2); // indent with two spaces
-		//		if (!string.IsNullOrEmpty(errors))
-		//		{
-		//			help.AddPreOptionsLine(string.Concat(Environment.NewLine, "ERROR(S):"));
-		//			help.AddPreOptionsLine(errors);
-		//		}
-		//	}
-		//}
+		private void HandleParsingErrorsInHelp(HelpText help)
+		{
+			var errors = help.RenderParsingErrorsText(this, 2); // indent with two spaces
+			if (!string.IsNullOrEmpty(errors))
+			{
+				help.MaximumDisplayWidth = 160;
+				help.AddPreOptionsLine(string.Concat("\n", "ERROR(S):"));
+				help.AddPreOptionsLine(errors);
+				help.AddPreOptionsLine("Use 'fnr.exe --cl --help' to see help for this command.");
+			}
+		}
 
 		#endregion
 	}
