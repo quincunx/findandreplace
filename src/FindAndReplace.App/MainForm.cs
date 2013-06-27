@@ -939,6 +939,14 @@ namespace FindAndReplace.App
 				e.Handled = true;
 			}
 		}
+
+		private void btnSwap_Click(object sender, EventArgs e)
+		{
+			string findText = txtFind.Text;
+
+			txtFind.Text = txtReplace.Text;
+			txtReplace.Text = findText;
+		}
 	}
 }
  

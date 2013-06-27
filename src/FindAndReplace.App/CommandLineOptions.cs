@@ -7,57 +7,57 @@ using CommandLine.Text;
 
 namespace FindAndReplace.App
 {
-	public class CommandLineOptions : CommandLineOptionsBase
+	public class CommandLineOptions
 	{
 		#region Standard Option Attribute
 
-		[Option(null, "cl", HelpText = "Required to run on command line.")]
-		public bool UseCommandLine = false; 
+		[Option("cl", HelpText = "Required to run on command line.")]
+		public bool UseCommandLine { get; set; } 
 
-		[Option(null, "find", Required = true, HelpText = "Text to find.")]
-		public string FindText = String.Empty;
+		[Option("find", Required = true, HelpText = "Text to find.")]
+		public string FindText { get; set; }
 
-		[Option(null, "replace", HelpText = "Replacement text.")]
-		public string ReplaceText = null;
+		[Option("replace", HelpText = "Replacement text.")]
+		public string ReplaceText { get; set; }
 
-		[Option(null, "caseSensitive", HelpText = "Case-sensitive.")]
-		public bool IsCaseSensitive = false;
+		[Option("caseSensitive", HelpText = "Case-sensitive.")]
+		public bool IsCaseSensitive { get; set; }
 
-		[Option(null, "useRegEx", HelpText = "Find text has Regular Expression.")]
-		public bool IsFindTextHasRegEx = false;
+		[Option("useRegEx", HelpText = "Find text has Regular Expression.")]
+		public bool IsFindTextHasRegEx { get; set; }
 
-		[Option(null, "dir", Required = true, HelpText = "Directory path.")]
-		public string Dir = String.Empty;
+		[Option("dir", Required = true, HelpText = "Directory path.")]
+		public string Dir { get; set; }
 
-		[Option(null, "fileMask", Required = true, HelpText = "File mask.")]
-		public string FileMask = String.Empty;
+		[Option("fileMask", Required = true, HelpText = "File mask.")]
+		public string FileMask { get; set; }
 
-		[Option(null, "excludeFileMask", HelpText = "Exclude file mask.")]
-		public string ExcludeFileMask = String.Empty;
+		[Option("excludeFileMask",  HelpText = "Exclude file mask.")]
+		public string ExcludeFileMask { get; set; }
 
-		[Option(null, "includeSubDirectories", HelpText = "Include files in SubDirectories.")]
-		public bool IncludeSubDirectories = false;
+		[Option("includeSubDirectories", HelpText = "Include files in SubDirectories.")]
+		public bool IncludeSubDirectories { get; set; }
 
-		[Option(null, "showEncoding", HelpText = "Display detected encoding information for each fle.")]
-		public bool ShowEncoding = false;
+		[Option("showEncoding", HelpText = "Display detected encoding information for each fle.")]
+		public bool ShowEncoding { get; set; }
 
-		[Option(null, "silent", HelpText = "Supress the command window output.")]
-		public bool Silent = false;
+		[Option("silent", HelpText = "Supress the command window output.")]
+		public bool Silent { get; set; }
 
-		[Option(null, "logFile", HelpText = "Path to log file where to save command output.")]
-		public string LogFile = null;
+		[Option("logFile", DefaultValue = null, HelpText = "Path to log file where to save command output.")]
+		public string LogFile { get; set; }
 		
 		#endregion
 
 		#region Specialized Option Attribute
 
-		[HelpOption(null, "help", HelpText = "Display this help screen.")]
+		[HelpOption("help", HelpText = "Display this help screen.")]
 		public string GetUsage()
 		{
 			var help = new HelpText("Find And Replace");
 
 			help.Copyright = new CopyrightInfo("Entech Solutions", 2011);
-			this.HandleParsingErrorsInHelp(help);
+			//HandleParsingErrorsInHelp();
 			help.AddPreOptionsLine("Usage: \n\nfnr.exe --cl --find \"Text To Find\" --replace \"Text To Replace\"  --caseSensitive  --dir \"Directory Path\" --fileMask \"*.*\"  --includeSubDirectories --useRegEx");
 			help.AddPreOptionsLine("\n");
 			help.AddPreOptionsLine("Mask new line and quote characters using \\n and \\\".");
@@ -68,14 +68,19 @@ namespace FindAndReplace.App
 			return help;
 		}
 
-		private void HandleParsingErrorsInHelp(HelpText help)
-		{
-			string errors = help.RenderParsingErrorsText(this);
-			if (!string.IsNullOrEmpty(errors))
-			{
-				help.AddPreOptionsLine(string.Concat(Environment.NewLine, "ERROR: ", errors, Environment.NewLine));
-			}
-		}
+
+		//private void HandleParsingErrorsInHelp()
+		//{
+		//	if (this.LastPostParsingState.Errors.Count > 0)
+		//	{
+		//		var errors = help.RenderParsingErrorsText(this, 2); // indent with two spaces
+		//		if (!string.IsNullOrEmpty(errors))
+		//		{
+		//			help.AddPreOptionsLine(string.Concat(Environment.NewLine, "ERROR(S):"));
+		//			help.AddPreOptionsLine(errors);
+		//		}
+		//	}
+		//}
 
 		#endregion
 	}

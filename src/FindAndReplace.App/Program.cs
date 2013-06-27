@@ -108,8 +108,7 @@ namespace FindAndReplace.App
 		public void Run(string[] args)
 		{
 			_options = new CommandLineOptions();
-			ICommandLineParser parser = new CommandLineParser(new CommandLineParserSettings(System.Console.Error));
-			if (!parser.ParseArguments(args, _options, System.Console.Error))
+			if (!CommandLine.Parser.Default.ParseArguments(args, _options))
 			{
 				Console.ReadKey();
 				Environment.Exit(1);

@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindAndReplace.App", "FindAndReplace.App\FindAndReplace.App.csproj", "{128F4172-1975-4ABA-A8D8-4B55DC9AB481}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindAndReplace.Tests", "FindAndReplace.Tests\FindAndReplace.Tests.csproj", "{2517D7CF-7BBD-4CEA-AA10-87FFB6C6A0DC}"
