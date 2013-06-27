@@ -4,6 +4,8 @@ syntax: glob
 bin/*
 obj/*
 TestResults/*
+_ReSharper*/
+_CommandLine/
 *.suo
 *.rdl.data
 *.sqlsuo
@@ -12,7 +14,6 @@ log4net.log
 *.csproj.user
 *.resharper.user
 *.ReSharper.user
-_ReSharper*/
 *.log
 *.orig
 *.ReSharper.user
