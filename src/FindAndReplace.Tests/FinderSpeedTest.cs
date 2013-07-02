@@ -196,7 +196,7 @@ free program...";
 
 		private void AddToAllTestResults(string testName, int numFiles, int fileSizeInChars)
 		{
-			string fullTestName = testName + " (file size: " + fileSizeInChars + " chars, num files: " + numFiles + ")";
+			string fullTestName = testName + " (file size: " + (fileSizeInChars == -1 ? "N/A" : fileSizeInChars.ToString()) + " chars, num files: " + numFiles + ")";
 			var finderTestResult = new FinderTestResult
 			{
 				TestName = fullTestName,
@@ -290,7 +290,7 @@ free program...";
 					totalMilliseconds += sw.Milliseconds;
 				}
 			
-				rowVals.Add(totalMilliseconds + " ms");
+				rowVals.Add(totalMilliseconds + "ms");
 			}
 
 			WriteRow(rowVals);
