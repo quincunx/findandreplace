@@ -179,15 +179,25 @@ namespace FindAndReplace
 			Encoding encoding = null;
 			string method = "";
 
+			StopWatch.Start("DetectEncoding: FileOpen");
+
 			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
 			{
+				StopWatch.Stop("DetectEncoding: FileOpen");
+
+				StopWatch.Start("DetectEncoding: UsingKlerksSoft");
+				
 				//First try BOM detection and Unicode detection using Klerks Soft encoder
 				stream.Seek(0, SeekOrigin.Begin);
 				encoding = DetectEncodingUsingKlerksSoft(stream);
-
+				
 				if (encoding != null)
 					method += " Klerks Soft: " + encoding.EncodingName;
 
+				StopWatch.Stop("DetectEncoding: UsingKlerksSoft");
+				
+				StopWatch.Start("DetectEncoding: UsingMLang");
+				
 				//If encoding is not dected, use MLang
 				if (encoding == null)
 				{
@@ -198,6 +208,9 @@ namespace FindAndReplace
 					if (encoding != null)
 						method += " MLang: " + encoding.EncodingName;
 				}
+
+				StopWatch.Stop("DetectEncoding: UsingMLang");
+				
 			}
 
 			if (encoding == null)

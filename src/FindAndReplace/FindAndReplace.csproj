@@ -49,6 +49,7 @@
     <Compile Include="Replacer.cs" />
     <Compile Include="ResultItem.cs" />
     <Compile Include="Stats.cs" />
+    <Compile Include="StopWatch.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VerifyArgument.cs" />
   </ItemGroup>

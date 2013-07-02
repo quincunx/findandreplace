@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using href.Utils;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FindAndReplace
 {
@@ -42,6 +44,7 @@ namespace FindAndReplace
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
 		public bool Silent { get; set; }
+		public int NumThreads { get; set; }
 
 		public class FindResultItem : ResultItem
 		{
@@ -53,6 +56,13 @@ namespace FindAndReplace
 			public Stats Stats { get; set; }
 		}
 
+
+		public Finder()
+		{
+			NumThreads = 1;
+		}
+
+
 		public FindResult Find()
 		{
 			Verify.Argument.IsNotEmpty(Dir, "Dir");
@@ -61,53 +71,44 @@ namespace FindAndReplace
 
 			Status status = Status.Processing;
 			
+			StopWatch.Start("GetFilesInDirectory");
+
 			//time
 			var startTime = DateTime.Now;
-
+			
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask);
 
 			var resultItems = new List<FindResultItem>();
 			var stats = new Stats();
 			stats.Files.Total = filesInDirectory.Length;
 
+			StopWatch.Stop("GetFilesInDirectory");
+
+
 			var startTimeProcessingFiles = DateTime.Now;
-			
-			//Analyze each file in the directory
+
+			//Old code
 			foreach (string filePath in filesInDirectory)
+
+
+				//Analyze each file in the directory
+				//Parallel.ForEach(filesInDirectory,
+				//				 new ParallelOptions {MaxDegreeOfParallelism = NumThreads},
+				//				 (filePath, state) =>
 			{
-				var resultItem = new FindResultItem();
-				resultItem.IsSuccess = true;
-
-				resultItem.FileName = Path.GetFileName(filePath);
-				resultItem.FilePath = filePath;
-				resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-
 				stats.Files.Processed++;
 
-				string fileContent = string.Empty;
 				
-				//Load 1KB or 10KB of data and check for /0/0/0/0
-				CheckIfBinary(filePath, resultItem);
+				var resultItem = FindInFile(filePath);
 
-				if (!resultItem.IsSuccess && resultItem.IsBinaryFile)
-					stats.Files.Binary++;
 				
+				
+				//Update stats
+				if (resultItem.IsBinaryFile)
+					stats.Files.Binary++;
 
 				if (resultItem.IsSuccess)
 				{
-					Encoding encoding = Utils.DetectFileEncoding(filePath);
-					resultItem.FileEncoding = encoding;
-
-					using (var sr = new StreamReader(filePath, encoding))
-					{
-						fileContent = sr.ReadToEnd();
-					}
-
-					resultItem.Matches = GetMatches(fileContent);
-					resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
-
-					resultItem.NumMatches = resultItem.Matches.Count;
-
 					stats.Matches.Found += resultItem.Matches.Count;
 
 					if (resultItem.Matches.Count > 0)
@@ -116,25 +117,32 @@ namespace FindAndReplace
 						stats.Files.WithoutMatches++;
 				}
 
-				//Skip files that don't have matches
-				if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
-					resultItems.Add(resultItem);
-				
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
-				
-				if (IsCancelRequested) 
+
+
+				//Update status
+				if (IsCancelRequested)
 					status = Status.Cancelled;
-				
+
 				if (stats.Files.Total == stats.Files.Processed)
 					status = Status.Completed;
 
+
+				//Skip files that don't have matches
+				if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
+					resultItems.Add(resultItem);
+
+				//Handle event
 				OnFileProcessed(new FinderEventArgs(resultItem, stats, status, Silent));
 
-				if (status == Status.Cancelled) 
-					break;
-			}
-
 			
+				if (status == Status.Cancelled)
+					break;
+				//state.Break();
+				//});
+			}
+			
+		
 			if (filesInDirectory.Length == 0)
 			{
 				status = Status.Completed;
@@ -142,6 +150,56 @@ namespace FindAndReplace
 			}
 
 			return new FindResult {Items = resultItems, Stats = stats};
+		}
+
+		private FindResultItem FindInFile(string filePath)
+		{
+			var resultItem = new FindResultItem();
+			resultItem.IsSuccess = true;
+
+			resultItem.FileName = Path.GetFileName(filePath);
+			resultItem.FilePath = filePath;
+			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
+
+			StopWatch.Start("CheckIfBinary");
+
+			//Load 1KB or 10KB of data and check for /0/0/0/0
+			CheckIfBinary(filePath, resultItem);
+
+
+			StopWatch.Stop("CheckIfBinary");
+
+			if (resultItem.IsSuccess)
+			{
+				//StopWatch.Start("DetectFileEncoding");
+
+				Encoding encoding = Utils.DetectFileEncoding(filePath);
+				resultItem.FileEncoding = encoding;
+
+				//StopWatch.Stop("DetectFileEncoding");
+
+				StopWatch.Start("ReadFileContent");
+
+				string fileContent;
+				using (var sr = new StreamReader(filePath, encoding))
+				{
+					fileContent = sr.ReadToEnd();
+				}
+
+				StopWatch.Stop("ReadFileContent");
+
+				StopWatch.Start("FindMatches");
+				resultItem.Matches = GetMatches(fileContent);
+				StopWatch.Stop("FindMatches");
+
+				StopWatch.Start("GetLineNumbersForMatchesPreview");
+				resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
+				StopWatch.Stop("GetLineNumbersForMatchesPreview");
+			
+				resultItem.NumMatches = resultItem.Matches.Count;
+			}
+
+			return resultItem;
 		}
 
 		public void CancelFind()

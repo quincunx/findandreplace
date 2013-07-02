@@ -55,6 +55,7 @@
     <Compile Include="FinderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplacerTest.cs" />
+    <Compile Include="FinderSpeedTest.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
