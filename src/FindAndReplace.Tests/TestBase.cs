@@ -12,11 +12,11 @@ namespace FindAndReplace.Tests
 	{
 		protected string _tempDir;
 
+
 		[SetUp] 
-		public void SetUp()
+		public virtual void SetUp()
 		{
-			_tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
-			Directory.CreateDirectory(_tempDir);
+			CreateTestDir();
 
 			FileStream fs = new FileStream(_tempDir + "\\test1.test", FileMode.Create);
 			StreamWriter sr = new StreamWriter(fs);
@@ -92,14 +92,27 @@ namespace FindAndReplace.Tests
 			File.Copy(_tempDir + "\\test2.test", _tempDir + "\\subDir\\test2.test", true);
 		}
 
-		[TearDown]
-		public void TearDown()
+		protected void CreateTestDir()
+		{
+			_tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
+			Directory.CreateDirectory(_tempDir);
+		}
+
+
+		protected void DeleteTestDir()
 		{
 			var tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
-
-			File.SetAttributes(_tempDir + "\\test3.test", FileAttributes.Normal);
 			
 			Directory.Delete(tempDir, true);
+		}
+
+		[TearDown]
+		public virtual void TearDown()
+		{
+			var tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
+			File.SetAttributes(tempDir + "\\test3.test", FileAttributes.Normal);
+
+			DeleteTestDir();
 		}
 
 	}
