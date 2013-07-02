@@ -134,6 +134,7 @@ free program...";
 		}
 
 
+
 		[Test]
 		public void Use_RegEx()
 		{
@@ -260,7 +261,7 @@ free program...";
 		{
 			for (int i = 0; i < _allTestResults.Count; i++)
 			{
-				Console.WriteLine("Test " + i + ": " + _allTestResults[i].TestName);
+				Console.WriteLine("Test " + (i + 1) + ": " + _allTestResults[i].TestName);
 			}
 			Console.WriteLine("");
 			Console.WriteLine("");
@@ -269,7 +270,7 @@ free program...";
 
 			for (int i = 0; i < _allTestResults.Count; i++)
 			{
-				rowVals.Add("Test " + i);
+				rowVals.Add("Test " + (i + 1));
 			}
 
 			WriteRow(rowVals);

@@ -152,55 +152,55 @@ namespace FindAndReplace
 			return new FindResult {Items = resultItems, Stats = stats};
 		}
 
-		private FindResultItem FindInFile(string filePath)
+	private FindResultItem FindInFile(string filePath)
+	{
+		var resultItem = new FindResultItem();
+		resultItem.IsSuccess = true;
+
+		resultItem.FileName = Path.GetFileName(filePath);
+		resultItem.FilePath = filePath;
+		resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
+
+		StopWatch.Start("CheckIfBinary");
+
+		//Load 1KB or 10KB of data and check for /0/0/0/0
+		CheckIfBinary(filePath, resultItem);
+
+
+		StopWatch.Stop("CheckIfBinary");
+
+		if (resultItem.IsSuccess)
 		{
-			var resultItem = new FindResultItem();
-			resultItem.IsSuccess = true;
+			//StopWatch.Start("DetectFileEncoding");
 
-			resultItem.FileName = Path.GetFileName(filePath);
-			resultItem.FilePath = filePath;
-			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
+			Encoding encoding = Utils.DetectFileEncoding(filePath);
+			resultItem.FileEncoding = encoding;
 
-			StopWatch.Start("CheckIfBinary");
+			//StopWatch.Stop("DetectFileEncoding");
 
-			//Load 1KB or 10KB of data and check for /0/0/0/0
-			CheckIfBinary(filePath, resultItem);
+			StopWatch.Start("ReadFileContent");
 
-
-			StopWatch.Stop("CheckIfBinary");
-
-			if (resultItem.IsSuccess)
+			string fileContent;
+			using (var sr = new StreamReader(filePath, encoding))
 			{
-				//StopWatch.Start("DetectFileEncoding");
-
-				Encoding encoding = Utils.DetectFileEncoding(filePath);
-				resultItem.FileEncoding = encoding;
-
-				//StopWatch.Stop("DetectFileEncoding");
-
-				StopWatch.Start("ReadFileContent");
-
-				string fileContent;
-				using (var sr = new StreamReader(filePath, encoding))
-				{
-					fileContent = sr.ReadToEnd();
-				}
-
-				StopWatch.Stop("ReadFileContent");
-
-				StopWatch.Start("FindMatches");
-				resultItem.Matches = GetMatches(fileContent);
-				StopWatch.Stop("FindMatches");
-
-				StopWatch.Start("GetLineNumbersForMatchesPreview");
-				resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
-				StopWatch.Stop("GetLineNumbersForMatchesPreview");
-			
-				resultItem.NumMatches = resultItem.Matches.Count;
+				fileContent = sr.ReadToEnd();
 			}
 
-			return resultItem;
+			StopWatch.Stop("ReadFileContent");
+
+			StopWatch.Start("FindMatches");
+			resultItem.Matches = GetMatches(fileContent);
+			StopWatch.Stop("FindMatches");
+
+			StopWatch.Start("GetLineNumbersForMatchesPreview");
+			resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
+			StopWatch.Stop("GetLineNumbersForMatchesPreview");
+			
+			resultItem.NumMatches = resultItem.Matches.Count;
 		}
+
+		return resultItem;
+	}
 
 		public void CancelFind()
 		{
