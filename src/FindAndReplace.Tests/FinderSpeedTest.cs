@@ -108,12 +108,16 @@ free program...";
 		[Test]
 		public void In_Real_Directory()
 		{
+			string realDir = "D:\\Temp\\FindAndReplaceTest\\StyleSalt";
+			if (!Directory.Exists(realDir))
+				return;
+
 			StopWatch stopWatch = new StopWatch();
 			stopWatch.Start();
 			
 			Finder finder = new Finder();
 
-			finder.Dir = "D:\\Temp\\FindAndReplaceTest\\StyleSalt";
+			finder.Dir = realDir;
 			finder.FileMask = "*.*";
 			finder.ExcludeFileMask = "*.dll, *.exe";
 			finder.FindText = "page";
