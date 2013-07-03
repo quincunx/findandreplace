@@ -106,7 +106,6 @@ OF SUCH DAMAGE.
 
 
 			//First read only what we need for BOM detection
-
 			byte[] bomBytes = new byte[InputFileStream.Length > 4 ? 4 : InputFileStream.Length];
 			InputFileStream.Read(bomBytes, 0, bomBytes.Length);
 

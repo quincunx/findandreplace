@@ -87,14 +87,12 @@ namespace FindAndReplace
 
 			var startTimeProcessingFiles = DateTime.Now;
 
-			//Old code
 			foreach (string filePath in filesInDirectory)
 
-
-				//Analyze each file in the directory
-				//Parallel.ForEach(filesInDirectory,
-				//				 new ParallelOptions {MaxDegreeOfParallelism = NumThreads},
-				//				 (filePath, state) =>
+			//Analyze each file in the directory
+			//Parallel.ForEach(filesInDirectory,
+			//				 new ParallelOptions {MaxDegreeOfParallelism = NumThreads},
+			//				 (filePath, state) =>
 			{
 				stats.Files.Processed++;
 
@@ -152,33 +150,64 @@ namespace FindAndReplace
 			return new FindResult {Items = resultItems, Stats = stats};
 		}
 
-	private FindResultItem FindInFile(string filePath)
-	{
-		var resultItem = new FindResultItem();
-		resultItem.IsSuccess = true;
-
-		resultItem.FileName = Path.GetFileName(filePath);
-		resultItem.FilePath = filePath;
-		resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
-
-		StopWatch.Start("CheckIfBinary");
-
-		//Load 1KB or 10KB of data and check for /0/0/0/0
-		CheckIfBinary(filePath, resultItem);
-
-
-		StopWatch.Stop("CheckIfBinary");
-
-		if (resultItem.IsSuccess)
+		private FindResultItem FindInFile(string filePath)
 		{
+			var resultItem = new FindResultItem();
+			resultItem.IsSuccess = true;
+
+			resultItem.FileName = Path.GetFileName(filePath);
+			resultItem.FilePath = filePath;
+			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
+
+			byte[] sampleBytes;
+
+			StopWatch.Start("ReadSampleFileContent");
+
+			//Check if can read first
+			try
+			{
+				sampleBytes = Utils.ReadFileContentSample(filePath);
+			}
+			catch (Exception exception)
+			{
+				StopWatch.Stop("ReadSampleFileContent");
+
+				resultItem.IsSuccess = false;
+				resultItem.FailedToOpen = true;
+				resultItem.ErrorMessage = exception.Message;
+				return resultItem;
+			}
+
+			StopWatch.Stop("ReadSampleFileContent");
+
+
+			StopWatch.Start("IsBinaryFile");
+
+			if (resultItem.IsSuccess)
+			{
+				// check for /0/0/0/0
+				if (Utils.IsBinaryFile(sampleBytes))
+				{
+					StopWatch.Stop("IsBinaryFile");
+
+					resultItem.IsSuccess = false;
+					resultItem.IsBinaryFile = true;
+					return resultItem;
+				}
+			}
+
+			StopWatch.Stop("IsBinaryFile");
+
+		
 			//StopWatch.Start("DetectFileEncoding");
 
-			Encoding encoding = Utils.DetectFileEncoding(filePath);
+			Encoding encoding = EncodingDetector.Detect(sampleBytes, defaultEncoding: Encoding.UTF8);
 			resultItem.FileEncoding = encoding;
 
 			//StopWatch.Stop("DetectFileEncoding");
 
-			StopWatch.Start("ReadFileContent");
+
+			StopWatch.Start("ReadFullFileContent");
 
 			string fileContent;
 			using (var sr = new StreamReader(filePath, encoding))
@@ -186,7 +215,7 @@ namespace FindAndReplace
 				fileContent = sr.ReadToEnd();
 			}
 
-			StopWatch.Stop("ReadFileContent");
+			StopWatch.Stop("ReadFullFileContent");
 
 			StopWatch.Start("FindMatches");
 			resultItem.Matches = GetMatches(fileContent);
@@ -197,43 +226,15 @@ namespace FindAndReplace
 			StopWatch.Stop("GetLineNumbersForMatchesPreview");
 			
 			resultItem.NumMatches = resultItem.Matches.Count;
+			return resultItem;
 		}
-
-		return resultItem;
-	}
 
 		public void CancelFind()
 		{
 			IsCancelRequested = true;
 		}
 
-		private void CheckIfBinary(string filePath, FindResultItem resultItem)
-		{
-			string shortContent = string.Empty;
-
-			//Check if can read first
-			try
-			{
-				shortContent = Utils.GetFileContentSample(filePath);
-			}
-			catch (Exception exception)
-			{
-				resultItem.IsSuccess = false;
-				resultItem.FailedToOpen = true;
-				resultItem.ErrorMessage = exception.Message;
-			}
-
-
-			if (resultItem.IsSuccess)
-			{
-				// check for /0/0/0/0
-				if (Utils.IsBinaryFile(shortContent))
-				{
-					resultItem.IsSuccess = false;
-					resultItem.IsBinaryFile = true;
-				}
-			}
-		}
+	
 		
 		public event FileProcessedEventHandler FileProcessed;
 

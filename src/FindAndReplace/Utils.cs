@@ -59,6 +59,14 @@ namespace FindAndReplace
 			return false;
 		}
 
+
+		public static bool IsBinaryFile(byte[] bytes)
+		{
+			string text = System.Text.Encoding.Default.GetString(bytes);
+			return IsBinaryFile(text);
+		}
+
+
 		public static List<MatchPreviewLineNumber> GetLineNumbersForMatchesPreview(string filePath, MatchCollection matches, int replaceStrLength = 0, bool isReplace = false)
 		{
 			string content = string.Empty;
@@ -77,8 +85,8 @@ namespace FindAndReplace
 
 			foreach (Match match in matches)
 			{
-				var lineIndexStart = DetectMatchLine(lines.ToArray(), GetMathcIndex(match.Index, replacedTextLength, isReplace));
-				var lineIndexEnd = DetectMatchLine(lines.ToArray(), GetMathcIndex(match.Index + replaceStrLength, replacedTextLength, isReplace));
+				var lineIndexStart = DetectMatchLine(lines.ToArray(), GetMatchIndex(match.Index, replacedTextLength, isReplace));
+				var lineIndexEnd = DetectMatchLine(lines.ToArray(), GetMatchIndex(match.Index + replaceStrLength, replacedTextLength, isReplace));
 
 				replacedTextLength += match.Length;
 
@@ -157,98 +165,24 @@ namespace FindAndReplace
 			return string.Format("^{0}$", Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", "."));
 		}
 
-		public static string GetFileContentSample(string filePath, int size = 10240)
+		public static byte[] ReadFileContentSample(string filePath, int maxSize = 10240)
 		{
-			var buffer = new char[10240];
-			string shortContent;
-
-			using (var sr = new StreamReader(filePath))
+			byte[] buffer;
+  			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
 			{
-				int k = sr.Read(buffer, 0, 10240);
+				long streamLength = stream.Length;
+				long bufferSize = Math.Min(streamLength, maxSize);
 
-				shortContent = new string(buffer, 0, k);
-				//shortContent = sr.ReadToEnd();
+				buffer= new byte[bufferSize];
+
+				stream.Read(buffer, 0, (int)bufferSize);
 			}
 
-			return shortContent;
+			return buffer;
 		}
 
 
-		public static Encoding DetectFileEncoding(string filePath)
-		{
-			Encoding encoding = null;
-			string method = "";
-
-			StopWatch.Start("DetectEncoding: FileOpen");
-
-			using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
-			{
-				StopWatch.Stop("DetectEncoding: FileOpen");
-
-				StopWatch.Start("DetectEncoding: UsingKlerksSoft");
-				
-				//First try BOM detection and Unicode detection using Klerks Soft encoder
-				stream.Seek(0, SeekOrigin.Begin);
-				encoding = DetectEncodingUsingKlerksSoft(stream);
-				
-				if (encoding != null)
-					method += " Klerks Soft: " + encoding.EncodingName;
-
-				StopWatch.Stop("DetectEncoding: UsingKlerksSoft");
-				
-				StopWatch.Start("DetectEncoding: UsingMLang");
-				
-				//If encoding is not dected, use MLang
-				if (encoding == null)
-				{
-					stream.Seek(0, SeekOrigin.Begin);
-					
-					encoding = DetectEncodingUsingMLang(stream);
-
-					if (encoding != null)
-						method += " MLang: " + encoding.EncodingName;
-				}
-
-				StopWatch.Stop("DetectEncoding: UsingMLang");
-				
-			}
-
-			if (encoding == null)
-				encoding = Encoding.UTF8; //Use UTF8 by default
-
-			//Console.WriteLine(method.PadRight(80, ' ') + " | " + filePath.PadRight(100, ' '));
-			return encoding;
-		}
-
-		private static Encoding DetectEncodingUsingKlerksSoft(FileStream stream)
-		{
-			return KlerksSoftEncodingDetector.DetectTextFileEncoding(stream, null);
-		}
-
-		private static Encoding DetectEncodingUsingMLang(Stream fileStream)
-		{
-			int length = 1024 * 10;
-
-			var buf = new byte[length];
-			fileStream.Read(buf, 0, length);
-
-			try
-			{
-				Encoding[] detected = EncodingTools.DetectInputCodepages(buf, 1);
-				if (detected.Length > 0)
-				{
-					return detected[0];
-				}
-			}
-			catch //(COMException ex)
-			{
-				// return default codepage on error
-			}
-
-			return null;
-		}
-
-		private static int GetMathcIndex(int originalIndex, int replacedTextLength, bool isReplace = false)
+		private static int GetMatchIndex(int originalIndex, int replacedTextLength, bool isReplace = false)
 		{
 			if (!isReplace) return originalIndex;
 
