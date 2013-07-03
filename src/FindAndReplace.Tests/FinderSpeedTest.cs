@@ -11,8 +11,6 @@ namespace FindAndReplace.Tests
 	[TestFixture]
 	public class FinderSpeedTest : TestBase
 	{
-		private string _speedDir;
-
 		//1000 chars
 		const string Chars1000 =
 				@"The GNU General Public License is a free, copyleft license for
@@ -53,7 +51,7 @@ free program...";
 	
 
 
-		private void WriteFiles(int numFiles, int fileSize, int dirNesting)
+		private void WriteFiles(int numFiles, int fileSize)
 		{
 			string fileContent = GetFileContent(fileSize);
 
@@ -63,16 +61,7 @@ free program...";
 			}	
 		}
 
-		//Rounds up to 1000 chars
-		private string GetFileContent(int fileSize)
-		{
-			var sbFileContent = new StringBuilder();
-			for (int i =0; i < System.Math.Ceiling((decimal)fileSize/1000); i++)
-				sbFileContent.Append(Chars1000);
-
-			return sbFileContent.ToString();
-		}
-
+	
 
 		private void CreateTestFile(int index, string fileContent)
 		{
@@ -108,7 +97,7 @@ free program...";
 		[Test]
 		public void In_Real_Directory()
 		{
-			string realDir = "D:\\Temp\\FindAndReplaceTest\\StyleSalt";
+			string realDir = Dir_StyleSalt;
 			if (!Directory.Exists(realDir))
 				return;
 
@@ -151,7 +140,7 @@ free program...";
 		{
 			CreateSpeedDir();
 
-			WriteFiles(numFiles, fileSizeInChars, 1);
+			WriteFiles(numFiles, fileSizeInChars);
 
 
 			StopWatch stopWatch = new StopWatch();
@@ -210,23 +199,6 @@ free program...";
 			_allTestResults.Add(finderTestResult);
 		}
 
-		private void CreateSpeedDir()
-		{
-			_speedDir = _tempDir + "\\Speed";
-
-			if (Directory.Exists(_speedDir))
-				throw new InvalidOperationException("Dir '" + _speedDir + "' already exists.");
-
-			Directory.CreateDirectory(_speedDir);
-		}
-
-		private void DeleteSpeedDir()
-		{
-			_speedDir = _tempDir + "\\Speed";
-
-			if (Directory.Exists(_speedDir))
-				Directory.Delete(_speedDir, true);
-		}
 
 
 		[Test]
@@ -244,11 +216,11 @@ free program...";
 			WriteHeadingsRow();
 			
 			WriteRow("GetFilesInDirectory");
-			WriteRow("CheckIfBinary");
-			WriteRow("DetectEncoding: FileOpen");
-			WriteRow("DetectEncoding: UsingKlerksSoft");
+			WriteRow("ReadSampleFileContent");
+			WriteRow("IsBinaryFile");
+			WriteRow("DetectEncoding: UsingKlerksSoftBom");
 			WriteRow("DetectEncoding: UsingMLang");
-			WriteRow("ReadFileContent");
+			WriteRow("ReadFullFileContent");
 			WriteRow("FindMatches");
 			WriteRow("GetLineNumbersForMatchesPreview");
 

@@ -124,33 +124,6 @@ namespace FindAndReplace
 			return new ReplaceResult {ResultItems = resultItems, Stats = stats};
 		}
 
-		private void CheckIfBinary(string filePath, ReplaceResultItem resultItem)
-		{
-			string shortContent = string.Empty;
-
-			//Check if can read first
-			try
-			{
-				shortContent = Utils.GetFileContentSample(filePath);
-			}
-			catch (Exception exception)
-			{
-				resultItem.IsSuccess = false;
-				resultItem.FailedToOpen = true;
-				resultItem.ErrorMessage = exception.Message;
-			}
-			
-			if (resultItem.IsSuccess)
-			{
-				// check for /0/0/0/0
-				if (Utils.IsBinaryFile(shortContent))
-				{
-					resultItem.IsSuccess = false;
-					resultItem.IsBinaryFile = true;
-				}
-			}
-		}
-
 		public void CancelReplace()
 		{
 			IsCancelRequested = true;
@@ -166,12 +139,37 @@ namespace FindAndReplace
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
 
-			CheckIfBinary(filePath, resultItem);
-			
+			byte[] sampleBytes;
+
+			//Check if can read first
+			try
+			{
+				sampleBytes = Utils.ReadFileContentSample(filePath);
+			}
+			catch (Exception exception)
+			{
+				resultItem.IsSuccess = false;
+				resultItem.FailedToOpen = true;
+				resultItem.ErrorMessage = exception.Message;
+				return resultItem;
+			}
+
+
+			if (resultItem.IsSuccess)
+			{
+				// check for /0/0/0/0
+				if (Utils.IsBinaryFile(sampleBytes))
+				{
+					resultItem.IsSuccess = false;
+					resultItem.IsBinaryFile = true;
+					return resultItem;
+				}
+			}
+
 			if (!resultItem.IsSuccess) 
 				return resultItem;
 
-			Encoding encoding = Utils.DetectFileEncoding(filePath);
+			Encoding encoding = EncodingDetector.Detect(sampleBytes, defaultEncoding:Encoding.UTF8);
 			resultItem.FileEncoding = encoding;
 
 			using (var sr = new StreamReader(filePath, encoding))

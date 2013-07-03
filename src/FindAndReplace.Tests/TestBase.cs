@@ -10,7 +10,30 @@ namespace FindAndReplace.Tests
 	[TestFixture]
 	public abstract class TestBase
 	{
+		protected  const string Dir_StyleSalt = "D:\\Temp\\FindAndReplaceTest\\StyleSalt";
 		protected string _tempDir;
+		protected string _speedDir;
+
+		//1000 chars
+		const string Chars1000 =
+				@"The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+
+  The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users.  We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors.  You can apply it to
+your programs, too.
+
+  When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free program...";
 
 
 		[SetUp] 
@@ -105,6 +128,36 @@ namespace FindAndReplace.Tests
 			
 			Directory.Delete(tempDir, true);
 		}
+
+
+		protected void CreateSpeedDir()
+		{
+			_speedDir = _tempDir + "\\Speed";
+
+			if (Directory.Exists(_speedDir))
+				throw new InvalidOperationException("Dir '" + _speedDir + "' already exists.");
+
+			Directory.CreateDirectory(_speedDir);
+		}
+
+		protected void DeleteSpeedDir()
+		{
+			_speedDir = _tempDir + "\\Speed";
+
+			if (Directory.Exists(_speedDir))
+				Directory.Delete(_speedDir, true);
+		}
+
+		//Rounds up to 1000 chars
+		protected string GetFileContent(int fileSize)
+		{
+			var sbFileContent = new StringBuilder();
+			for (int i = 0; i < System.Math.Ceiling((decimal)fileSize / 1000); i++)
+				sbFileContent.Append(Chars1000);
+
+			return sbFileContent.ToString();
+		}
+
 
 		[TearDown]
 		public virtual void TearDown()
