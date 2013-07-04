@@ -78,7 +78,7 @@ namespace FindAndReplace.Tests
 		[Test]
 		public void KlerkSoft_Bom_And_Heuristics_Real_Dir()
 		{
-			RunTest(EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.MLang, Dir_StyleSalt);
+			RunTest(EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.KlerkSoftHeuristics, Dir_StyleSalt);
 		}
 
 
