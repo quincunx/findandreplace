@@ -197,16 +197,14 @@ namespace FindAndReplace
 		
 			if (matches.Count > 0)
 			{
+				string newContent = Regex.Replace(fileContent, finderText, ReplaceText, regexOptions);
+
 				try
 				{
-					string newContent = Regex.Replace(fileContent, finderText, ReplaceText, regexOptions);
-
 					using (var sw = new StreamWriter(filePath, false, encoding))
 					{
 						sw.Write(newContent);
 					}
-
-					resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, matches, ReplaceText.Length, true);
 				}
 				catch (Exception ex)
 				{

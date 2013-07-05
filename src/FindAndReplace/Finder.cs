@@ -198,15 +198,9 @@ namespace FindAndReplace
 
 			StopWatch.Stop("IsBinaryFile");
 
-		
-			//StopWatch.Start("DetectFileEncoding");
-
 			Encoding encoding = EncodingDetector.Detect(sampleBytes, defaultEncoding: Encoding.UTF8);
 			resultItem.FileEncoding = encoding;
-
-			//StopWatch.Stop("DetectFileEncoding");
-
-
+			
 			StopWatch.Start("ReadFullFileContent");
 
 			string fileContent;
@@ -221,10 +215,6 @@ namespace FindAndReplace
 			resultItem.Matches = GetMatches(fileContent);
 			StopWatch.Stop("FindMatches");
 
-			StopWatch.Start("GetLineNumbersForMatchesPreview");
-			resultItem.LineNumbers = Utils.GetLineNumbersForMatchesPreview(filePath, resultItem.Matches);
-			StopWatch.Stop("GetLineNumbersForMatchesPreview");
-			
 			resultItem.NumMatches = resultItem.Matches.Count;
 			return resultItem;
 		}

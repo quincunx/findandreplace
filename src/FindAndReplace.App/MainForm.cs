@@ -16,13 +16,12 @@ namespace FindAndReplace.App
 	public partial class MainForm : Form
 	{
 		public const int ExtraWidthWhenResults = 350;
-		//public static List<string> RichTextBoxLinNumbers { get; set; }
-		//public static int LineNumbersDigitCount { get; set; }
 
 		private Finder _finder;
 		private Replacer _replacer;
 		private Thread _currentThread;
 		private bool _isFindMode;
+		private string _lastReplaceText;
 
 		private delegate void SetFindResultCallback(Finder.FindResultItem resultItem, Stats stats, Status status);
 		
@@ -31,10 +30,6 @@ namespace FindAndReplace.App
 		public MainForm()
 		{
 			InitializeComponent();
-
-			//RichTextBoxLinNumbers = new List<string>();
-
-			//txtMatches.richTextBox1.get
 		}
 
 		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -167,17 +162,16 @@ namespace FindAndReplace.App
 
 					if (findResultItem.IsSuccess)
 					{
-						string content = string.Empty;
-
+						string fileContent = string.Empty;
+						
 						using (var sr = new StreamReader(findResultItem.FilePath, findResultItem.FileEncoding))
 						{
-							content = sr.ReadToEnd();
+							fileContent = sr.ReadToEnd();
 						}
 
-						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(content,
-						                                                                       findResultItem.LineNumbers.Select(ln => ln.LineNumber).ToList());
+						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, findResultItem.Matches);
+						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
 
-						//PrepareLineNumbersForTooltip(findResultItem.LineNumbers, currentRow);
 					}
 					else
 					{
@@ -367,6 +361,8 @@ namespace FindAndReplace.App
 					return;
 			}
 
+			//Rememember last replace text for preview
+			_lastReplaceText = txtReplace.Text;
 
 			var replacer = new Replacer();
 
@@ -454,19 +450,15 @@ namespace FindAndReplace.App
 
 					if (!replaceResultItem.FailedToOpen)
 					{
-						string content = string.Empty;
+						string fileContent = string.Empty;
 
 						using (var sr = new StreamReader(replaceResultItem.FilePath, replaceResultItem.FileEncoding))
 						{
-							content = sr.ReadToEnd();
+							fileContent = sr.ReadToEnd();
 						}
 
-					//foreach (Match match in replaceResultItem.Matches)
-					//{
-					//    linesToPreview.AddRange(GetLineNumbersForMatchesPreview(content, match));
-					//}
-						if (replaceResultItem.LineNumbers!=null)
-						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(content, replaceResultItem.LineNumbers.Select(ln => ln.LineNumber).ToList());
+						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, replaceResultItem.Matches, _lastReplaceText.Length, true);
+						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
 					}
 					else
 					{
@@ -766,106 +758,6 @@ namespace FindAndReplace.App
 
 			lblStats.Text = sb.ToString();
 		}
-
-		/*
-		private void GenerateLineNumbers(string lines)
-		{
-			RichTextBoxLinNumbers.Clear();
-
-			var linesArray = lines.Trim().Split(' ').ToArray();
-
-			int prevLineNumber = 0;
-			for (int i = 0; i < linesArray.Count(); i++)
-			{
-				var lineNumberItem = linesArray[i].Split('-');
-
-				int currentLineNumber = Convert.ToInt32(lineNumberItem[0]);
-
-				if (prevLineNumber>0 && currentLineNumber-prevLineNumber>1) RichTextBoxLinNumbers.Add("...");
-
-				RichTextBoxLinNumbers.Add(linesArray[i]);
-
-				prevLineNumber = currentLineNumber;
-			}
-
-			LineNumbersDigitCount = (int) Math.Ceiling(Math.Log10(prevLineNumber));
-		}
-		*/
-		/*
-		private void PrepareLineNumbersForTooltip(List<MathLineNumber> lineNumbers, int gridRowNumber)
-		{
-			StringBuilder sb = new StringBuilder();
-			foreach (var line in lineNumbers)
-			{
-				string lineNumber = String.Format("{0}-{1}", line.LineNumber, line.HasMatch);
-				sb.Append(String.Format("{0} ", lineNumber));
-			}
-
-			gvResults.Rows[gridRowNumber].Cells[gvResults.Columns.Count-1].Value = sb.ToString();
-		}
-		*/
-		/*
-		public void UpdateLineNumbersLabel()
-		{
-				var lineNumbers = MainForm.RichTextBoxLinNumbers;
-
-				//finally, renumber label
-				numberLabel.Text = "";
-				string format = "D" + MainForm.LineNumbersDigitCount;
-
-				var highLightFont = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
-				var regularFont = new Font("Microsoft Sans Serif", 8, FontStyle.Regular);
-				numberLabel.Font = regularFont;
-
-				for (int i = 0; i < lineNumbers.Count(); i++)
-				{
-					int lineNumber;
-
-					var lineNumberStr = lineNumbers[i];
-					if (lineNumberStr != "...")
-					{
-						var splitLineNumber = lineNumberStr.Split('-');
-
-						if (Int32.TryParse(splitLineNumber[0], out lineNumber))
-						{
-							numberLabel.Text += lineNumber.ToString(format) + "\n";
-						}
-
-					}
-					else numberLabel.Text += lineNumbers[i] + "\n";
-				}
-
-				//highliting
-				for (int i = 0; i < lineNumbers.Count(); i++)
-				{
-					int lineNumber;
-
-					var lineNumberStr = lineNumbers[i];
-					if (lineNumberStr != "...")
-					{
-						var splitLineNumber = lineNumberStr.Split('-');
-
-						if (Int32.TryParse(splitLineNumber[0], out lineNumber))
-						{
-							if (splitLineNumber[1] == "True")
-							{
-
-								var selectionStart = numberLabel.GetFirstCharIndexFromLine(i);
-
-								numberLabel.Select(selectionStart, MainForm.LineNumbersDigitCount);
-
-								numberLabel.SelectionFont = highLightFont;
-
-								numberLabel.SelectionColor = Color.Black;
-							}
-						}
-					}
-				}
-
-			
-
-		}
-		*/
 
 		public class GVResultEventArgs : EventArgs
 		{
