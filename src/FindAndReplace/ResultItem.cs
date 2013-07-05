@@ -18,8 +18,7 @@ namespace FindAndReplace
 		public bool IsBinaryFile { get; set; }
 		public bool FailedToOpen { get; set; }
 		public string ErrorMessage { get; set; }
-		public List<MatchPreviewLineNumber> LineNumbers { get; set; }
-
+		
 		public bool IncludeInResultsList
 		{
 			get

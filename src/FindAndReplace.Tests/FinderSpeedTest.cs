@@ -222,8 +222,7 @@ free program...";
 			WriteRow("DetectEncoding: UsingMLang");
 			WriteRow("ReadFullFileContent");
 			WriteRow("FindMatches");
-			WriteRow("GetLineNumbersForMatchesPreview");
-
+			
 			WriteTotalsRow();
 			
 

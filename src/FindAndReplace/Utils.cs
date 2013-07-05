@@ -67,17 +67,10 @@ namespace FindAndReplace
 		}
 
 
-		public static List<MatchPreviewLineNumber> GetLineNumbersForMatchesPreview(string filePath, MatchCollection matches, int replaceStrLength = 0, bool isReplace = false)
+		public static List<MatchPreviewLineNumber> GetLineNumbersForMatchesPreview(string fileContent, MatchCollection matches, int replaceStrLength = 0, bool isReplace = false)
 		{
-			string content = string.Empty;
-
-			using (var sr = new StreamReader(filePath))
-			{
-				content = sr.ReadToEnd();
-			}
-
 			var separator = Environment.NewLine;
-			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
+			var lines = fileContent.Split(new string[] { separator }, StringSplitOptions.None);
 
 			var temp = new List<MatchPreviewLineNumber>();
 
