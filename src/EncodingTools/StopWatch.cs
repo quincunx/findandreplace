@@ -40,7 +40,6 @@ namespace FindAndReplace
 	[Serializable]
 	public class StopWatch
 	{
-		[ThreadStatic]
 		private static ConcurrentDictionary<string, StopWatch> _stopWatches;
 		private DateTime _endTime;
 		private DateTime _startTime;
@@ -121,13 +120,7 @@ namespace FindAndReplace
 		/// <summary>The time span representation of time elapsed on this watch.  Updated when Stop() is called.</summary>
 		public static ConcurrentDictionary<string, StopWatch> Collection
 		{
-			get
-			{
-				if (_stopWatches == null)
-					_stopWatches = new ConcurrentDictionary<string, StopWatch>();
-
-				return _stopWatches;
-			}
+			get { return _stopWatches;}
 			set { _stopWatches = value; }
 		}
 
@@ -197,7 +190,7 @@ namespace FindAndReplace
 
 			PrintCollection(totalMilliseconds, sb);
 
-			Trace.Write(sb.ToString());
+			Console.Write(sb.ToString());
 		}
 
 	

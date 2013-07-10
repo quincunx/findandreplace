@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using href.Utils;
 
 namespace FindAndReplace
@@ -48,9 +46,9 @@ namespace FindAndReplace
 
 			if ((opts & Options.MLang) == Options.MLang)
 			{
-				StopWatch.Start("DetectEncoding: UsingMLang");
+				//StopWatch.Start("DetectEncoding: UsingMLang");
 				encoding = DetectEncodingUsingMLang(bytes);
-				StopWatch.Stop("DetectEncoding: UsingMLang");
+				//StopWatch.Stop("DetectEncoding: UsingMLang");
 			}
 
 			if (encoding == null)

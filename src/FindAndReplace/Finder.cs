@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
-using href.Utils;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace FindAndReplace
 {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Threading;
+using FindAndReplace;
 
 namespace href.Utils
 {
@@ -296,9 +298,10 @@ namespace href.Utils
 
             List<Encoding> result = new List<Encoding>();
 
-            // get the IMultiLanguage3 interface
+			// get the IMultiLanguage3 interface
             MultiLanguage.IMultiLanguage3 multilang3 = new MultiLanguage.CMultiLanguageClass();
-            if (multilang3 == null)
+
+			if (multilang3 == null)
                 throw new System.Runtime.InteropServices.COMException("Failed to get IMultilang3");
             try
             {
@@ -392,6 +395,8 @@ namespace href.Utils
         public static Encoding[] DetectInputCodepages(byte[] input, int maxEncodings)
         {
 
+			StopWatch.Start("DetectInputCodepages_" + Thread.CurrentThread.ManagedThreadId);
+
             if (maxEncodings < 1)
                 throw new ArgumentOutOfRangeException("at least one encoding must be returend", "maxEncodings");
 
@@ -416,11 +421,14 @@ namespace href.Utils
                 input = newInput;
             }
 
+			
+
             List<Encoding> result = new List<Encoding>();
 
             // get the IMultiLanguage" interface
-            MultiLanguage.IMultiLanguage2 multilang2 = new MultiLanguage.CMultiLanguageClass();
-            if (multilang2 == null)
+			MultiLanguage.IMultiLanguage2 multilang2 = new MultiLanguage.CMultiLanguageClass();
+			
+			if (multilang2 == null)
                 throw new System.Runtime.InteropServices.COMException("Failed to get IMultilang2");
             try
             {
@@ -432,10 +440,15 @@ namespace href.Utils
                 // setup options (none)   
                 MultiLanguage.MLDETECTCP options = MultiLanguage.MLDETECTCP.MLDETECTCP_NONE;
 
+
+				StopWatch.Start("multilang2.DetectInputCodepage_" + Thread.CurrentThread.ManagedThreadId);
+
                 // finally... call to DetectInputCodepage
                 multilang2.DetectInputCodepage(options,0,
                     ref input[0], ref srcLen, ref detectedEncdings[0], ref scores);
-                
+
+				StopWatch.Stop("multilang2.DetectInputCodepage_" + Thread.CurrentThread.ManagedThreadId);
+
                 // get result
                 if (scores > 0)
                 {
@@ -450,12 +463,102 @@ namespace href.Utils
             {
                 Marshal.FinalReleaseComObject(multilang2);
             }
+
+			StopWatch.Stop("DetectInputCodepages_" + Thread.CurrentThread.ManagedThreadId);
+
             // nothing found
             return result.ToArray();
         }
 
 
-        /// <summary>
+		/*  Eric made no difference
+	    public static MultiLanguage.IMultiLanguage2 _multilang2;
+
+		public static void PreDetectInputCodepages2()
+	    {
+			StopWatch.Start("PreDetectInputCodepages2_" + Thread.CurrentThread.ManagedThreadId);
+
+			// get the IMultiLanguage" interface
+			_multilang2 = new MultiLanguage.CMultiLanguageClass();
+
+			if (_multilang2 == null)
+				throw new System.Runtime.InteropServices.COMException("Failed to get IMultilang2");
+
+			StopWatch.Stop("PreDetectInputCodepages2_" + Thread.CurrentThread.ManagedThreadId);
+
+	    }
+
+	    public static Encoding[] DetectInputCodepages2(byte[] input, int maxEncodings)
+		{
+			StopWatch.Start("DetectInputCodepages2_" + Thread.CurrentThread.ManagedThreadId);
+
+			if (maxEncodings < 1)
+				throw new ArgumentOutOfRangeException("at least one encoding must be returend", "maxEncodings");
+
+			if (input == null)
+				throw new ArgumentNullException("input");
+
+			// empty strings can always be encoded as ASCII
+			if (input.Length == 0)
+				return new Encoding[] { Encoding.ASCII };
+		
+			// expand the string to be at least 256 bytes
+			if (input.Length < 256)
+			{
+				byte[] newInput = new byte[256];
+				int steps = 256 / input.Length;
+				for (int i = 0; i < steps; i++)
+					Array.Copy(input, 0, newInput, input.Length * i, input.Length);
+
+				int rest = 256 % input.Length;
+				if (rest > 0)
+					Array.Copy(input, 0, newInput, steps * input.Length, rest);
+				input = newInput;
+			}
+
+			
+			MultiLanguage.DetectEncodingInfo[] detectedEncdings = new MultiLanguage.DetectEncodingInfo[maxEncodings];
+	
+			// setup options (none)   
+			MultiLanguage.MLDETECTCP options = MultiLanguage.MLDETECTCP.MLDETECTCP_NONE;
+
+			List<Encoding> result = new List<Encoding>();
+			int scores = detectedEncdings.Length;
+			int srcLen = input.Length;
+
+			StopWatch.Start("multilang2.DetectInputCodepage2_" + Thread.CurrentThread.ManagedThreadId);
+
+			// finally... call to DetectInputCodepage
+			_multilang2.DetectInputCodepage(options, 0,
+				ref input[0], ref srcLen, ref detectedEncdings[0], ref scores);
+
+			StopWatch.Stop("multilang2.DetectInputCodepage2_" + Thread.CurrentThread.ManagedThreadId);
+
+			// get result
+			if (scores > 0)
+			{
+				for (int i = 0; i < scores; i++)
+				{
+					// add the result
+					result.Add(Encoding.GetEncoding((int)detectedEncdings[i].nCodePage));
+				}
+			}
+			
+			StopWatch.Stop("DetectInputCodepages2_" + Thread.CurrentThread.ManagedThreadId);
+			
+			// nothing found
+			return result.ToArray();
+		}
+
+
+		public static void PostDetectInputCodepages2()
+		{
+			Marshal.FinalReleaseComObject(_multilang2);
+		}
+
+		 */
+
+		/// <summary>
         /// Opens a text file and returns the content 
         /// encoded in the most probable encoding
         /// </summary>
