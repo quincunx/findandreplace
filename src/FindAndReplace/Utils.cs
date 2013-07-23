@@ -15,6 +15,7 @@ namespace FindAndReplace
 		{
 			//Create a new option
 			var options = new RegexOptions();
+			options |= RegexOptions.Multiline;
 
 			//Is the match case check box checked
 			if (!isCaseSensitive)

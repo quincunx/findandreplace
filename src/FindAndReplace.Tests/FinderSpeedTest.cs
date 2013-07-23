@@ -9,6 +9,7 @@ using NUnit.Framework;
 namespace FindAndReplace.Tests
 {
 	[TestFixture]
+	[Ignore]
 	public class FinderSpeedTest : TestBase
 	{
 		//1000 chars
