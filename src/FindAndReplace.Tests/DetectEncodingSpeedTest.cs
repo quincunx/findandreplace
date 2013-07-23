@@ -98,6 +98,7 @@ namespace FindAndReplace.Tests
 		}
 
 
+
 		[Test]
 		public void MLang_Real_Dir_MultiThreaded()
 		{

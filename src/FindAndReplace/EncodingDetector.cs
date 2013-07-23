@@ -46,9 +46,9 @@ namespace FindAndReplace
 
 			if ((opts & Options.MLang) == Options.MLang)
 			{
-				//StopWatch.Start("DetectEncoding: UsingMLang");
+				StopWatch.Start("DetectEncoding: UsingMLang");
 				encoding = DetectEncodingUsingMLang(bytes);
-				//StopWatch.Stop("DetectEncoding: UsingMLang");
+				StopWatch.Stop("DetectEncoding: UsingMLang");
 			}
 
 			if (encoding == null)
