@@ -17,12 +17,16 @@ namespace FindAndReplace
 		public bool IsSuccess { get; set; }
 		public bool IsBinaryFile { get; set; }
 		public bool FailedToOpen { get; set; }
+		public bool IsIncludeFilesWithoutMatches { get; set; }
 		public string ErrorMessage { get; set; }
-		
+
 		public bool IncludeInResultsList
 		{
 			get
 			{
+				if (IsSuccess && IsIncludeFilesWithoutMatches)
+					return true;
+
 				if (IsSuccess && NumMatches > 0)
 					return true;
 

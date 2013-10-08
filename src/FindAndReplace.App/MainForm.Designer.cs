@@ -62,6 +62,8 @@
 			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this.btnSwap = new System.Windows.Forms.Button();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.chkSkipIsBinaryFile = new System.Windows.Forms.CheckBox();
+			this.chkIsIncludeFilesWithoutMatches = new System.Windows.Forms.CheckBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -90,7 +92,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(12, 200);
+			this.label2.Location = new System.Drawing.Point(12, 219);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(50, 13);
 			this.label2.TabIndex = 13;
@@ -99,7 +101,7 @@
 			// txtReplace
 			// 
 			this.txtReplace.CausesValidation = false;
-			this.txtReplace.Location = new System.Drawing.Point(83, 200);
+			this.txtReplace.Location = new System.Drawing.Point(83, 219);
 			this.txtReplace.Multiline = true;
 			this.txtReplace.Name = "txtReplace";
 			this.txtReplace.Size = new System.Drawing.Size(539, 74);
@@ -108,7 +110,7 @@
 			// 
 			// btnReplace
 			// 
-			this.btnReplace.Location = new System.Drawing.Point(547, 280);
+			this.btnReplace.Location = new System.Drawing.Point(547, 299);
 			this.btnReplace.Name = "btnReplace";
 			this.btnReplace.Size = new System.Drawing.Size(75, 23);
 			this.btnReplace.TabIndex = 15;
@@ -186,7 +188,7 @@
 			// 
 			// btnGenReplaceCommandLine
 			// 
-			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(448, 308);
+			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(448, 327);
 			this.btnGenReplaceCommandLine.Name = "btnGenReplaceCommandLine";
 			this.btnGenReplaceCommandLine.Size = new System.Drawing.Size(174, 23);
 			this.btnGenReplaceCommandLine.TabIndex = 16;
@@ -216,7 +218,7 @@
 			// 
 			this.pnlCommandLine.Controls.Add(this.lblCommandLine);
 			this.pnlCommandLine.Controls.Add(this.txtCommandLine);
-			this.pnlCommandLine.Location = new System.Drawing.Point(7, 344);
+			this.pnlCommandLine.Location = new System.Drawing.Point(11, 355);
 			this.pnlCommandLine.Name = "pnlCommandLine";
 			this.pnlCommandLine.Size = new System.Drawing.Size(1012, 100);
 			this.pnlCommandLine.TabIndex = 21;
@@ -270,7 +272,7 @@
 			this.pnlGridResults.Controls.Add(this.progressBar);
 			this.pnlGridResults.Controls.Add(this.lblResults);
 			this.pnlGridResults.Controls.Add(this.gvResults);
-			this.pnlGridResults.Location = new System.Drawing.Point(6, 345);
+			this.pnlGridResults.Location = new System.Drawing.Point(10, 356);
 			this.pnlGridResults.Name = "pnlGridResults";
 			this.pnlGridResults.Size = new System.Drawing.Size(1013, 196);
 			this.pnlGridResults.TabIndex = 22;
@@ -294,7 +296,7 @@
 			// txtNoMatches
 			// 
 			this.txtNoMatches.AutoSize = true;
-			this.txtNoMatches.Location = new System.Drawing.Point(80, 317);
+			this.txtNoMatches.Location = new System.Drawing.Point(80, 336);
 			this.txtNoMatches.Name = "txtNoMatches";
 			this.txtNoMatches.Size = new System.Drawing.Size(97, 13);
 			this.txtNoMatches.TabIndex = 17;
@@ -312,11 +314,11 @@
 			// chkIsRegEx
 			// 
 			this.chkIsRegEx.AutoSize = true;
-			this.chkIsRegEx.Location = new System.Drawing.Point(200, 173);
+			this.chkIsRegEx.Location = new System.Drawing.Point(226, 173);
 			this.chkIsRegEx.Name = "chkIsRegEx";
-			this.chkIsRegEx.Size = new System.Drawing.Size(141, 17);
+			this.chkIsRegEx.Size = new System.Drawing.Size(138, 17);
 			this.chkIsRegEx.TabIndex = 11;
-			this.chkIsRegEx.Text = " Use regular expressions";
+			this.chkIsRegEx.Text = "Use regular expressions";
 			this.chkIsRegEx.UseVisualStyleBackColor = true;
 			// 
 			// txtMatchesPreview
@@ -374,15 +376,36 @@
 			this.btnSwap.UseVisualStyleBackColor = true;
 			this.btnSwap.Click += new System.EventHandler(this.btnSwap_Click);
 			// 
+			// chkSkipIsBinaryFile
+			// 
+			this.chkSkipIsBinaryFile.AutoSize = true;
+			this.chkSkipIsBinaryFile.Location = new System.Drawing.Point(83, 196);
+			this.chkSkipIsBinaryFile.Name = "chkSkipIsBinaryFile";
+			this.chkSkipIsBinaryFile.Size = new System.Drawing.Size(141, 17);
+			this.chkSkipIsBinaryFile.TabIndex = 10;
+			this.chkSkipIsBinaryFile.Text = "Skip binary file detection";
+			this.chkSkipIsBinaryFile.UseVisualStyleBackColor = true;
+			// 
+			// chkIsIncludeFilesWithoutMatches
+			// 
+			this.chkIsIncludeFilesWithoutMatches.AutoSize = true;
+			this.chkIsIncludeFilesWithoutMatches.Location = new System.Drawing.Point(226, 196);
+			this.chkIsIncludeFilesWithoutMatches.Name = "chkIsIncludeFilesWithoutMatches";
+			this.chkIsIncludeFilesWithoutMatches.Size = new System.Drawing.Size(162, 17);
+			this.chkIsIncludeFilesWithoutMatches.TabIndex = 11;
+			this.chkIsIncludeFilesWithoutMatches.Text = "Include files without matches";
+			this.chkIsIncludeFilesWithoutMatches.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(676, 336);
+			this.ClientSize = new System.Drawing.Size(676, 355);
 			this.Controls.Add(this.btnSwap);
 			this.Controls.Add(this.btnSelectDir);
 			this.Controls.Add(this.txtExcludeFileMask);
 			this.Controls.Add(this.label3);
+			this.Controls.Add(this.chkIsIncludeFilesWithoutMatches);
 			this.Controls.Add(this.chkIsRegEx);
 			this.Controls.Add(this.lblStats);
 			this.Controls.Add(this.txtMatchesPreview);
@@ -390,6 +413,7 @@
 			this.Controls.Add(this.pnlGridResults);
 			this.Controls.Add(this.btnGenReplaceCommandLine);
 			this.Controls.Add(this.chkIncludeSubDirectories);
+			this.Controls.Add(this.chkSkipIsBinaryFile);
 			this.Controls.Add(this.chkIsCaseSensitive);
 			this.Controls.Add(this.btnFindOnly);
 			this.Controls.Add(this.txtFileMask);
@@ -455,6 +479,8 @@
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
 		private System.Windows.Forms.Button btnSwap;
 		private System.Windows.Forms.ToolTip toolTip;
+		private System.Windows.Forms.CheckBox chkSkipIsBinaryFile;
+		private System.Windows.Forms.CheckBox chkIsIncludeFilesWithoutMatches;
 	}
 }
 

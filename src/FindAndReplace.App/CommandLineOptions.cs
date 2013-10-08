@@ -49,6 +49,12 @@ namespace FindAndReplace.App
 
 		[Option("logFile", HelpText = "Path to log file where to save command output.")]
 		public string LogFile { get; set; }
+
+		[Option("skipBinaryFileDetection", HelpText = "Ignore detection of binary files.")]
+		public bool SkipIsBinaryFile { get; set; }
+
+		[Option("includeFilesWithoutMatches", HelpText = "Include files without matches in results.")]
+		public string IsFilesWithoutMatches { get; set; }
 		
 		#endregion
 

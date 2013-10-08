@@ -58,6 +58,8 @@ namespace FindAndReplace.App
 			finder.FindTextHasRegEx = chkIsRegEx.Checked;
 			finder.FindText = txtFind.Text;
 			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
+			finder.IsBinaryFileDetection = chkSkipIsBinaryFile.Checked;
+			finder.IsIncludeFilesWithoutMatches = chkIsIncludeFilesWithoutMatches.Checked;
 			finder.ExcludeFileMask = txtExcludeFileMask.Text;
 
 			CreateListener(finder);
@@ -83,6 +85,8 @@ namespace FindAndReplace.App
 			data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			data.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			data.IsRegEx = chkIsRegEx.Checked;
+			data.IsBinaryFileDetection = chkSkipIsBinaryFile.Checked;
+			data.IsIncludeFilesWithoutMatches = chkIsIncludeFilesWithoutMatches.Checked;
 			data.ReplaceText = txtReplace.Text;
 
 			data.Save();
@@ -375,6 +379,8 @@ namespace FindAndReplace.App
 			replacer.FindText = txtFind.Text;
 			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
+			replacer.IsBinaryFileDetection = chkSkipIsBinaryFile.Checked;
+			replacer.IsIncludeFilesWithoutMatches = chkIsIncludeFilesWithoutMatches.Checked;
 			replacer.ReplaceText = txtReplace.Text;
 		
 			ShowResultPanel();
@@ -521,7 +527,7 @@ namespace FindAndReplace.App
 			
 			txtCommandLine.Clear();
 			
-			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5}{6} --find \"{7}\" --replace \"{8}\"",
+			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5}{6}{7}{8} --find \"{9}\" --replace \"{10}\"",
 									 Application.ExecutablePath,
 									 txtDir.Text.TrimEnd('\\'),
 									 txtFileMask.Text,
@@ -529,6 +535,8 @@ namespace FindAndReplace.App
 									 chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
 									 chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
 									 chkIsRegEx.Checked ? " --useRegEx" : "",
+									 chkSkipIsBinaryFile.Checked ? " --skipBinaryFileDetection" : "",
+									 chkIsIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
 									 CommandLineUtils.EncodeText(txtReplace.Text)
 									 );
@@ -726,7 +734,14 @@ namespace FindAndReplace.App
 			sb.AppendLine("Files:");
 			sb.AppendLine("- Total: " + stats.Files.Total);
 			sb.AppendLine("- Processed: " + stats.Files.Processed);
-			sb.AppendLine("- Binary: " + stats.Files.Binary + " (skipped)");
+			if (!chkSkipIsBinaryFile.Checked)
+			{
+				sb.AppendLine("- Binary: " + stats.Files.Binary + " (skipped)");
+			}
+			else
+			{
+				sb.AppendLine("- Binary: detection skipped");
+			}
 			sb.AppendLine("- With Matches: " + stats.Files.WithMatches);
 			sb.AppendLine("- Without Matches: " + stats.Files.WithoutMatches);
 			sb.AppendLine("- Failed to Open: " + stats.Files.FailedToRead);
@@ -790,6 +805,7 @@ namespace FindAndReplace.App
 			txtReplace.Text = data.ReplaceText;
 			chkIncludeSubDirectories.Checked = data.IncludeSubDirectories;
 			chkIsCaseSensitive.Checked = data.IsCaseSensitive;
+			chkSkipIsBinaryFile.Checked = data.IsBinaryFileDetection;
 			chkIsRegEx.Checked = data.IsRegEx;
 		}
 

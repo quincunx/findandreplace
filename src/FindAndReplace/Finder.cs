@@ -37,6 +37,8 @@ namespace FindAndReplace
 		public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
+		public bool IsBinaryFileDetection { get; set; }
+		public bool IsIncludeFilesWithoutMatches { get; set; }
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
 		public bool Silent { get; set; }
@@ -123,7 +125,7 @@ namespace FindAndReplace
 
 
 				//Skip files that don't have matches
-				if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
+				//if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
 					resultItems.Add(resultItem);
 
 				//Handle event
@@ -150,6 +152,7 @@ namespace FindAndReplace
 		{
 			var resultItem = new FindResultItem();
 			resultItem.IsSuccess = true;
+			resultItem.IsIncludeFilesWithoutMatches = IsIncludeFilesWithoutMatches;
 
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
@@ -177,22 +180,25 @@ namespace FindAndReplace
 			StopWatch.Stop("ReadSampleFileContent");
 
 
-			StopWatch.Start("IsBinaryFile");
-
-			if (resultItem.IsSuccess)
+			if (!IsBinaryFileDetection)
 			{
-				// check for /0/0/0/0
-				if (Utils.IsBinaryFile(sampleBytes))
+				StopWatch.Start("IsBinaryFile");
+
+				if (resultItem.IsSuccess)
 				{
-					StopWatch.Stop("IsBinaryFile");
+					// check for /0/0/0/0
+					if (Utils.IsBinaryFile(sampleBytes))
+					{
+						StopWatch.Stop("IsBinaryFile");
 
-					resultItem.IsSuccess = false;
-					resultItem.IsBinaryFile = true;
-					return resultItem;
+						resultItem.IsSuccess = false;
+						resultItem.IsBinaryFile = true;
+						return resultItem;
+					}
 				}
-			}
 
-			StopWatch.Stop("IsBinaryFile");
+				StopWatch.Stop("IsBinaryFile");
+			}
 
 			Encoding encoding = EncodingDetector.Detect(sampleBytes, defaultEncoding: Encoding.UTF8);
 			resultItem.FileEncoding = encoding;

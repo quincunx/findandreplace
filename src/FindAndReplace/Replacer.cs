@@ -33,6 +33,8 @@ namespace FindAndReplace
 		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
+		public bool IsBinaryFileDetection { get; set; }
+		public bool IsIncludeFilesWithoutMatches { get; set; }
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
 		public bool IsSupressOutput { get; set; }
@@ -135,6 +137,7 @@ namespace FindAndReplace
 
 			var resultItem = new ReplaceResultItem();
 			resultItem.IsSuccess = true;
+			resultItem.IsIncludeFilesWithoutMatches = IsIncludeFilesWithoutMatches;
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
@@ -154,15 +157,17 @@ namespace FindAndReplace
 				return resultItem;
 			}
 
-
-			if (resultItem.IsSuccess)
+			if (!IsBinaryFileDetection)
 			{
-				// check for /0/0/0/0
-				if (Utils.IsBinaryFile(sampleBytes))
+				if (resultItem.IsSuccess)
 				{
-					resultItem.IsSuccess = false;
-					resultItem.IsBinaryFile = true;
-					return resultItem;
+					// check for /0/0/0/0
+					if (Utils.IsBinaryFile(sampleBytes))
+					{
+						resultItem.IsSuccess = false;
+						resultItem.IsBinaryFile = true;
+						return resultItem;
+					}
 				}
 			}
 
