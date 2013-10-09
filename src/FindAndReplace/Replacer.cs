@@ -11,14 +11,14 @@ namespace FindAndReplace
 		public Replacer.ReplaceResultItem ResultItem { get; set; }
 		public Stats Stats { get; set; }
 		public Status Status { get; set; }
-		public bool Silent { get; set; }
+		public bool IsSilent { get; set; }
 
-		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, Stats stats, Status status, bool silent = false)
+		public ReplacerEventArgs(Replacer.ReplaceResultItem resultItem, Stats stats, Status status, bool isSilent = false)
 		{
 			ResultItem = resultItem;
 			Stats = stats;
 			Status = status;
-			Silent = silent;
+			IsSilent = isSilent;
 		}
 	}
 
@@ -33,8 +33,8 @@ namespace FindAndReplace
 		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
-		public bool IsBinaryFileDetection { get; set; }
-		public bool IsIncludeFilesWithoutMatches { get; set; }
+		public bool SkipBinaryFileDetection { get; set; }
+		public bool IncludeFilesWithoutMatches { get; set; }
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
 		public bool IsSupressOutput { get; set; }
@@ -137,7 +137,7 @@ namespace FindAndReplace
 
 			var resultItem = new ReplaceResultItem();
 			resultItem.IsSuccess = true;
-			resultItem.IsIncludeFilesWithoutMatches = IsIncludeFilesWithoutMatches;
+			resultItem.IsIncludeFilesWithoutMatches = IncludeFilesWithoutMatches;
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);
@@ -157,7 +157,7 @@ namespace FindAndReplace
 				return resultItem;
 			}
 
-			if (!IsBinaryFileDetection)
+			if (!SkipBinaryFileDetection)
 			{
 				if (resultItem.IsSuccess)
 				{
