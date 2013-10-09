@@ -194,20 +194,20 @@ namespace FindAndReplace.App
 
 		private void OnFinderFileProcessed(object sender, FinderEventArgs e)
 		{
-			if (e.ResultItem.IncludeInResultsList && !e.Silent)
+			if (e.ResultItem.IncludeInResultsList && !e.IsSilent)
 				PrintFinderResultRow(e.ResultItem, e.Stats);
 
-			if (e.Stats.Files.Processed == e.Stats.Files.Total && !e.Silent)
+			if (e.Stats.Files.Processed == e.Stats.Files.Total && !e.IsSilent)
 				PrintStatistics(e.Stats);
 			
 		}
 
 		private void OnReplacerFileProcessed(object sender, ReplacerEventArgs e)
 		{
-			if (e.ResultItem.IncludeInResultsList && !e.Silent)
+			if (e.ResultItem.IncludeInResultsList && !e.IsSilent)
 				PrintReplacerResultRow(e.ResultItem, e.Stats);
 
-			if (e.Stats.Files.Processed == e.Stats.Files.Total && !e.Silent)
+			if (e.Stats.Files.Processed == e.Stats.Files.Total && !e.IsSilent)
 				PrintStatistics(e.Stats, true);
 		}
 
