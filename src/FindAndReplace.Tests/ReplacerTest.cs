@@ -27,7 +27,7 @@ namespace FindAndReplace.Tests
 				Assert.Fail("Cant find test files");
 
 			Assert.AreEqual(2, resultItems.Count);
-			Assert.AreEqual("test1.test", resultItems[0].FileName);
+			Assert.AreEqual("test1.txt", resultItems[0].FileName);
 			Assert.AreEqual(3, resultItems[0].NumMatches);
 			Assert.IsTrue(resultItems[0].IsSuccess);
 
@@ -56,13 +56,13 @@ namespace FindAndReplace.Tests
 			var matchedResultItems = resultItems.Where(ri => ri.NumMatches != 0).ToList();
 			Assert.AreEqual(3, matchedResultItems.Count);
 
-			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
+			var firstFile = resultItems.Where(ri => ri.FileName == "test1.txt").ToList();
 
 			Assert.AreEqual(1, firstFile.Count);
 			Assert.AreEqual(5, firstFile[0].NumMatches);
 			Assert.IsTrue(firstFile[0].IsSuccess);
 
-			var secondFile = resultItems.Where(ri => ri.FileName == "test2.test").ToList();
+			var secondFile = resultItems.Where(ri => ri.FileName == "test2.txt").ToList();
 
 			Assert.AreEqual(1, secondFile.Count);
 			Assert.AreEqual(1, secondFile[0].NumMatches);
@@ -118,7 +118,7 @@ namespace FindAndReplace.Tests
 
 			Assert.AreEqual(1, matchedResultItems.Count);
 			Assert.AreEqual(5, matchedResultItems[0].NumMatches);
-			Assert.AreEqual("test1.test", matchedResultItems[0].FileName);
+			Assert.AreEqual("test1.txt", matchedResultItems[0].FileName);
 			Assert.IsTrue(matchedResultItems[0].IsSuccess);
 
 			resultItems = replacer.Replace().ResultItems;
@@ -145,7 +145,7 @@ namespace FindAndReplace.Tests
 				Assert.Fail("Can't find test files");
 
 			Assert.AreEqual(1, resultItems.Count);
-			Assert.AreEqual("test1.test", resultItems[0].FileName);
+			Assert.AreEqual("test1.txt", resultItems[0].FileName);
 			Assert.AreEqual(1, resultItems[0].NumMatches);
 			Assert.IsTrue(resultItems[0].IsSuccess);
 
@@ -174,7 +174,7 @@ namespace FindAndReplace.Tests
 
 			Assert.AreEqual(5, matchedResultItems.Count);
 
-			var firstFile = resultItems.Where(ri => ri.FileName == "test1.test").ToList();
+			var firstFile = resultItems.Where(ri => ri.FileName == "test1.txt").ToList();
 
 			Assert.AreEqual(2, firstFile.Count);
 			Assert.AreEqual(5, firstFile[0].NumMatches);
@@ -182,7 +182,7 @@ namespace FindAndReplace.Tests
 			Assert.IsTrue(firstFile[0].IsSuccess);
 			Assert.IsTrue(firstFile[1].IsSuccess);
 
-			var secondFile = resultItems.Where(ri => ri.FileName == "test2.test").ToList();
+			var secondFile = resultItems.Where(ri => ri.FileName == "test2.txt").ToList();
 
 			Assert.AreEqual(2, secondFile.Count);
 			Assert.AreEqual(1, secondFile[0].NumMatches);
@@ -208,7 +208,7 @@ namespace FindAndReplace.Tests
 				Assert.Fail("Can't find test files");
 
 			Assert.AreEqual(1, resultItems.Count);
-			Assert.AreEqual("test2.test", resultItems[0].FileName);
+			Assert.AreEqual("test2.txt", resultItems[0].FileName);
 			Assert.AreEqual(1, resultItems[0].NumMatches);
 		}
 
@@ -228,7 +228,7 @@ namespace FindAndReplace.Tests
 				Assert.Fail("Can't find test files");
 
 			Assert.AreEqual(1, resultItems.Count);
-			Assert.AreEqual("test3.test", resultItems[0].FileName);
+			Assert.AreEqual("test3.txt", resultItems[0].FileName);
 			Assert.IsTrue(resultItems[0].FailedToWrite);
 			Assert.IsNotEmpty(resultItems[0].ErrorMessage);
 		}

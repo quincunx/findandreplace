@@ -137,7 +137,8 @@ namespace FindAndReplace
 
 			var resultItem = new ReplaceResultItem();
 			resultItem.IsSuccess = true;
-			resultItem.IsIncludeFilesWithoutMatches = IncludeFilesWithoutMatches;
+			resultItem.IncludeFilesWithoutMatches = IncludeFilesWithoutMatches;  //only used internally
+
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
 			resultItem.FileRelativePath = "." + filePath.Substring(Dir.Length);

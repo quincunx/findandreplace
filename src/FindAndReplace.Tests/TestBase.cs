@@ -41,7 +41,7 @@ free program...";
 		{
 			CreateTestDir();
 
-			FileStream fs = new FileStream(_tempDir + "\\test1.test", FileMode.Create);
+			FileStream fs = new FileStream(_tempDir + "\\test1.txt", FileMode.Create);
 			StreamWriter sr = new StreamWriter(fs);
 
 			sr.Write("The licenses for most software and other practical");
@@ -56,7 +56,7 @@ free program...";
 			sr.Close();
 			fs.Close();
 
-			fs = new FileStream(_tempDir + "\\test2.test", FileMode.Create);
+			fs = new FileStream(_tempDir + "\\test2.txt", FileMode.Create);
 			sr = new StreamWriter(fs);
 
 			sr.WriteLine("1234567890");
@@ -67,7 +67,7 @@ free program...";
 			sr.Close();
 			fs.Close();
 
-			fs = new FileStream(_tempDir + "\\test3.test", FileMode.Create);
+			fs = new FileStream(_tempDir + "\\test3.txt", FileMode.Create);
 			sr = new StreamWriter(fs);
 
 			sr.WriteLine("This is a readonly file");
@@ -75,9 +75,9 @@ free program...";
 			sr.Close();
 			fs.Close();
 
-			File.SetAttributes(_tempDir + "\\test3.test", FileAttributes.ReadOnly);
+			File.SetAttributes(_tempDir + "\\test3.txt", FileAttributes.ReadOnly);
 
-			fs = new FileStream(_tempDir + "\\test4.test", FileMode.Create);
+			fs = new FileStream(_tempDir + "\\test4.txt", FileMode.Create);
 			sr = new StreamWriter(fs);
 
 			sr.WriteLine(
@@ -110,9 +110,21 @@ free program...";
 			sr.Close();
 			fs.Close();
 
+
+			//And one binary file
+			
+			fs = new FileStream(_tempDir + "\\test5.dll", FileMode.Create);
+			sr = new StreamWriter(fs);
+
+			sr.WriteLine("This file is binary because it has char: \0\0\0\0");
+			
+			sr.Close();
+			fs.Close();
+			
+
 			Directory.CreateDirectory(_tempDir + "\\subDir");
-			File.Copy(_tempDir + "\\test1.test", _tempDir + "\\subDir\\test1.test", true);
-			File.Copy(_tempDir + "\\test2.test", _tempDir + "\\subDir\\test2.test", true);
+			File.Copy(_tempDir + "\\test1.txt", _tempDir + "\\subDir\\test1.txt", true);
+			File.Copy(_tempDir + "\\test2.txt", _tempDir + "\\subDir\\test2.txt", true);
 		}
 
 		protected void CreateTestDir()
@@ -163,7 +175,7 @@ free program...";
 		public virtual void TearDown()
 		{
 			var tempDir = Path.GetTempPath() + "\\FindAndReplaceTests";
-			File.SetAttributes(tempDir + "\\test3.test", FileAttributes.Normal);
+			File.SetAttributes(tempDir + "\\test3.txt", FileAttributes.Normal);
 
 			DeleteTestDir();
 		}
