@@ -538,7 +538,7 @@ namespace FindAndReplace.App
 									 chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
 									 chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
 									 chkIsRegEx.Checked ? " --useRegEx" : "",
-									 chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
+									 chkSkipBinaryFileDetection.Checked ? " --SkipBinaryFileDetection" : "",
 									 chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
 									 CommandLineUtils.EncodeText(txtReplace.Text)

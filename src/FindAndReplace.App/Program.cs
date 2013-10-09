@@ -34,7 +34,7 @@ namespace FindAndReplace.App
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main(string[] args)
+		static int Main(string[] args)
 		{
 			// from http://blogs.msdn.com/b/microsoft_press/archive/2010/02/03/jeffrey-richter-excerpt-2-from-clr-via-c-third-edition.aspx
 			AppDomain.CurrentDomain.AssemblyResolve += ResolveEventHandler;
@@ -66,9 +66,10 @@ namespace FindAndReplace.App
 				}
 
 				var clRunner = new CommandLineRunner();
-				clRunner.Run(args);
+				int dosErrorLevel = clRunner.Run(args);
 
 				FreeConsole();
+			    return dosErrorLevel;
 			}
 			else
 			{
@@ -76,6 +77,7 @@ namespace FindAndReplace.App
 				Application.SetCompatibleTextRenderingDefault(false);
 				Application.Run(new MainForm());
 
+			    return 0;
 			}
 		}
 
@@ -103,10 +105,20 @@ namespace FindAndReplace.App
 
 	public class CommandLineRunner
 	{
-		private CommandLineOptions _options;
+	    public enum DosErrorLevel
+	    {
+	        Success = 0,
+	        FatalError = 1,
+	        ErrorsInSomeFiles = 2
+	    };
 
-		public void Run(string[] args)
+	
+	    private CommandLineOptions _options;
+
+		public int Run(string[] args)
 		{
+		    DosErrorLevel dosErrorLevel;
+
 			_options = new CommandLineOptions();
 			if (!CommandLine.Parser.Default.ParseArguments(args, _options))
 			{
@@ -128,6 +140,7 @@ namespace FindAndReplace.App
 				var sw1 = new StreamWriter(fs1);
 				Console.SetOut(sw1);
 			}
+
 			Console.WriteLine("");
 				
 			if (validationResultList.Any(vr => !vr.IsSuccess))
@@ -139,12 +152,44 @@ namespace FindAndReplace.App
 				}
 
 				Console.WriteLine("");
+
+                dosErrorLevel = DosErrorLevel.FatalError;
 			}
 			else
 			{
-				if (_options.ReplaceText != null)
-				{
-					var replacer = new Replacer();
+                dosErrorLevel = DosErrorLevel.Success;
+
+			    if (_options.ReplaceText == null)
+			    {
+
+
+			        var finder = new Finder();
+			        finder.Dir = _options.Dir;
+			        finder.IncludeSubDirectories = _options.IncludeSubDirectories;
+			        finder.FileMask = _options.FileMask;
+			        finder.ExcludeFileMask = _options.ExcludeFileMask;
+
+			        finder.FindText = CommandLineUtils.DecodeText(_options.FindText);
+			        finder.IsCaseSensitive = _options.IsCaseSensitive;
+			        finder.FindTextHasRegEx = _options.IsFindTextHasRegEx;
+			        finder.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
+			        finder.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
+
+
+			        finder.IsSilent = _options.Silent;
+
+			        finder.FileProcessed += OnFinderFileProcessed;
+
+			        var findResult = finder.Find();
+
+
+                    if (_options.SetErrorLevelIfAnyFileErrors)
+                        if (findResult.Stats.Files.FailedToRead > 0)
+                            dosErrorLevel = DosErrorLevel.ErrorsInSomeFiles;
+                }
+                else
+                {
+			         var replacer = new Replacer();
 					replacer.Dir = _options.Dir;
 					replacer.IncludeSubDirectories = _options.IncludeSubDirectories;
 
@@ -154,31 +199,20 @@ namespace FindAndReplace.App
 					replacer.FindText = CommandLineUtils.DecodeText(_options.FindText);
 					replacer.IsCaseSensitive = _options.IsCaseSensitive;
 					replacer.FindTextHasRegEx = _options.IsFindTextHasRegEx;
+				    replacer.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
+                    replacer.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
+				    
 					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText);
 
-					replacer.Silent = _options.Silent;
+					replacer.IsSilent = _options.Silent;
 					
 					replacer.FileProcessed += OnReplacerFileProcessed;
-					
-					replacer.Replace();
-				}
-				else
-				{
-					var finder = new Finder();
-					finder.Dir = _options.Dir;
-					finder.IncludeSubDirectories = _options.IncludeSubDirectories;
-					finder.FileMask = _options.FileMask;
-					finder.ExcludeFileMask = _options.ExcludeFileMask;
-					
-					finder.FindText = CommandLineUtils.DecodeText(_options.FindText);
-					finder.IsCaseSensitive = _options.IsCaseSensitive;
-					finder.FindTextHasRegEx = _options.IsFindTextHasRegEx;
-					finder.Silent = _options.Silent;
-					
-					finder.FileProcessed += OnFinderFileProcessed;
 
-					finder.Find();
+				    var replaceResult = replacer.Replace();
 
+                    if (_options.SetErrorLevelIfAnyFileErrors)
+                        if (replaceResult.Stats.Files.FailedToRead > 0 || replaceResult.Stats.Files.FailedToWrite > 0)
+                            dosErrorLevel = DosErrorLevel.ErrorsInSomeFiles;
 				}
 			}
 
@@ -190,6 +224,8 @@ namespace FindAndReplace.App
 			#if (DEBUG)
 				Console.ReadLine();
 			#endif
+
+		    return (int) dosErrorLevel;
 		}
 
 		private void OnFinderFileProcessed(object sender, FinderEventArgs e)

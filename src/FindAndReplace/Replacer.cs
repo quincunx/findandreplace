@@ -38,7 +38,7 @@ namespace FindAndReplace
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
 		public bool IsSupressOutput { get; set; }
-		public bool Silent { get; set; }
+		public bool IsSilent { get; set; }
 
 		public class ReplaceResultItem : ResultItem
 		{
@@ -111,7 +111,7 @@ namespace FindAndReplace
 				if (stats.Files.Total == stats.Files.Processed)
 					status = Status.Completed;
 				
-				OnFileProcessed(new ReplacerEventArgs(resultItem, stats, status, Silent));
+				OnFileProcessed(new ReplacerEventArgs(resultItem, stats, status, IsSilent));
 
 				if (status == Status.Cancelled)
 					break;
@@ -120,7 +120,7 @@ namespace FindAndReplace
 			if (filesInDirectory.Length == 0)
 			{
 				status = Status.Completed;
-				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats, status, Silent));
+				OnFileProcessed(new ReplacerEventArgs(new ReplaceResultItem(), stats, status, IsSilent));
 			}
 
 			return new ReplaceResult {ResultItems = resultItems, Stats = stats};
