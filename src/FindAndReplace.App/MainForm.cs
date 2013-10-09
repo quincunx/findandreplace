@@ -85,8 +85,8 @@ namespace FindAndReplace.App
 			data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			data.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			data.IsRegEx = chkIsRegEx.Checked;
-			data.IsBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
-			data.IsIncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
+			data.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
+			data.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			data.ReplaceText = txtReplace.Text;
 
 			data.Save();
@@ -164,7 +164,7 @@ namespace FindAndReplace.App
 					
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
-					if (findResultItem.IsSuccess)
+					if (findResultItem.IsSuccess  && findResultItem.NumMatches > 0)  //Account for errors and IncludeFilesWithoutMatches
 					{
 						string fileContent = string.Empty;
 						
@@ -173,9 +173,12 @@ namespace FindAndReplace.App
 							fileContent = sr.ReadToEnd();
 						}
 
-						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, findResultItem.Matches);
-						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
-
+						if (findResultItem.NumMatches > 0)  //Account for IncludeFilesWithoutMatches
+						{
+							List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, findResultItem.Matches);
+							gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
+						}
+				
 					}
 					else
 					{
@@ -452,12 +455,12 @@ namespace FindAndReplace.App
 					gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
 					gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
 					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
-					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsSuccess ? "Yes" : "No";
+					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsReplaced ? "Yes" : "No";
 					gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
 					
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
-					if (!replaceResultItem.FailedToOpen)
+					if (!replaceResultItem.IsSuccess && replaceResultItem.NumMatches > 0)  //Account for errors and IncludeFilesWithoutMatches
 					{
 						string fileContent = string.Empty;
 
@@ -465,7 +468,7 @@ namespace FindAndReplace.App
 						{
 							fileContent = sr.ReadToEnd();
 						}
-
+						
 						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, replaceResultItem.Matches, _lastReplaceText.Length, true);
 						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
 					}
@@ -538,7 +541,7 @@ namespace FindAndReplace.App
 									 chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
 									 chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
 									 chkIsRegEx.Checked ? " --useRegEx" : "",
-									 chkSkipBinaryFileDetection.Checked ? " --SkipBinaryFileDetection" : "",
+									 chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
 									 chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
 									 CommandLineUtils.EncodeText(txtReplace.Text)
@@ -602,7 +605,10 @@ namespace FindAndReplace.App
 			int matchesPreviewColNumber = _isFindMode ? 4 : 5;
 
 			if (gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value == null)
+			{
+				HideMatchesPreviewPanel();
 				return;
+			}
 
 			ShowMatchesPreviewPanel();
 			//GenerateLineNumbers(gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber + 1].Value.ToString());
@@ -737,14 +743,7 @@ namespace FindAndReplace.App
 			sb.AppendLine("Files:");
 			sb.AppendLine("- Total: " + stats.Files.Total);
 			sb.AppendLine("- Processed: " + stats.Files.Processed);
-			if (!chkSkipBinaryFileDetection.Checked)
-			{
-				sb.AppendLine("- Binary: " + stats.Files.Binary + " (skipped)");
-			}
-			else
-			{
-				sb.AppendLine("- Binary: detection skipped");
-			}
+			sb.AppendLine("- Binary: " + stats.Files.Binary + " (skipped)");
 			sb.AppendLine("- With Matches: " + stats.Files.WithMatches);
 			sb.AppendLine("- Without Matches: " + stats.Files.WithoutMatches);
 			sb.AppendLine("- Failed to Open: " + stats.Files.FailedToRead);
@@ -808,7 +807,8 @@ namespace FindAndReplace.App
 			txtReplace.Text = data.ReplaceText;
 			chkIncludeSubDirectories.Checked = data.IncludeSubDirectories;
 			chkIsCaseSensitive.Checked = data.IsCaseSensitive;
-			chkSkipBinaryFileDetection.Checked = data.IsBinaryFileDetection;
+			chkSkipBinaryFileDetection.Checked = data.SkipBinaryFileDetection;
+			chkIncludeFilesWithoutMatches.Checked = data.IncludeFilesWithoutMatches;
 			chkIsRegEx.Checked = data.IsRegEx;
 		}
 

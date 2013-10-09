@@ -12,8 +12,8 @@ namespace FindAndReplace.App
 		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool IsRegEx { get; set; }
-		public bool IsBinaryFileDetection { get; set; }
-		public bool IsIncludeFilesWithoutMatches { get; set; }
+		public bool SkipBinaryFileDetection { get; set; }
+		public bool IncludeFilesWithoutMatches { get; set; }
 		public string ExcludeFileMask { get; set; }
 
 
@@ -26,8 +26,8 @@ namespace FindAndReplace.App
 			SaveValueToRegistry("IncludeSubDirectories", IncludeSubDirectories.ToString());
 			SaveValueToRegistry("IsCaseSensitive", IsCaseSensitive.ToString());
 			SaveValueToRegistry("IsRegEx", IsRegEx.ToString());
-			SaveValueToRegistry("SkipBinaryFileDetection", IsBinaryFileDetection.ToString());
-			SaveValueToRegistry("IncludeFilesWithoutMatches", IsIncludeFilesWithoutMatches.ToString());
+			SaveValueToRegistry("SkipBinaryFileDetection", SkipBinaryFileDetection.ToString());
+			SaveValueToRegistry("IncludeFilesWithoutMatches", IncludeFilesWithoutMatches.ToString());
 			SaveValueToRegistry("ReplaceText", ReplaceText);
 		}
 
@@ -47,8 +47,8 @@ namespace FindAndReplace.App
 			IncludeSubDirectories = GetValueFromRegistry("IncludeSubDirectories") == "True";
 			IsCaseSensitive = GetValueFromRegistry("IsCaseSensitive") == "True";
 			IsRegEx = GetValueFromRegistry("IsRegEx") == "True";
-			IsBinaryFileDetection = GetValueFromRegistry("SkipBinaryFileDetection") == "True";
-			IsIncludeFilesWithoutMatches = GetValueFromRegistry("IncludeFilesWithoutMatches") == "True";
+			SkipBinaryFileDetection = GetValueFromRegistry("SkipBinaryFileDetection") == "True";
+			IncludeFilesWithoutMatches = GetValueFromRegistry("IncludeFilesWithoutMatches") == "True";
 			ReplaceText = GetValueFromRegistry("ReplaceText");
 		}
 

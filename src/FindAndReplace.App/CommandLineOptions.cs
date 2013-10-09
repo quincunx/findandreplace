@@ -50,7 +50,7 @@ namespace FindAndReplace.App
 		[Option("logFile", HelpText = "Path to log file where to save command output.")]
 		public string LogFile { get; set; }
 
-		[Option("SkipBinaryFileDetection", HelpText = "Ignore detection of binary files.")]
+		[Option("skipBinaryFileDetection", HelpText = "Ignore detection of binary files.")]
 		public bool SkipBinaryFileDetection { get; set; }
 
 		[Option("includeFilesWithoutMatches", HelpText = "Include files without matches in results.")]
