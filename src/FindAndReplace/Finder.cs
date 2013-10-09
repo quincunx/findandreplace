@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -52,6 +53,12 @@ namespace FindAndReplace
 		{
 			public List<FindResultItem> Items { get; set; }
 			public Stats Stats { get; set; }
+
+			public List<FindResultItem> ItemsWithMatches
+			{
+				get { return Items.Where(r => r.NumMatches > 0).ToList(); }
+			}
+
 		}
 
 
@@ -86,19 +93,13 @@ namespace FindAndReplace
 			var startTimeProcessingFiles = DateTime.Now;
 
 			foreach (string filePath in filesInDirectory)
-
-			//Analyze each file in the directory
-			//Parallel.ForEach(filesInDirectory,
-			//				 new ParallelOptions {MaxDegreeOfParallelism = NumThreads},
-			//				 (filePath, state) =>
 			{
+
 				stats.Files.Processed++;
 
-				
+
 				var resultItem = FindInFile(filePath);
 
-				
-				
 				//Update stats
 				if (resultItem.IsBinaryFile)
 					stats.Files.Binary++;
@@ -125,20 +126,19 @@ namespace FindAndReplace
 
 
 				//Skip files that don't have matches
-				//if (String.IsNullOrEmpty(resultItem.ErrorMessage) || resultItem.NumMatches > 0)
+				if (resultItem.IncludeInResultsList)
 					resultItems.Add(resultItem);
 
 				//Handle event
 				OnFileProcessed(new FinderEventArgs(resultItem, stats, status, IsSilent));
 
-			
+
 				if (status == Status.Cancelled)
 					break;
-				//state.Break();
-				//});
 			}
-			
-		
+
+
+
 			if (filesInDirectory.Length == 0)
 			{
 				status = Status.Completed;
@@ -152,7 +152,7 @@ namespace FindAndReplace
 		{
 			var resultItem = new FindResultItem();
 			resultItem.IsSuccess = true;
-			resultItem.IsIncludeFilesWithoutMatches = IncludeFilesWithoutMatches;
+			resultItem.IncludeFilesWithoutMatches = IncludeFilesWithoutMatches;
 
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
