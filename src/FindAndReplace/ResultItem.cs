@@ -37,5 +37,10 @@ namespace FindAndReplace
 				return false;
 			}
 		}
+
+		public bool IsReplaced
+		{
+			get { return this.IsSuccess && this.NumMatches > 0; }  //Account for case when no matches found
+		}
 	}
 }

@@ -275,7 +275,7 @@ namespace FindAndReplace.App
 			if (!item.FailedToOpen)
 				PrintNameValuePair("Matches", item.NumMatches.ToString());
 
-			PrintNameValuePair("Replaced", item.IsSuccess ? "Yes" : "No");
+			PrintNameValuePair("Replaced", item.IsReplaced ? "Yes" : "No");
 
 			if (!item.IsSuccess)
 				PrintNameValuePair("Error", item.ErrorMessage);
