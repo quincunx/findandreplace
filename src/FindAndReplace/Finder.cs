@@ -41,7 +41,7 @@ namespace FindAndReplace
 		public bool IncludeFilesWithoutMatches { get; set; }
 		public string ExcludeFileMask { get; set; }
 		public bool IsCancelRequested { get; set; }
-		public bool Silent { get; set; }
+		public bool IsSilent { get; set; }
 		public int NumThreads { get; set; }
 
 		public class FindResultItem : ResultItem
@@ -129,7 +129,7 @@ namespace FindAndReplace
 					resultItems.Add(resultItem);
 
 				//Handle event
-				OnFileProcessed(new FinderEventArgs(resultItem, stats, status, Silent));
+				OnFileProcessed(new FinderEventArgs(resultItem, stats, status, IsSilent));
 
 			
 				if (status == Status.Cancelled)
@@ -142,7 +142,7 @@ namespace FindAndReplace
 			if (filesInDirectory.Length == 0)
 			{
 				status = Status.Completed;
-				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats, status, Silent));
+				OnFileProcessed(new FinderEventArgs(new FindResultItem(), stats, status, IsSilent));
 			}
 
 			return new FindResult {Items = resultItems, Stats = stats};
