@@ -533,7 +533,7 @@ namespace FindAndReplace.App
 			
 			txtCommandLine.Clear();
 			
-			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\" {3}{4}{5}{6}{7}{8} --find \"{9}\" --replace \"{10}\"",
+			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8} --find \"{9}\" --replace \"{10}\"",
 									 Application.ExecutablePath,
 									 txtDir.Text.TrimEnd('\\'),
 									 txtFileMask.Text,

@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineUtilsTest.cs" />
     <Compile Include="DetectEncodingAccuracyTest.cs" />
     <Compile Include="DetectEncodingSpeedTest.cs" />
     <Compile Include="FinderTest.cs" />
