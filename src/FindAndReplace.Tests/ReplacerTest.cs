@@ -70,7 +70,7 @@ namespace FindAndReplace.Tests
 		}
 		
 		[Test]
-		public void Replace_WhenSearchTextIsNewYorkNoRegExpr_NoReplacesText()
+		public void Replace_WhenSearchTextIsNewYork_NoReplacesText()
 		{
 			Replacer replacer = new Replacer();
 
@@ -85,12 +85,12 @@ namespace FindAndReplace.Tests
 		}
 		
 		[Test]
-		public void Replace_WhenSearchMaskIsTxtOnlyNoRegExpr_NoRepacesText()
+		public void Replace_WhenFileMaskIsTxt1Only_NoRepacesText()
 		{
 			Replacer replacer = new Replacer();
 
 			replacer.Dir = _tempDir;
-			replacer.FileMask = "*.txt";
+			replacer.FileMask = "*.txt1";
 			replacer.FindText = "a";
 			replacer.ReplaceText = "b";
 
@@ -100,7 +100,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void Replace_WhenSearchMaskIsTest1NoRegExpr_ReplacesTextInOne()
+		public void Replace_WhenFileMaskIsTest1_ReplacesTextInOne()
 		{
 			Replacer replacer = new Replacer();
 

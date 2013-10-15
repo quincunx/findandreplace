@@ -190,7 +190,7 @@ namespace FindAndReplace
 
 			if (!FindTextHasRegEx)
 			{
-				matches= Regex.Matches(fileContent, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
+				matches = Regex.Matches(fileContent, Regex.Escape(FindText), regexOptions);
 			}
 			else
 			{
