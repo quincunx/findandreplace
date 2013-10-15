@@ -159,19 +159,19 @@ namespace FindAndReplace.App
 			{
                 dosErrorLevel = DosErrorLevel.Success;
 
+                bool hasRegEx = _options.IsFindTextHasRegEx;
+
 			    if (_options.ReplaceText == null)
 			    {
-
-
-			        var finder = new Finder();
+                    var finder = new Finder();
 			        finder.Dir = _options.Dir;
 			        finder.IncludeSubDirectories = _options.IncludeSubDirectories;
 			        finder.FileMask = _options.FileMask;
 			        finder.ExcludeFileMask = _options.ExcludeFileMask;
 
-			        finder.FindText = CommandLineUtils.DecodeText(_options.FindText);
+                    finder.FindText = CommandLineUtils.DecodeText(_options.FindText, hasRegEx);
 			        finder.IsCaseSensitive = _options.IsCaseSensitive;
-			        finder.FindTextHasRegEx = _options.IsFindTextHasRegEx;
+                    finder.FindTextHasRegEx = hasRegEx;
 			        finder.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
 			        finder.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
 
@@ -196,7 +196,7 @@ namespace FindAndReplace.App
 					replacer.FileMask = _options.FileMask;
 					replacer.ExcludeFileMask = _options.ExcludeFileMask;
 
-					replacer.FindText = CommandLineUtils.DecodeText(_options.FindText);
+					replacer.FindText = CommandLineUtils.DecodeText(_options.FindText, hasRegEx);
 					replacer.IsCaseSensitive = _options.IsCaseSensitive;
 					replacer.FindTextHasRegEx = _options.IsFindTextHasRegEx;
 				    replacer.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
