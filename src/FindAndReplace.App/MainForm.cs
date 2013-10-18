@@ -177,11 +177,6 @@ namespace FindAndReplace.App
 						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, findResultItem.Matches);
 						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
 					}
-					else
-					{
-						if (!findResultItem.IsSuccess)
-							gvResults.Rows[currentRow].Cells[4].Value = findResultItem.ErrorMessage;
-					}
 
 					//Grid likes to select the first row for some reason
 					if (gvResults.Rows.Count == 1)
@@ -473,11 +468,6 @@ namespace FindAndReplace.App
 						
 						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, replaceResultItem.Matches, _lastReplaceText.Length, true);
 						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
-					}
-					else
-					{
-						if (!replaceResultItem.IsSuccess)
-							gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
 					}
 
 					//Grid likes to select the first row for some reason
