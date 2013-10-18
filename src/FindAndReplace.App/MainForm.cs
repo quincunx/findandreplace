@@ -479,16 +479,18 @@ namespace FindAndReplace.App
 				progressBar.Value = stats.Files.Processed;
 
 				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " + replaceResultItem.FileRelativePath;;
+
+				ShowStats(stats, true);
 			}
 			else
 			{
 				HideResultPanel();
 
 				txtNoMatches.Visible = true;
+
+				HideStats();
 			}
 			
-
-			ShowStats(stats, true);
 
 			//When last file - enable buttons back
 			if (status == Status.Completed || status == Status.Cancelled)
