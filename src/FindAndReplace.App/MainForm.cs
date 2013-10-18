@@ -173,16 +173,14 @@ namespace FindAndReplace.App
 							fileContent = sr.ReadToEnd();
 						}
 
-						if (findResultItem.NumMatches > 0)  //Account for IncludeFilesWithoutMatches
-						{
-							List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, findResultItem.Matches);
-							gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
-						}
-				
+						
+						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, findResultItem.Matches);
+						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
 					}
 					else
 					{
-						gvResults.Rows[currentRow].Cells[4].Value = findResultItem.ErrorMessage;
+						if (!findResultItem.IsSuccess)
+							gvResults.Rows[currentRow].Cells[4].Value = findResultItem.ErrorMessage;
 					}
 
 					//Grid likes to select the first row for some reason
@@ -195,15 +193,19 @@ namespace FindAndReplace.App
 				progressBar.Value = stats.Files.Processed;
 
 				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +  findResultItem.FileRelativePath;
+
+				ShowStats(stats);
 			}
 			else
 			{
 				HideResultPanel();
 
 				txtNoMatches.Visible = true;
+
+				HideStats();
 			}
 			
-			ShowStats(stats);
+			
 
 			//When last file - enable buttons back
 			if (status == Status.Completed || status == Status.Cancelled)
@@ -460,7 +462,7 @@ namespace FindAndReplace.App
 					
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
-					if (!replaceResultItem.IsSuccess && replaceResultItem.NumMatches > 0)  //Account for errors and IncludeFilesWithoutMatches
+					if (replaceResultItem.IsSuccess && replaceResultItem.NumMatches > 0)  //Account for errors and IncludeFilesWithoutMatches
 					{
 						string fileContent = string.Empty;
 
@@ -474,7 +476,8 @@ namespace FindAndReplace.App
 					}
 					else
 					{
-						gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
+						if (!replaceResultItem.IsSuccess)
+							gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
 					}
 
 					//Grid likes to select the first row for some reason
@@ -775,6 +778,13 @@ namespace FindAndReplace.App
 
 			lblStats.Text = sb.ToString();
 		}
+
+
+		private void HideStats()
+		{
+			lblStats.Text = String.Empty;
+		}
+		
 
 		public class GVResultEventArgs : EventArgs
 		{
