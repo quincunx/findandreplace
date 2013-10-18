@@ -13,7 +13,7 @@ namespace FindAndReplace
 		public string FileRelativePath { get; set; }
 		public Encoding FileEncoding { get; set; }
 		public int NumMatches { get; set; }
-		public MatchCollection Matches { get; set; }
+		public List<LiteMatch> Matches { get; set; }
 		public bool IsSuccess { get; set; }
 		public bool IsBinaryFile { get; set; }
 		public bool FailedToOpen { get; set; }

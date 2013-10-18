@@ -81,6 +81,7 @@ namespace FindAndReplace
 			//time
 			var startTime = DateTime.Now;
 			
+
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask);
 
 			var resultItems = new List<FindResultItem>();
@@ -214,7 +215,10 @@ namespace FindAndReplace
 			StopWatch.Stop("ReadFullFileContent");
 
 			StopWatch.Start("FindMatches");
-			resultItem.Matches = GetMatches(fileContent);
+			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
+
+			resultItem.Matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, regexOptions);
+
 			StopWatch.Stop("FindMatches");
 
 			resultItem.NumMatches = resultItem.Matches.Count;
@@ -236,14 +240,6 @@ namespace FindAndReplace
 				FileProcessed(this, e);
 		}
 
-		private MatchCollection GetMatches(string fileContent)
-		{
-			if (!FindTextHasRegEx)
-				return Regex.Matches(fileContent, Regex.Escape(FindText), Utils.GetRegExOptions(IsCaseSensitive));
-
-			var exp = new Regex(FindText, Utils.GetRegExOptions(IsCaseSensitive));
-
-			return exp.Matches(fileContent);
-		}
+		
 	}
 }
