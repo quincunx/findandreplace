@@ -19,11 +19,14 @@ namespace FindAndReplace
 
         public SearchOption SearchOption { get; set; }
 
+		public bool IsCancelRequested { get; set; }
         public bool IsCancelled { get; set; }
         public Task _task;
 
         public BlockingCollection<string> FileQueue = new BlockingCollection<string>();
-
+		
+		public bool IsCompleted { get { return FileQueue.IsCompleted; } }
+		public int FileCount { get; set; }
 
         public void RunAsync()
         {
@@ -33,6 +36,7 @@ namespace FindAndReplace
         private void Run()
         {
             IsCancelled = false;
+	        FileCount = 0;
 
             foreach (var fileMask in FileMasks)
             {
@@ -42,15 +46,26 @@ namespace FindAndReplace
                 foreach (string filePath in files)
                 {
                     if (!IsMatchWithExcludeFileMasks(filePath))
-                        FileQueue.Add(filePath);
+                    {
+	                    FileCount++;
+	                    FileQueue.Add(filePath);
+                    }
 
-                    if (IsCancelled)
-                        break;
+	                if (IsCancelRequested)
+	                     break;
                 }
-            }
+
+
+				if (IsCancelRequested)
+					break;
+			}
+
+
+	        if (IsCancelRequested)
+		        IsCancelled = true;
 
             FileQueue.CompleteAdding();
-        }
+       }
 
 
         public List<string> RunSync()
@@ -102,7 +117,7 @@ namespace FindAndReplace
 
         public void Cancel()
         {
-            IsCancelled = true;
+            IsCancelRequested = true;
         }
     }
 }
