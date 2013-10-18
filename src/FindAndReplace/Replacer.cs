@@ -185,25 +185,18 @@ namespace FindAndReplace
 
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
-			var finderText = FindTextHasRegEx ? FindText : Regex.Escape(FindText);
-			MatchCollection matches;
-
-			if (!FindTextHasRegEx)
-			{
-				matches = Regex.Matches(fileContent, Regex.Escape(FindText), regexOptions);
-			}
-			else
-			{
-				matches = Regex.Matches(fileContent, finderText, regexOptions);
-			}
-
+			var matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, regexOptions);
 			
 			resultItem.NumMatches = matches.Count;
 			resultItem.Matches = matches;
 		
 			if (matches.Count > 0)
 			{
-				string newContent = Regex.Replace(fileContent, finderText, ReplaceText, regexOptions);
+			    string escapedFindText = FindText;
+			    if (!FindTextHasRegEx)
+                    escapedFindText = Regex.Escape(FindText);
+
+                string newContent = Regex.Replace(fileContent, escapedFindText, ReplaceText, regexOptions);
 
 				try
 				{

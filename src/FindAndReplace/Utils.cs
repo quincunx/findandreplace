@@ -51,6 +51,33 @@ namespace FindAndReplace
 			return filesInDirectory.ToArray();
 		}
 
+
+        public static FileGetter CreateFileGetter(string dir, string fileMask, bool includeSubDirectories, string excludeMask)
+        {
+            SearchOption searchOption = includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+            var fileMasks = fileMask.Split(',').ToList();
+            fileMasks = fileMasks.Select(fm => fm.Trim()).ToList();
+
+            List<string> excludeFileMasks = null;
+            if (!String.IsNullOrEmpty(excludeMask))
+            {
+                excludeFileMasks = excludeMask.Split(',').ToList();
+                excludeFileMasks = excludeFileMasks.Select(fm => fm.Trim()).ToList();
+            }
+            
+            var fileGetter = new FileGetter
+            {
+                DirPath = dir,
+                FileMasks = fileMasks,
+                ExcludeFileMasks = excludeFileMasks,
+                SearchOption = searchOption
+            };
+
+            return fileGetter;
+        }
+
+
 		public static bool IsBinaryFile(string fileContent)
 		{
 			//http://stackoverflow.com/questions/910873/how-can-i-determine-if-a-file-is-binary-or-text-in-c
@@ -68,7 +95,7 @@ namespace FindAndReplace
 		}
 
 
-		public static List<MatchPreviewLineNumber> GetLineNumbersForMatchesPreview(string fileContent, MatchCollection matches, int replaceStrLength = 0, bool isReplace = false)
+		public static List<MatchPreviewLineNumber> GetLineNumbersForMatchesPreview(string fileContent, List<LiteMatch> matches, int replaceStrLength = 0, bool isReplace = false)
 		{
 			var separator = Environment.NewLine;
 			var lines = fileContent.Split(new string[] { separator }, StringSplitOptions.None);
@@ -77,7 +104,7 @@ namespace FindAndReplace
 
 			int replacedTextLength = 0;
 
-			foreach (Match match in matches)
+			foreach (LiteMatch match in matches)
 			{
 				var lineIndexStart = DetectMatchLine(lines.ToArray(), GetMatchIndex(match.Index, replacedTextLength, isReplace));
 				var lineIndexEnd = DetectMatchLine(lines.ToArray(), GetMatchIndex(match.Index + replaceStrLength, replacedTextLength, isReplace));
@@ -154,7 +181,7 @@ namespace FindAndReplace
 		}
 
 		//from http://www.roelvanlisdonk.nl/?p=259
-		private static string WildcardToRegex(string pattern)
+		internal static string WildcardToRegex(string pattern)
 		{
 			return string.Format("^{0}$", Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", "."));
 		}
@@ -184,5 +211,24 @@ namespace FindAndReplace
 
 			return newIndex;
 		}
+
+
+        public static List<LiteMatch> FindMatches(string fileContent, string findText, bool findTextHasRegEx, RegexOptions regexOptions)
+        {
+            MatchCollection matches;
+
+            if (!findTextHasRegEx)
+                matches = Regex.Matches(fileContent, Regex.Escape(findText), regexOptions);
+            else
+                matches = Regex.Matches(fileContent, findText, regexOptions);
+         
+            List<LiteMatch> liteMatches = new List<LiteMatch>();
+            foreach (Match match in matches)
+            {
+                liteMatches.Add(new LiteMatch {Index = match.Index, Length = match.Length});
+            }
+
+            return liteMatches;
+        }
 	}
 }

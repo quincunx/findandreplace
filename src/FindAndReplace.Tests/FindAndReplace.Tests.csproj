@@ -55,6 +55,7 @@
     <Compile Include="CommandLineUtilsTest.cs" />
     <Compile Include="DetectEncodingAccuracyTest.cs" />
     <Compile Include="DetectEncodingSpeedTest.cs" />
+    <Compile Include="FileGetterTest.cs" />
     <Compile Include="FinderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplacerTest.cs" />
