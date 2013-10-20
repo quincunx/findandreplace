@@ -71,7 +71,8 @@ namespace FindAndReplace
                 DirPath = dir,
                 FileMasks = fileMasks,
                 ExcludeFileMasks = excludeFileMasks,
-                SearchOption = searchOption
+                SearchOption = searchOption,
+                UseBlockingCollection = false
             };
 
             return fileGetter;
