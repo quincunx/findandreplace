@@ -3,8 +3,10 @@ using Microsoft.Win32;
 
 namespace FindAndReplace.App
 {
-	public class RegistryData
+	public class FormData
 	{
+        public bool IsFindOnly { get; set; }
+
 		public string Dir { get; set; }
 		public string FileMask { get; set; }
 		public bool IncludeSubDirectories { get; set; }
@@ -17,7 +19,7 @@ namespace FindAndReplace.App
 		public string ExcludeFileMask { get; set; }
 
 
-		public void Save()
+		public void SaveToRegistry()
 		{
 			SaveValueToRegistry("Dir", Dir);
 			SaveValueToRegistry("FileMask", FileMask);
@@ -38,7 +40,7 @@ namespace FindAndReplace.App
 			return dir == null;
 		}
 
-		public void Load()
+		public void LoadFromRegistry()
 		{
 			Dir = GetValueFromRegistry("Dir");
 			FileMask = GetValueFromRegistry("Filemask");
