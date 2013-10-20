@@ -20,8 +20,10 @@ namespace FindAndReplace.App
 		private Finder _finder;
 		private Replacer _replacer;
 		private Thread _currentThread;
-		private bool _isFindMode;
-		private string _lastReplaceText;
+
+        public bool _isFindOnly;
+	    private FormData _lastOperationFormData;
+	    
 
 		private delegate void SetFindResultCallback(Finder.FindResultItem resultItem, Stats stats, Status status);
 		
@@ -40,7 +42,7 @@ namespace FindAndReplace.App
 
 		private void btnFindOnly_Click(object sender, EventArgs e)
 		{
-			_isFindMode = true;
+			_isFindOnly = true;
 
 			if (!ValidateForm())
 				return;
@@ -76,7 +78,9 @@ namespace FindAndReplace.App
 
 		private void SaveToRegistry()
 		{
-			var data = new RegistryData();
+			var data = new FormData();
+
+		    data.IsFindOnly = _isFindOnly;
 
 			data.Dir = txtDir.Text;
 			data.FileMask = txtFileMask.Text;
@@ -89,7 +93,9 @@ namespace FindAndReplace.App
 			data.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			data.ReplaceText = txtReplace.Text;
 
-			data.Save();
+			data.SaveToRegistry();
+
+		    _lastOperationFormData = data;
 		}
 
 
@@ -354,7 +360,7 @@ namespace FindAndReplace.App
 
 		private void btnReplace_Click(object sender, EventArgs e)
 		{
-			_isFindMode = false;
+			_isFindOnly = false;
 
 			if (!ValidateForm())
 				return;
@@ -367,9 +373,6 @@ namespace FindAndReplace.App
 				if (dlgResult == DialogResult.No)
 					return;
 			}
-
-			//Rememember last replace text for preview
-			_lastReplaceText = txtReplace.Text;
 
 			var replacer = new Replacer();
 
@@ -466,7 +469,7 @@ namespace FindAndReplace.App
 							fileContent = sr.ReadToEnd();
 						}
 						
-						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, replaceResultItem.Matches, _lastReplaceText.Length, true);
+						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, replaceResultItem.Matches, _lastOperationFormData.ReplaceText.Length, true);
 						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
 					}
 
@@ -597,7 +600,7 @@ namespace FindAndReplace.App
             if (e.RowIndex == -1)   //heading
                 return;
 
-			int matchesPreviewColNumber = _isFindMode ? 4 : 5;
+            int matchesPreviewColNumber = _lastOperationFormData.IsFindOnly ? 4 : 5;
 
 			if (gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value == null)
 			{
@@ -606,10 +609,6 @@ namespace FindAndReplace.App
 			}
 
 			ShowMatchesPreviewPanel();
-			//GenerateLineNumbers(gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber + 1].Value.ToString());
-			
-
-			//gvResults.Columns[4].Visible ? 5 : 3;
 
             var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
 
@@ -617,14 +616,15 @@ namespace FindAndReplace.App
 			txtMatchesPreview.Clear();
 
 			txtMatchesPreview.Text = matchesPreviewText;
-			//txtMatches.ReadOnly = true;
-
+		
 			var font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
 
-			var findText = !_isFindMode ? txtReplace.Text.Replace("\r\n", "\n") : txtFind.Text.Replace("\r\n", "\n");
+            //Use _lastOperation form data since user may change it before clicking on preview
+            var findText = _lastOperationFormData.IsFindOnly ? _lastOperationFormData.FindText : _lastOperationFormData.ReplaceText;
+            findText = findText.Replace("\r\n", "\n");
 
-			//var mathches = chkIsCaseSensitive.Checked ? Regex.Matches(txtMatchesPreview.Text, findText) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), RegexOptions.IgnoreCase);
-			var mathches = (chkIsRegEx.Checked && _isFindMode) ? Regex.Matches(txtMatchesPreview.Text, findText, Utils.GetRegExOptions(chkIsCaseSensitive.Checked)) : Regex.Matches(txtMatchesPreview.Text, Regex.Escape(findText), Utils.GetRegExOptions(chkIsCaseSensitive.Checked));
+            findText = (_lastOperationFormData.IsRegEx && _lastOperationFormData.IsFindOnly) ? findText : Regex.Escape(findText);
+            var mathches = Regex.Matches(txtMatchesPreview.Text, findText, Utils.GetRegExOptions(_lastOperationFormData.IsCaseSensitive));
 
 			int count = 0;
 			int maxCount = 1000;
@@ -646,8 +646,6 @@ namespace FindAndReplace.App
 			}
 
 			txtMatchesPreview.SelectionLength = 0;
-
-			//UpdateLineNumbersLabel();
 		}
 
 		private string GenerateMatchesPreviewText(string content, List<int> rowNumbers)
@@ -787,7 +785,7 @@ namespace FindAndReplace.App
 		{
 			if (_currentThread.IsAlive)
 			{
-				if (_isFindMode)
+				if (_isFindOnly)
 					_finder.CancelFind();
 				else
 					_replacer.CancelReplace();
@@ -796,11 +794,11 @@ namespace FindAndReplace.App
 
 		private void InitWithRegistryData()
 		{
-			var data = new RegistryData();
+			var data = new FormData();
 			if (data.IsEmpty()) //Keep defaults
 				return;
 			
-			data.Load();
+			data.LoadFromRegistry();
 
 			txtDir.Text = data.Dir;
 			txtFileMask.Text = data.FileMask;
