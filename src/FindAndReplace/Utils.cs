@@ -40,11 +40,26 @@ namespace FindAndReplace
 
 			if (!String.IsNullOrEmpty(excludeMask))
 			{
-				var excludeFileMasks = excludeMask.Split(',');
-				filesInDirectory = excludeFileMasks
-					.Select(excludeFileMask => WildcardToRegex(excludeFileMask.Trim()))
-					.Aggregate(filesInDirectory,
-							   (current, excludeMaskRegEx) => current.Where(f => !Regex.IsMatch(f, excludeMaskRegEx)).ToList());
+				var tempFilesInDirectory = new List<string>();
+				List<string> excludeFileMasks = excludeMask.Split(',').ToList();
+				excludeFileMasks = excludeFileMasks.Select(fm => WildcardToRegex(fm.Trim())).ToList();
+
+
+				foreach (var excludeFileMaskRegExPattern in excludeFileMasks)
+				{
+					foreach (string filePath in filesInDirectory)
+					{
+						string fileName = Path.GetFileName(filePath);
+						if (fileName == null)   //Somehow it can be null. So add a check
+							continue;
+						
+						if (!Regex.IsMatch(fileName, excludeFileMaskRegExPattern))
+							tempFilesInDirectory.Add(filePath);
+					}
+				}
+
+
+				filesInDirectory = tempFilesInDirectory;
 			}
 
 			filesInDirectory.Sort();
