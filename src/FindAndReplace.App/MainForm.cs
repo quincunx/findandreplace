@@ -83,14 +83,15 @@ namespace FindAndReplace.App
 		    data.IsFindOnly = _isFindOnly;
 
 			data.Dir = txtDir.Text;
+            data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			data.FileMask = txtFileMask.Text;
 			data.ExcludeFileMask = txtExcludeFileMask.Text;
 			data.FindText = txtFind.Text;
-			data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			data.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			data.IsRegEx = chkIsRegEx.Checked;
 			data.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			data.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
+            data.ShowEncoding = chkShowEncoding.Checked;
 			data.ReplaceText = txtReplace.Text;
 
 			data.SaveToRegistry();
@@ -108,13 +109,16 @@ namespace FindAndReplace.App
 
 			AddResultsColumn("Filename", "Filename", 250);
 			AddResultsColumn("Path", "Path", 450);
+
+            if (chkShowEncoding.Checked)
+                AddResultsColumn("FileEncoding", "Encoding", 100);
+			
 			AddResultsColumn("NumMatches", "Matches", 50);
 			AddResultsColumn("ErrorMessage", "Error", 150);
 
-			gvResults.Columns.Add("Tooltip", "");
-			gvResults.Columns.Add("TooltipLineNums", "");
-			gvResults.Columns[4].Visible = false;
-			gvResults.Columns[5].Visible = false;
+            gvResults.Columns.Add("MatchesPreview", "");
+            gvResults.Columns[gvResults.ColumnCount - 1].Visible = false;
+
 			HideMatchesPreviewPanel();
 
 			progressBar.Value = 0;
@@ -163,10 +167,15 @@ namespace FindAndReplace.App
 
 					gvResults.Rows[currentRow].ContextMenuStrip = CreateContextMenu(currentRow);
 
-					gvResults.Rows[currentRow].Cells[0].Value = findResultItem.FileName;
-					gvResults.Rows[currentRow].Cells[1].Value = findResultItem.FileRelativePath;
-					gvResults.Rows[currentRow].Cells[2].Value = findResultItem.NumMatches;
-					gvResults.Rows[currentRow].Cells[3].Value = findResultItem.ErrorMessage;
+				    int columnIndex = 0;
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileName;
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileRelativePath;
+
+                    if (_lastOperationFormData.ShowEncoding)
+                        gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileEncoding.EncodingName;
+
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.NumMatches;
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.ErrorMessage;
 					
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
@@ -181,7 +190,7 @@ namespace FindAndReplace.App
 
 						
 						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, findResultItem.Matches);
-						gvResults.Rows[currentRow].Cells[4].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
+						gvResults.Rows[currentRow].Cells[columnIndex].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
 					}
 
 					//Grid likes to select the first row for some reason
@@ -421,16 +430,18 @@ namespace FindAndReplace.App
 			gvResults.Columns.Clear();
 
 			AddResultsColumn("Filename", "Filename", 250);
-			AddResultsColumn("Path", "Path", 400);
-			AddResultsColumn("NumMatches", "Matches", 50);
+            AddResultsColumn("Path", "Path", 400);
+			
+            if (chkShowEncoding.Checked)
+                AddResultsColumn("FileEncoding", "Encoding", 100);
+			
+            AddResultsColumn("NumMatches", "Matches", 50);
 			AddResultsColumn("IsSuccess", "Replaced", 60);
 			AddResultsColumn("ErrorMessage", "Error", 150);
 
 			gvResults.Columns.Add("MatchesPreview", "");
-			gvResults.Columns.Add("MatchesPreviewLineNums", "");
-			gvResults.Columns[5].Visible = false;
-			gvResults.Columns[6].Visible = false;
-
+            gvResults.Columns[gvResults.ColumnCount - 1 ].Visible = false;
+        
 			HideMatchesPreviewPanel();
 			progressBar.Value = 0;
 		}
@@ -452,11 +463,16 @@ namespace FindAndReplace.App
 
 					gvResults.Rows[currentRow].ContextMenuStrip = CreateContextMenu(currentRow);
 
-					gvResults.Rows[currentRow].Cells[0].Value = replaceResultItem.FileName;
-					gvResults.Rows[currentRow].Cells[1].Value = replaceResultItem.FileRelativePath;
-					gvResults.Rows[currentRow].Cells[2].Value = replaceResultItem.NumMatches;
-					gvResults.Rows[currentRow].Cells[3].Value = replaceResultItem.IsReplaced ? "Yes" : "No";
-					gvResults.Rows[currentRow].Cells[4].Value = replaceResultItem.ErrorMessage;
+				    int columnIndex = 0;
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileName;
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileRelativePath;
+
+                    if (_lastOperationFormData.ShowEncoding)
+                        gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileEncoding.EncodingName;
+
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.NumMatches;
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.IsReplaced ? "Yes" : "No";
+                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.ErrorMessage;
 					
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
@@ -470,7 +486,7 @@ namespace FindAndReplace.App
 						}
 						
 						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, replaceResultItem.Matches, _lastOperationFormData.ReplaceText.Length, true);
-						gvResults.Rows[currentRow].Cells[5].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
+                        gvResults.Rows[currentRow].Cells[columnIndex].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
 					}
 
 					//Grid likes to select the first row for some reason
@@ -531,7 +547,7 @@ namespace FindAndReplace.App
 			
 			txtCommandLine.Clear();
 			
-			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8} --find \"{9}\" --replace \"{10}\"",
+			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9} --find \"{10}\" --replace \"{11}\"",
 									 Application.ExecutablePath,
 									 txtDir.Text.TrimEnd('\\'),
 									 txtFileMask.Text,
@@ -540,6 +556,7 @@ namespace FindAndReplace.App
 									 chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
 									 chkIsRegEx.Checked ? " --useRegEx" : "",
 									 chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
+                                     chkShowEncoding.Checked ? " --showEncoding" : "",
 									 chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
 									 CommandLineUtils.EncodeText(txtFind.Text),
 									 CommandLineUtils.EncodeText(txtReplace.Text)
@@ -600,9 +617,9 @@ namespace FindAndReplace.App
             if (e.RowIndex == -1)   //heading
                 return;
 
-            int matchesPreviewColNumber = _lastOperationFormData.IsFindOnly ? 4 : 5;
+            int matchedPreviewColIndex = gvResults.ColumnCount - 1; //Always last column
 
-			if (gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value == null)
+			if (gvResults.Rows[e.RowIndex].Cells[matchedPreviewColIndex].Value == null)
 			{
 				HideMatchesPreviewPanel();
 				return;
@@ -610,7 +627,7 @@ namespace FindAndReplace.App
 
 			ShowMatchesPreviewPanel();
 
-            var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchesPreviewColNumber].Value.ToString();
+            var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchedPreviewColIndex].Value.ToString();
 
 			txtMatchesPreview.SelectionLength = 0;
 			txtMatchesPreview.Clear();
@@ -801,16 +818,17 @@ namespace FindAndReplace.App
 			data.LoadFromRegistry();
 
 			txtDir.Text = data.Dir;
+            chkIncludeSubDirectories.Checked = data.IncludeSubDirectories;
 			txtFileMask.Text = data.FileMask;
 			txtExcludeFileMask.Text = data.ExcludeFileMask;
 			txtFind.Text = data.FindText;
-			txtReplace.Text = data.ReplaceText;
-			chkIncludeSubDirectories.Checked = data.IncludeSubDirectories;
 			chkIsCaseSensitive.Checked = data.IsCaseSensitive;
-			chkSkipBinaryFileDetection.Checked = data.SkipBinaryFileDetection;
+            chkIsRegEx.Checked = data.IsRegEx;
+            chkSkipBinaryFileDetection.Checked = data.SkipBinaryFileDetection;
 			chkIncludeFilesWithoutMatches.Checked = data.IncludeFilesWithoutMatches;
-			chkIsRegEx.Checked = data.IsRegEx;
-		}
+            chkShowEncoding.Checked = data.ShowEncoding;
+            txtReplace.Text = data.ReplaceText;
+        }
 
 		private void btnSelectDir_Click(object sender, EventArgs e)
 		{
