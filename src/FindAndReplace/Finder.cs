@@ -201,7 +201,15 @@ namespace FindAndReplace
 				StopWatch.Stop("IsBinaryFile");
 			}
 
-			Encoding encoding = EncodingDetector.Detect(sampleBytes, defaultEncoding: Encoding.UTF8);
+			Encoding encoding = EncodingDetector.Detect(sampleBytes);
+            if (encoding == null)
+            {
+                resultItem.IsSuccess = false;
+                resultItem.FailedToOpen = true;
+                resultItem.ErrorMessage = "Could not detect file encoding.";
+                return resultItem;
+            }
+
 			resultItem.FileEncoding = encoding;
 			
 			StopWatch.Start("ReadFullFileContent");

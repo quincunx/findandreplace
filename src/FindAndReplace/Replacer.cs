@@ -175,7 +175,7 @@ namespace FindAndReplace
 			if (!resultItem.IsSuccess) 
 				return resultItem;
 
-			Encoding encoding = EncodingDetector.Detect(sampleBytes, defaultEncoding:Encoding.UTF8);
+			Encoding encoding = EncodingDetector.Detect(sampleBytes);
 			resultItem.FileEncoding = encoding;
 
 			using (var sr = new StreamReader(filePath, encoding))
