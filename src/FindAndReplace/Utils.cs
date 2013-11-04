@@ -56,10 +56,10 @@ namespace FindAndReplace
 						if (!Regex.IsMatch(fileName, excludeFileMaskRegExPattern))
 							tempFilesInDirectory.Add(filePath);
 					}
+
+                    filesInDirectory = tempFilesInDirectory;
+                    tempFilesInDirectory = new List<string>();
 				}
-
-
-				filesInDirectory = tempFilesInDirectory;
 			}
 
 			filesInDirectory.Sort();
