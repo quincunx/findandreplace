@@ -176,6 +176,14 @@ namespace FindAndReplace
 				return resultItem;
 
 			Encoding encoding = EncodingDetector.Detect(sampleBytes);
+            if (encoding == null)
+            {
+                resultItem.IsSuccess = false;
+                resultItem.FailedToOpen = true;
+                resultItem.ErrorMessage = "Could not detect file encoding.";
+                return resultItem;
+            }
+
 			resultItem.FileEncoding = encoding;
 
 			using (var sr = new StreamReader(filePath, encoding))

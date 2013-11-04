@@ -172,7 +172,9 @@ namespace FindAndReplace.App
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileRelativePath;
 
                     if (_lastOperationFormData.ShowEncoding)
-                        gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileEncoding.EncodingName;
+                        gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileEncoding != null
+                                                                                    ? findResultItem.FileEncoding.EncodingName
+                                                                                    : String.Empty;
 
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.NumMatches;
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.ErrorMessage;
@@ -467,8 +469,10 @@ namespace FindAndReplace.App
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileName;
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileRelativePath;
 
-                    if (_lastOperationFormData.ShowEncoding)
-                        gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileEncoding.EncodingName;
+				    if (_lastOperationFormData.ShowEncoding)
+				        gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileEncoding != null
+				                                                                    ? replaceResultItem.FileEncoding.EncodingName
+				                                                                    : String.Empty;
 
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.NumMatches;
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.IsReplaced ? "Yes" : "No";
