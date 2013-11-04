@@ -27,16 +27,23 @@ namespace FindAndReplace
 	public class Replacer
 	{
 		public string Dir { get; set; }
-		public string FileMask { get; set; }
 		public bool IncludeSubDirectories { get; set; }
+        public string FileMask { get; set; }
+		public string ExcludeFileMask { get; set; }
+		
+
 		public string FindText { get; set; }
-		public string ReplaceText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
 		public bool SkipBinaryFileDetection { get; set; }
 		public bool IncludeFilesWithoutMatches { get; set; }
-		public string ExcludeFileMask { get; set; }
-		public bool IsCancelRequested { get; set; }
+
+        public string ReplaceText { get; set; }
+		
+        public Encoding AlwaysUseEncoding { get; set; }
+        public Encoding DefaultEncodingIfNotDetected { get; set; }
+        
+        public bool IsCancelRequested { get; set; }
 		public bool IsSupressOutput { get; set; }
 		public bool IsSilent { get; set; }
 
@@ -126,11 +133,7 @@ namespace FindAndReplace
 			return new ReplaceResult {ResultItems = resultItems, Stats = stats};
 		}
 
-		public void CancelReplace()
-		{
-			IsCancelRequested = true;
-		}
-		
+
 		private ReplaceResultItem ReplaceTextInFile(string filePath)
 		{
 			string fileContent = string.Empty;
@@ -175,7 +178,7 @@ namespace FindAndReplace
 			if (!resultItem.IsSuccess) 
 				return resultItem;
 
-			Encoding encoding = EncodingDetector.Detect(sampleBytes);
+			Encoding encoding = DetectEncoding(sampleBytes);
             if (encoding == null)
             {
                 resultItem.IsSuccess = false;
@@ -223,6 +226,20 @@ namespace FindAndReplace
 
 			return resultItem;
 		}
+
+
+        private Encoding DetectEncoding(byte[] sampleBytes)
+        {
+            if (AlwaysUseEncoding != null)
+                return AlwaysUseEncoding;
+
+            return EncodingDetector.Detect(sampleBytes, defaultEncoding: DefaultEncodingIfNotDetected);
+        }
+
+        public void CancelReplace()
+        {
+            IsCancelRequested = true;
+        }
 
 		public event ReplaceFileProcessedEventHandler FileProcessed;
 

@@ -32,33 +32,39 @@ namespace FindAndReplace.App
 		[Option("dir", Required = true, HelpText = "Directory path.")]
 		public string Dir { get; set; }
 
+        [Option("includeSubDirectories", HelpText = "Include files in SubDirectories.")]
+        public bool IncludeSubDirectories { get; set; }
+
 		[Option("fileMask", Required = true, HelpText = "File mask.")]
 		public string FileMask { get; set; }
 
 		[Option("excludeFileMask",  HelpText = "Exclude file mask.")]
 		public string ExcludeFileMask { get; set; }
 
-		[Option("includeSubDirectories", HelpText = "Include files in SubDirectories.")]
-		public bool IncludeSubDirectories { get; set; }
-
-		[Option("showEncoding", HelpText = "Display detected encoding information for each fle.")]
-		public bool ShowEncoding { get; set; }
-
-		[Option("silent", HelpText = "Supress the command window output.")]
-		public bool Silent { get; set; }
-
-		[Option("logFile", HelpText = "Path to log file where to save command output.")]
-		public string LogFile { get; set; }
-
 		[Option("skipBinaryFileDetection", HelpText = "Ignore detection of binary files.")]
 		public bool SkipBinaryFileDetection { get; set; }
+
+        [Option("showEncoding", HelpText = "Display detected encoding information for each fle.")]
+        public bool ShowEncoding { get; set; }
+
+        [Option("alwaysUseEncoding", HelpText = "Skip encoding detection and always use specified encoding.")]
+        public string AlwaysUseEncoding { get; set; }
+
+        [Option("defaultEncodingIfNotDetected", HelpText = "If encoding is not detected in some very rare cases, use this one.")]
+        public string DefaultEncodingIfNotDetected { get; set; }
 
 		[Option("includeFilesWithoutMatches", HelpText = "Include files without matches in results.")]
 		public bool IncludeFilesWithoutMatches { get; set; }
 
         [Option("setErrorLevelIfAnyFileErrors", HelpText = "Return ErrorLevel 2 if any files have read/write errors.")]
         public bool SetErrorLevelIfAnyFileErrors { get; set; }
-		
+
+        [Option("silent", HelpText = "Supress the command window output.")]
+        public bool Silent { get; set; }
+
+        [Option("logFile", HelpText = "Path to log file where to save command output.")]
+        public string LogFile { get; set; }
+
 
 		#endregion
 

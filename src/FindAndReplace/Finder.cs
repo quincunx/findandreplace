@@ -33,17 +33,22 @@ namespace FindAndReplace
 	{
 		public string Dir { get; set; }
 		public bool IncludeSubDirectories { get; set; }
-
 		public string FileMask { get; set; }
-		public string FindText { get; set; }
+        public string ExcludeFileMask { get; set; }
+		
+        public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
 		public bool SkipBinaryFileDetection { get; set; }
+
+        public Encoding AlwaysUseEncoding { get; set; }
+        public Encoding DefaultEncodingIfNotDetected { get; set; }
+
 		public bool IncludeFilesWithoutMatches { get; set; }
-		public string ExcludeFileMask { get; set; }
+        public bool IsSilent { get; set; }
+
 		public bool IsCancelRequested { get; set; }
-		public bool IsSilent { get; set; }
-		public int NumThreads { get; set; }
+		
 
 		public class FindResultItem : ResultItem
 		{
@@ -64,7 +69,6 @@ namespace FindAndReplace
 
 		public Finder()
 		{
-			NumThreads = 1;
 		}
 
 
@@ -101,10 +105,6 @@ namespace FindAndReplace
 
 				var resultItem = FindInFile(filePath);
 
-				//Update stats
-				if (resultItem.IsBinaryFile)
-					stats.Files.Binary++;
-
 				if (resultItem.IsSuccess)
 				{
 					stats.Matches.Found += resultItem.Matches.Count;
@@ -114,6 +114,15 @@ namespace FindAndReplace
 					else
 						stats.Files.WithoutMatches++;
 				}
+				else
+				{
+					if (resultItem.FailedToOpen)
+						stats.Files.FailedToRead++;
+		
+					if (resultItem.IsBinaryFile)
+						stats.Files.Binary++;
+				}
+
 
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
 
@@ -201,7 +210,7 @@ namespace FindAndReplace
 				StopWatch.Stop("IsBinaryFile");
 			}
 
-			Encoding encoding = EncodingDetector.Detect(sampleBytes);
+		    Encoding encoding = DetectEncoding(sampleBytes);
             if (encoding == null)
             {
                 resultItem.IsSuccess = false;
@@ -233,7 +242,15 @@ namespace FindAndReplace
 			return resultItem;
 		}
 
-		public void CancelFind()
+	    private Encoding DetectEncoding(byte[] sampleBytes)
+	    {
+	        if (AlwaysUseEncoding != null)
+	            return AlwaysUseEncoding;
+
+            return EncodingDetector.Detect(sampleBytes, defaultEncoding: DefaultEncodingIfNotDetected);
+	    }
+
+	    public void CancelFind()
 		{
 			IsCancelRequested = true;
 		}

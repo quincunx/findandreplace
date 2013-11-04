@@ -173,7 +173,7 @@ namespace FindAndReplace.App
 
                     if (_lastOperationFormData.ShowEncoding)
                         gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileEncoding != null
-                                                                                    ? findResultItem.FileEncoding.EncodingName
+                                                                                    ? findResultItem.FileEncoding.WebName
                                                                                     : String.Empty;
 
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.NumMatches;
@@ -471,7 +471,7 @@ namespace FindAndReplace.App
 
 				    if (_lastOperationFormData.ShowEncoding)
 				        gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileEncoding != null
-				                                                                    ? replaceResultItem.FileEncoding.EncodingName
+				                                                                    ? replaceResultItem.FileEncoding.WebName
 				                                                                    : String.Empty;
 
                     gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.NumMatches;
