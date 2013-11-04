@@ -78,5 +78,22 @@ namespace FindAndReplace.App
 			return result;
 		}
 
+	    public static ValidationResult IsValidEncoding(string encodingName, string itemName)
+	    {
+            var result = new ValidationResult() { IsSuccess = true, FieldName = itemName };
+
+            try
+            {
+                Encoding.GetEncoding(encodingName);
+
+            }
+            catch (ArgumentException)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage = "Invalid encoding name";
+            }
+
+            return result;
+	    }
 	}
 }

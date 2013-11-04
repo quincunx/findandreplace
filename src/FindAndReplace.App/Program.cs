@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using CommandLine;
 
@@ -131,8 +132,17 @@ namespace FindAndReplace.App
 			validationResultList.Add(ValidationUtils.IsDirValid(_options.Dir, "dir"));
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FileMask, "fileMask"));
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FindText, "find"));
+            validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FindText, "find"));
 
-			if (_options.IsFindTextHasRegEx) validationResultList.Add(ValidationUtils.IsValidRegExp(_options.FindText, "find"));
+			if (_options.IsFindTextHasRegEx) 
+                validationResultList.Add(ValidationUtils.IsValidRegExp(_options.FindText, "find"));
+
+            if (!(String.IsNullOrEmpty(_options.AlwaysUseEncoding)))
+                validationResultList.Add(ValidationUtils.IsValidEncoding(_options.AlwaysUseEncoding, "alwaysUseEncoding"));
+
+            if (!(String.IsNullOrEmpty(_options.DefaultEncodingIfNotDetected)))
+                validationResultList.Add(ValidationUtils.IsValidEncoding(_options.DefaultEncodingIfNotDetected, "alwaysUseEncoding"));
+
 
 			if (!String.IsNullOrEmpty(_options.LogFile))
 			{
@@ -173,10 +183,12 @@ namespace FindAndReplace.App
 			        finder.IsCaseSensitive = _options.IsCaseSensitive;
                     finder.FindTextHasRegEx = hasRegEx;
 			        finder.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
-			        finder.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
+                    finder.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
+			       
+                    finder.AlwaysUseEncoding = GetEncoding(_options.AlwaysUseEncoding);
+                    finder.DefaultEncodingIfNotDetected = GetEncoding(_options.DefaultEncodingIfNotDetected);
 
-
-			        finder.IsSilent = _options.Silent;
+                    finder.IsSilent = _options.Silent;
 
 			        finder.FileProcessed += OnFinderFileProcessed;
 
@@ -204,6 +216,9 @@ namespace FindAndReplace.App
 				    
 					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText);
 
+                    replacer.AlwaysUseEncoding = GetEncoding(_options.AlwaysUseEncoding);
+                    replacer.DefaultEncodingIfNotDetected = GetEncoding(_options.DefaultEncodingIfNotDetected);
+
 					replacer.IsSilent = _options.Silent;
 					
 					replacer.FileProcessed += OnReplacerFileProcessed;
@@ -228,7 +243,15 @@ namespace FindAndReplace.App
 		    return (int) dosErrorLevel;
 		}
 
-		private void OnFinderFileProcessed(object sender, FinderEventArgs e)
+	    private Encoding GetEncoding(string encodingName)
+	    {
+	        if (String.IsNullOrEmpty(encodingName))
+	            return null;
+
+            return Encoding.GetEncoding(encodingName);
+	    }
+
+	    private void OnFinderFileProcessed(object sender, FinderEventArgs e)
 		{
 			if (e.ResultItem.IncludeInResultsList && !e.IsSilent)
 				PrintFinderResultRow(e.ResultItem, e.Stats);
@@ -265,7 +288,7 @@ namespace FindAndReplace.App
 			PrintNameValuePair("File", item.FileRelativePath);
 
 			if (_options.ShowEncoding && item.FileEncoding != null)
-				PrintNameValuePair("Encoding", item.FileEncoding.EncodingName);
+				PrintNameValuePair("Encoding", item.FileEncoding.WebName);
 		}
 
 		public void PrintReplacerResultRow(Replacer.ReplaceResultItem item, Stats stats)
