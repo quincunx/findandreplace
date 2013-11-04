@@ -18,7 +18,25 @@ namespace FindAndReplace.App
         public bool ShowEncoding { get; set; }
 		public bool IncludeFilesWithoutMatches { get; set; }
         public string ReplaceText { get; set; }
-		
+
+		private static readonly string _versionIndependentRegKey;
+		static FormData()
+		{
+			_versionIndependentRegKey = GetVersionIndependentRegKey();
+		}
+
+		//Fix for Registry key changing for each new version
+		//http://stackoverflow.com/questions/1515943/application-userappdataregistry-and-version-number
+
+		private static string GetVersionIndependentRegKey()
+		{
+			//Keep using 1.0.0.0 for everything
+			string versionDependent = Application.UserAppDataRegistry.Name;
+			string versionIndependent = versionDependent.Substring(0, versionDependent.LastIndexOf("\\"));
+			versionIndependent = versionIndependent + "\\1.0.0.0";
+			return versionIndependent;
+		}
+
 		public void SaveToRegistry()
 		{
 			SaveValueToRegistry("Dir", Dir);
@@ -59,18 +77,20 @@ namespace FindAndReplace.App
 
 		private void SaveValueToRegistry(string name, string value)
 		{
-			Application.UserAppDataRegistry.SetValue(name, value, RegistryValueKind.String);
+			Registry.SetValue(_versionIndependentRegKey, name, value, RegistryValueKind.String);
 		}
 
 		private string GetValueFromRegistry(string name)
 		{
-			var value = Application.UserAppDataRegistry.GetValue(name);
+			var value = Registry.GetValue(_versionIndependentRegKey, name, null);
 
 			if (value != null)
 				return value.ToString();
 
 			return null;
 		}
+
+
 	}
 
 }
