@@ -4,11 +4,14 @@ namespace FindAndReplace
 {
 	public static class CommandLineUtils
 	{
-		public static string EncodeText(string original)
+		public static string EncodeText(string original, bool isRegularExpression = false)
 		{
-			return original
-				.Replace(Environment.NewLine, "\\n")
-				.Replace("\"", "\\\"");
+			var result = original.Replace(Environment.NewLine, "\\n");
+			
+			if (!isRegularExpression)
+				result = result.Replace("\"", "\\\"");
+
+			return result;
 		}
 
 		public static string DecodeText(string original, bool hasRegEx = false)

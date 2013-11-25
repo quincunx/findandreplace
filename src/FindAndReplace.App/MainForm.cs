@@ -562,7 +562,7 @@ namespace FindAndReplace.App
 									 chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
                                      chkShowEncoding.Checked ? " --showEncoding" : "",
 									 chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
-									 CommandLineUtils.EncodeText(txtFind.Text),
+									 CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked),
 									 CommandLineUtils.EncodeText(txtReplace.Text)
 									 );
 
