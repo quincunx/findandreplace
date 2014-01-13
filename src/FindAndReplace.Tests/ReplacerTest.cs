@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace FindAndReplace.Tests
@@ -312,5 +313,45 @@ namespace FindAndReplace.Tests
 					sr.Write(fileContent);
 			}			
 		}
+
+
+
+		//This is for reasearch
+		[Test]
+		public void Replace_WhenHasMatchEvaluator_AndStaticEvaluatorText_ReplacesText()
+		{
+			string text = "A x@x.com letter --- alphabetical ---- missing ---- lack release penchant slack acryllic laundry A x@x.com hh --- cease";
+			string findPattern = @"A x@x.com (.*?) ---";
+			string matchEvaluatorText = "---";
+			string replaceText = "-B-";
+			
+			var result = Regex.Replace(text, findPattern, (match =>
+			                                               ReplaceMatch(match, matchEvaluatorText, replaceText)));
+
+			Assert.AreEqual("A x@x.com letter -B- alphabetical ---- missing ---- lack release penchant slack acryllic laundry A x@x.com hh -B- cease", result);
+		}
+
+		private static string ReplaceMatch(Match match, string findText, string replaceText)
+		{
+			return Regex.Replace(match.ToString(), findText, replaceText);
+		}
+
+
+		[Test]
+		public void Replace_WhenHasMatchEvaluator_AndDynamicEvaluatorText_ReplacesText()
+		{
+			//Let's say I want to replace (.* ?) with -B-
+			//MS Has many possibly patterns for replacement: http://msdn.microsoft.com/en-us/library/ewy2t5e0(v=vs.110).aspx
+			string text = "A x@x.com letter --- alphabetical ---- missing ---- lack release penchant slack acryllic laundry A x@x.com hh --- cease";
+			string findPattern = @"A x@x.com (.*?) ---";
+			string matchEvaluatorText = "$1";
+			string replaceText = "-B-";
+
+			var result = Regex.Replace(text, findPattern, (match =>
+			                                               ReplaceMatch(match, matchEvaluatorText, replaceText)));
+
+			Assert.AreEqual("A x@x.com -B- --- alphabetical ---- missing ---- lack release penchant slack acryllic laundry A x@x.com -B- --- cease", result);
+		}
+
 	}
 }
