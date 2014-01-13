@@ -34,21 +34,21 @@ namespace FindAndReplace
 		public string Dir { get; set; }
 		public bool IncludeSubDirectories { get; set; }
 		public string FileMask { get; set; }
-        public string ExcludeFileMask { get; set; }
-		
-        public string FindText { get; set; }
+		public string ExcludeFileMask { get; set; }
+
+		public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool FindTextHasRegEx { get; set; }
 		public bool SkipBinaryFileDetection { get; set; }
 
-        public Encoding AlwaysUseEncoding { get; set; }
-        public Encoding DefaultEncodingIfNotDetected { get; set; }
+		public Encoding AlwaysUseEncoding { get; set; }
+		public Encoding DefaultEncodingIfNotDetected { get; set; }
 
 		public bool IncludeFilesWithoutMatches { get; set; }
-        public bool IsSilent { get; set; }
+		public bool IsSilent { get; set; }
 
 		public bool IsCancelRequested { get; set; }
-		
+
 
 		public class FindResultItem : ResultItem
 		{
@@ -79,12 +79,12 @@ namespace FindAndReplace
 			Verify.Argument.IsNotEmpty(FindText, "FindText");
 
 			Status status = Status.Processing;
-			
+
 			StopWatch.Start("GetFilesInDirectory");
 
 			//time
 			var startTime = DateTime.Now;
-			
+
 
 			string[] filesInDirectory = Utils.GetFilesInDirectory(Dir, FileMask, IncludeSubDirectories, ExcludeFileMask);
 
@@ -118,7 +118,7 @@ namespace FindAndReplace
 				{
 					if (resultItem.FailedToOpen)
 						stats.Files.FailedToRead++;
-		
+
 					if (resultItem.IsBinaryFile)
 						stats.Files.Binary++;
 				}
@@ -210,17 +210,17 @@ namespace FindAndReplace
 				StopWatch.Stop("IsBinaryFile");
 			}
 
-		    Encoding encoding = DetectEncoding(sampleBytes);
-            if (encoding == null)
-            {
-                resultItem.IsSuccess = false;
-                resultItem.FailedToOpen = true;
-                resultItem.ErrorMessage = "Could not detect file encoding.";
-                return resultItem;
-            }
+			Encoding encoding = DetectEncoding(sampleBytes);
+			if (encoding == null)
+			{
+				resultItem.IsSuccess = false;
+				resultItem.FailedToOpen = true;
+				resultItem.ErrorMessage = "Could not detect file encoding.";
+				return resultItem;
+			}
 
 			resultItem.FileEncoding = encoding;
-			
+
 			StopWatch.Start("ReadFullFileContent");
 
 			string fileContent;
@@ -242,21 +242,21 @@ namespace FindAndReplace
 			return resultItem;
 		}
 
-	    private Encoding DetectEncoding(byte[] sampleBytes)
-	    {
-	        if (AlwaysUseEncoding != null)
-	            return AlwaysUseEncoding;
+		private Encoding DetectEncoding(byte[] sampleBytes)
+		{
+			if (AlwaysUseEncoding != null)
+				return AlwaysUseEncoding;
 
-            return EncodingDetector.Detect(sampleBytes, defaultEncoding: DefaultEncodingIfNotDetected);
-	    }
+			return EncodingDetector.Detect(sampleBytes, defaultEncoding: DefaultEncodingIfNotDetected);
+		}
 
-	    public void CancelFind()
+		public void CancelFind()
 		{
 			IsCancelRequested = true;
 		}
 
-	
-		
+
+
 		public event FileProcessedEventHandler FileProcessed;
 
 		protected virtual void OnFileProcessed(FinderEventArgs e)
@@ -265,6 +265,6 @@ namespace FindAndReplace
 				FileProcessed(this, e);
 		}
 
-		
+
 	}
 }

@@ -15,7 +15,7 @@ namespace FindAndReplace.App
 
 		public string FieldName { get; set; }
 	}
-	
+
 	public static class ValidationUtils
 	{
 		public static ValidationResult IsDirValid(string dir, string itemName)
@@ -49,7 +49,7 @@ namespace FindAndReplace.App
 
 		public static ValidationResult IsNotEmpty(string text, string itemName)
 		{
-			var result = new ValidationResult() { IsSuccess = true, FieldName = itemName};
+			var result = new ValidationResult() {IsSuccess = true, FieldName = itemName};
 
 			if (text.Trim() == "")
 			{
@@ -63,7 +63,7 @@ namespace FindAndReplace.App
 
 		public static ValidationResult IsValidRegExp(string text, string itemName)
 		{
-			var result = new ValidationResult() { IsSuccess = true, FieldName = itemName };
+			var result = new ValidationResult() {IsSuccess = true, FieldName = itemName};
 
 			try
 			{
@@ -78,22 +78,22 @@ namespace FindAndReplace.App
 			return result;
 		}
 
-	    public static ValidationResult IsValidEncoding(string encodingName, string itemName)
-	    {
-            var result = new ValidationResult() { IsSuccess = true, FieldName = itemName };
+		public static ValidationResult IsValidEncoding(string encodingName, string itemName)
+		{
+			var result = new ValidationResult() {IsSuccess = true, FieldName = itemName};
 
-            try
-            {
-                Encoding.GetEncoding(encodingName);
+			try
+			{
+				Encoding.GetEncoding(encodingName);
 
-            }
-            catch (ArgumentException)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = "Invalid encoding name";
-            }
+			}
+			catch (ArgumentException)
+			{
+				result.IsSuccess = false;
+				result.ErrorMessage = "Invalid encoding name";
+			}
 
-            return result;
-	    }
+			return result;
+		}
 	}
 }

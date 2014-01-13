@@ -21,12 +21,12 @@ namespace FindAndReplace.App
 		private Replacer _replacer;
 		private Thread _currentThread;
 
-        public bool _isFindOnly;
-	    private FormData _lastOperationFormData;
-	    
+		public bool _isFindOnly;
+		private FormData _lastOperationFormData;
+
 
 		private delegate void SetFindResultCallback(Finder.FindResultItem resultItem, Stats stats, Status status);
-		
+
 		private delegate void SetReplaceResultCallback(Replacer.ReplaceResultItem resultItem, Stats stats, Status status);
 
 		public MainForm()
@@ -46,7 +46,7 @@ namespace FindAndReplace.App
 
 			if (!ValidateForm())
 				return;
-			
+
 			PrepareFinderGrid();
 
 			lblStats.Text = "";
@@ -80,10 +80,10 @@ namespace FindAndReplace.App
 		{
 			var data = new FormData();
 
-		    data.IsFindOnly = _isFindOnly;
+			data.IsFindOnly = _isFindOnly;
 
 			data.Dir = txtDir.Text;
-            data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
+			data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			data.FileMask = txtFileMask.Text;
 			data.ExcludeFileMask = txtExcludeFileMask.Text;
 			data.FindText = txtFind.Text;
@@ -91,12 +91,12 @@ namespace FindAndReplace.App
 			data.IsRegEx = chkIsRegEx.Checked;
 			data.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			data.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
-            data.ShowEncoding = chkShowEncoding.Checked;
+			data.ShowEncoding = chkShowEncoding.Checked;
 			data.ReplaceText = txtReplace.Text;
 
 			data.SaveToRegistry();
 
-		    _lastOperationFormData = data;
+			_lastOperationFormData = data;
 		}
 
 
@@ -110,14 +110,14 @@ namespace FindAndReplace.App
 			AddResultsColumn("Filename", "Filename", 250);
 			AddResultsColumn("Path", "Path", 450);
 
-            if (chkShowEncoding.Checked)
-                AddResultsColumn("FileEncoding", "Encoding", 100);
-			
+			if (chkShowEncoding.Checked)
+				AddResultsColumn("FileEncoding", "Encoding", 100);
+
 			AddResultsColumn("NumMatches", "Matches", 50);
 			AddResultsColumn("ErrorMessage", "Error", 150);
 
-            gvResults.Columns.Add("MatchesPreview", "");
-            gvResults.Columns[gvResults.ColumnCount - 1].Visible = false;
+			gvResults.Columns.Add("MatchesPreview", "");
+			gvResults.Columns[gvResults.ColumnCount - 1].Visible = false;
 
 			HideMatchesPreviewPanel();
 
@@ -127,13 +127,13 @@ namespace FindAndReplace.App
 		private void AddResultsColumn(string dataPropertyName, string headerText, int width)
 		{
 			gvResults.Columns.Add(new DataGridViewColumn()
-			                      	{
-			                      		DataPropertyName = dataPropertyName,
-			                      		HeaderText = headerText,
-			                      		CellTemplate = new DataGridViewTextBoxCell(),
-			                      		Width = width,
-			                      		SortMode = DataGridViewColumnSortMode.Automatic
-			                      	});
+				{
+					DataPropertyName = dataPropertyName,
+					HeaderText = headerText,
+					CellTemplate = new DataGridViewTextBoxCell(),
+					Width = width,
+					SortMode = DataGridViewColumnSortMode.Automatic
+				});
 		}
 
 		private void CreateListener(Finder finder)
@@ -151,7 +151,7 @@ namespace FindAndReplace.App
 			else
 			{
 				SetFindResultCallback findResultCallback = ShowFindResult;
-				this.Invoke(findResultCallback, new object[] { e.ResultItem, e.Stats, e.Status });
+				this.Invoke(findResultCallback, new object[] {e.ResultItem, e.Stats, e.Status});
 			}
 		}
 
@@ -167,44 +167,48 @@ namespace FindAndReplace.App
 
 					gvResults.Rows[currentRow].ContextMenuStrip = CreateContextMenu(currentRow);
 
-				    int columnIndex = 0;
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileName;
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileRelativePath;
+					int columnIndex = 0;
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileName;
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileRelativePath;
 
-                    if (_lastOperationFormData.ShowEncoding)
-                        gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileEncoding != null
-                                                                                    ? findResultItem.FileEncoding.WebName
-                                                                                    : String.Empty;
+					if (_lastOperationFormData.ShowEncoding)
+						gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.FileEncoding != null
+							                                                        ? findResultItem.FileEncoding.WebName
+							                                                        : String.Empty;
 
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.NumMatches;
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.ErrorMessage;
-					
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.NumMatches;
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = findResultItem.ErrorMessage;
+
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
-					if (findResultItem.IsSuccess  && findResultItem.NumMatches > 0)  //Account for errors and IncludeFilesWithoutMatches
+					if (findResultItem.IsSuccess && findResultItem.NumMatches > 0) //Account for errors and IncludeFilesWithoutMatches
 					{
 						string fileContent = string.Empty;
-						
+
 						using (var sr = new StreamReader(findResultItem.FilePath, findResultItem.FileEncoding))
 						{
 							fileContent = sr.ReadToEnd();
 						}
 
-						
-						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, findResultItem.Matches);
-						gvResults.Rows[currentRow].Cells[columnIndex].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
+
+						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent,
+						                                                                                 findResultItem.Matches);
+						gvResults.Rows[currentRow].Cells[columnIndex].Value = GenerateMatchesPreviewText(fileContent,
+						                                                                                 lineNumbers.Select(
+							                                                                                 ln => ln.LineNumber).ToList());
 					}
 
 					//Grid likes to select the first row for some reason
 					if (gvResults.Rows.Count == 1)
 						gvResults.ClearSelection();
-					
+
 				}
 
 				progressBar.Maximum = stats.Files.Total;
 				progressBar.Value = stats.Files.Processed;
 
-				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +  findResultItem.FileRelativePath;
+				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
+				                 findResultItem.FileRelativePath;
 
 				ShowStats(stats);
 			}
@@ -216,21 +220,21 @@ namespace FindAndReplace.App
 
 				HideStats();
 			}
-			
-			
+
+
 
 			//When last file - enable buttons back
 			if (status == Status.Completed || status == Status.Cancelled)
 			{
 				if (status == Status.Completed)
 					lblStatus.Text = "Processed " + stats.Files.Processed + " files.";
-				
+
 				if (status == Status.Cancelled)
 					lblStatus.Text = "Operation was cancelled.";
 
 				EnableButtons();
 			}
-				
+
 		}
 
 		private void DisableButtons()
@@ -265,7 +269,7 @@ namespace FindAndReplace.App
 			DisableButtons();
 
 			txtNoMatches.Visible = false;
-			
+
 			HideCommandLinePanel();
 			HideMatchesPreviewPanel();
 
@@ -294,7 +298,7 @@ namespace FindAndReplace.App
 				this.Width -= ExtraWidthWhenResults;
 			}
 		}
-		
+
 		private void ShowCommandLinePanel()
 		{
 			HideResultPanel();
@@ -363,9 +367,9 @@ namespace FindAndReplace.App
 			if (firstInvalidControl != null)
 				firstInvalidControl.Focus();
 
-            if (!isFormValid && this.AutoValidate == AutoValidate.Disable)
-                this.AutoValidate = AutoValidate.EnablePreventFocusChange;  //Revalidate on focus change
-		    
+			if (!isFormValid && this.AutoValidate == AutoValidate.Disable)
+				this.AutoValidate = AutoValidate.EnablePreventFocusChange; //Revalidate on focus change
+
 			return isFormValid;
 		}
 
@@ -378,8 +382,9 @@ namespace FindAndReplace.App
 
 			if (String.IsNullOrEmpty(txtReplace.Text))
 			{
-				DialogResult dlgResult = MessageBox.Show(this, 
-														"Are you sure you would like to replace with an empty string?", "Replace Confirmation",
+				DialogResult dlgResult = MessageBox.Show(this,
+				                                         "Are you sure you would like to replace with an empty string?",
+				                                         "Replace Confirmation",
 				                                         MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				if (dlgResult == DialogResult.No)
 					return;
@@ -399,7 +404,7 @@ namespace FindAndReplace.App
 			replacer.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			replacer.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			replacer.ReplaceText = txtReplace.Text;
-		
+
 			ShowResultPanel();
 
 			lblStats.Text = "";
@@ -432,18 +437,18 @@ namespace FindAndReplace.App
 			gvResults.Columns.Clear();
 
 			AddResultsColumn("Filename", "Filename", 250);
-            AddResultsColumn("Path", "Path", 400);
-			
-            if (chkShowEncoding.Checked)
-                AddResultsColumn("FileEncoding", "Encoding", 100);
-			
-            AddResultsColumn("NumMatches", "Matches", 50);
+			AddResultsColumn("Path", "Path", 400);
+
+			if (chkShowEncoding.Checked)
+				AddResultsColumn("FileEncoding", "Encoding", 100);
+
+			AddResultsColumn("NumMatches", "Matches", 50);
 			AddResultsColumn("IsSuccess", "Replaced", 60);
 			AddResultsColumn("ErrorMessage", "Error", 150);
 
 			gvResults.Columns.Add("MatchesPreview", "");
-            gvResults.Columns[gvResults.ColumnCount - 1 ].Visible = false;
-        
+			gvResults.Columns[gvResults.ColumnCount - 1].Visible = false;
+
 			HideMatchesPreviewPanel();
 			progressBar.Value = 0;
 		}
@@ -465,22 +470,23 @@ namespace FindAndReplace.App
 
 					gvResults.Rows[currentRow].ContextMenuStrip = CreateContextMenu(currentRow);
 
-				    int columnIndex = 0;
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileName;
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileRelativePath;
+					int columnIndex = 0;
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileName;
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileRelativePath;
 
-				    if (_lastOperationFormData.ShowEncoding)
-				        gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileEncoding != null
-				                                                                    ? replaceResultItem.FileEncoding.WebName
-				                                                                    : String.Empty;
+					if (_lastOperationFormData.ShowEncoding)
+						gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.FileEncoding != null
+							                                                        ? replaceResultItem.FileEncoding.WebName
+							                                                        : String.Empty;
 
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.NumMatches;
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.IsReplaced ? "Yes" : "No";
-                    gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.ErrorMessage;
-					
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.NumMatches;
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.IsReplaced ? "Yes" : "No";
+					gvResults.Rows[currentRow].Cells[columnIndex++].Value = replaceResultItem.ErrorMessage;
+
 					gvResults.Rows[currentRow].Resizable = DataGridViewTriState.False;
 
-					if (replaceResultItem.IsSuccess && replaceResultItem.NumMatches > 0)  //Account for errors and IncludeFilesWithoutMatches
+					if (replaceResultItem.IsSuccess && replaceResultItem.NumMatches > 0)
+						//Account for errors and IncludeFilesWithoutMatches
 					{
 						string fileContent = string.Empty;
 
@@ -488,9 +494,14 @@ namespace FindAndReplace.App
 						{
 							fileContent = sr.ReadToEnd();
 						}
-						
-						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent, replaceResultItem.Matches, _lastOperationFormData.ReplaceText.Length, true);
-                        gvResults.Rows[currentRow].Cells[columnIndex].Value = GenerateMatchesPreviewText(fileContent, lineNumbers.Select(ln => ln.LineNumber).ToList());
+
+						List<MatchPreviewLineNumber> lineNumbers = Utils.GetLineNumbersForMatchesPreview(fileContent,
+						                                                                                 replaceResultItem.Matches,
+						                                                                                 _lastOperationFormData
+							                                                                                 .ReplaceText.Length, true);
+						gvResults.Rows[currentRow].Cells[columnIndex].Value = GenerateMatchesPreviewText(fileContent,
+						                                                                                 lineNumbers.Select(
+							                                                                                 ln => ln.LineNumber).ToList());
 					}
 
 					//Grid likes to select the first row for some reason
@@ -501,7 +512,9 @@ namespace FindAndReplace.App
 				progressBar.Maximum = stats.Files.Total;
 				progressBar.Value = stats.Files.Processed;
 
-				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " + replaceResultItem.FileRelativePath;;
+				lblStatus.Text = "Processing " + stats.Files.Processed + " of " + stats.Files.Total + " files.  Last file: " +
+				                 replaceResultItem.FileRelativePath;
+				;
 
 				ShowStats(stats, true);
 			}
@@ -513,7 +526,7 @@ namespace FindAndReplace.App
 
 				HideStats();
 			}
-			
+
 
 			//When last file - enable buttons back
 			if (status == Status.Completed || status == Status.Cancelled)
@@ -532,12 +545,12 @@ namespace FindAndReplace.App
 		{
 			if (!this.gvResults.InvokeRequired)
 			{
-				ShowReplaceResult(e.ResultItem,  e.Stats, e.Status);
+				ShowReplaceResult(e.ResultItem, e.Stats, e.Status);
 			}
 			else
 			{
 				var replaceResultCallback = new SetReplaceResultCallback(ShowReplaceResult);
-				this.Invoke(replaceResultCallback, new object[] { e.ResultItem, e.Stats, e.Status });
+				this.Invoke(replaceResultCallback, new object[] {e.ResultItem, e.Stats, e.Status});
 			}
 		}
 
@@ -548,23 +561,27 @@ namespace FindAndReplace.App
 
 			ShowCommandLinePanel();
 			lblStats.Text = "";
-			
+
 			txtCommandLine.Clear();
-			
-			string s = String.Format("\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9} --find \"{10}\" --replace \"{11}\"",
-									 Application.ExecutablePath,
-									 txtDir.Text.TrimEnd('\\'),
-									 txtFileMask.Text,
-									 String.IsNullOrEmpty(txtExcludeFileMask.Text) ? "" : String.Format(" --excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludeFileMask.Text)),
-									 chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
-									 chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
-									 chkIsRegEx.Checked ? " --useRegEx" : "",
-									 chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
-                                     chkShowEncoding.Checked ? " --showEncoding" : "",
-									 chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
-									 CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked),
-									 CommandLineUtils.EncodeText(txtReplace.Text)
-									 );
+
+			string s =
+				String.Format(
+					"\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9} --find \"{10}\" --replace \"{11}\"",
+					Application.ExecutablePath,
+					txtDir.Text.TrimEnd('\\'),
+					txtFileMask.Text,
+					String.IsNullOrEmpty(txtExcludeFileMask.Text)
+						? ""
+						: String.Format(" --excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludeFileMask.Text)),
+					chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
+					chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
+					chkIsRegEx.Checked ? " --useRegEx" : "",
+					chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
+					chkShowEncoding.Checked ? " --showEncoding" : "",
+					chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
+					CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked),
+					CommandLineUtils.EncodeText(txtReplace.Text)
+					);
 
 			txtCommandLine.Text = s;
 		}
@@ -618,10 +635,10 @@ namespace FindAndReplace.App
 
 		private void gvResults_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
-            if (e.RowIndex == -1)   //heading
-                return;
+			if (e.RowIndex == -1) //heading
+				return;
 
-            int matchedPreviewColIndex = gvResults.ColumnCount - 1; //Always last column
+			int matchedPreviewColIndex = gvResults.ColumnCount - 1; //Always last column
 
 			if (gvResults.Rows[e.RowIndex].Cells[matchedPreviewColIndex].Value == null)
 			{
@@ -631,21 +648,24 @@ namespace FindAndReplace.App
 
 			ShowMatchesPreviewPanel();
 
-            var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchedPreviewColIndex].Value.ToString();
+			var matchesPreviewText = gvResults.Rows[e.RowIndex].Cells[matchedPreviewColIndex].Value.ToString();
 
 			txtMatchesPreview.SelectionLength = 0;
 			txtMatchesPreview.Clear();
 
 			txtMatchesPreview.Text = matchesPreviewText;
-		
+
 			var font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
 
-            //Use _lastOperation form data since user may change it before clicking on preview
-            var findText = _lastOperationFormData.IsFindOnly ? _lastOperationFormData.FindText : _lastOperationFormData.ReplaceText;
-            findText = findText.Replace("\r\n", "\n");
+			//Use _lastOperation form data since user may change it before clicking on preview
+			var findText = _lastOperationFormData.IsFindOnly
+				               ? _lastOperationFormData.FindText
+				               : _lastOperationFormData.ReplaceText;
+			findText = findText.Replace("\r\n", "\n");
 
-            findText = (_lastOperationFormData.IsRegEx && _lastOperationFormData.IsFindOnly) ? findText : Regex.Escape(findText);
-            var mathches = Regex.Matches(txtMatchesPreview.Text, findText, Utils.GetRegExOptions(_lastOperationFormData.IsCaseSensitive));
+			findText = (_lastOperationFormData.IsRegEx && _lastOperationFormData.IsFindOnly) ? findText : Regex.Escape(findText);
+			var mathches = Regex.Matches(txtMatchesPreview.Text, findText,
+			                             Utils.GetRegExOptions(_lastOperationFormData.IsCaseSensitive));
 
 			int count = 0;
 			int maxCount = 1000;
@@ -673,13 +693,14 @@ namespace FindAndReplace.App
 		{
 			var separator = Environment.NewLine;
 
-			var lines = content.Split(new string[] { separator }, StringSplitOptions.None);
+			var lines = content.Split(new string[] {separator}, StringSplitOptions.None);
 
 			var stringBuilder = new StringBuilder();
 
 			rowNumbers = rowNumbers.Distinct().OrderBy(r => r).ToList();
 			var prevLineIndex = 0;
-			string lineSeparator = ("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
+			string lineSeparator =
+				("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
 
 			foreach (var rowNumber in rowNumbers)
 			{
@@ -704,7 +725,7 @@ namespace FindAndReplace.App
 		//from http://stackoverflow.com/questions/334630/c-open-folder-and-select-the-file
 		private void gvResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.RowIndex == -1)   //heading
+			if (e.RowIndex == -1) //heading
 				return;
 
 			OpenFileUsingExternalApp(e.RowIndex);
@@ -751,7 +772,7 @@ namespace FindAndReplace.App
 			Process.Start("explorer.exe", argument);
 		}
 
-		private void ShowStats(Stats stats, bool showReplaceStats=false)
+		private void ShowStats(Stats stats, bool showReplaceStats = false)
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("Files:");
@@ -761,10 +782,10 @@ namespace FindAndReplace.App
 			sb.AppendLine("- With Matches: " + stats.Files.WithMatches);
 			sb.AppendLine("- Without Matches: " + stats.Files.WithoutMatches);
 			sb.AppendLine("- Failed to Open: " + stats.Files.FailedToRead);
-			
+
 			if (showReplaceStats)
 				sb.AppendLine("- Failed to Write: " + stats.Files.FailedToWrite);
-			
+
 			sb.AppendLine("");
 			sb.AppendLine("Matches:");
 			sb.AppendLine("- Found: " + stats.Matches.Found);
@@ -781,7 +802,7 @@ namespace FindAndReplace.App
 				sb.AppendLine("Time:");
 				sb.AppendLine("- Passed: " + Utils.FormatTimeSpan(stats.Time.Passed));
 
-				if (passedSeconds >= 3 && (int)remainingSeconds != 0)
+				if (passedSeconds >= 3 && (int) remainingSeconds != 0)
 				{
 					sb.AppendLine("- Remaining: " + Utils.FormatTimeSpan(stats.Time.Remaining) + " (estimated)");
 				}
@@ -795,7 +816,7 @@ namespace FindAndReplace.App
 		{
 			lblStats.Text = String.Empty;
 		}
-		
+
 
 		public class GVResultEventArgs : EventArgs
 		{
@@ -818,21 +839,21 @@ namespace FindAndReplace.App
 			var data = new FormData();
 			if (data.IsEmpty()) //Keep defaults
 				return;
-			
+
 			data.LoadFromRegistry();
 
 			txtDir.Text = data.Dir;
-            chkIncludeSubDirectories.Checked = data.IncludeSubDirectories;
+			chkIncludeSubDirectories.Checked = data.IncludeSubDirectories;
 			txtFileMask.Text = data.FileMask;
 			txtExcludeFileMask.Text = data.ExcludeFileMask;
 			txtFind.Text = data.FindText;
 			chkIsCaseSensitive.Checked = data.IsCaseSensitive;
-            chkIsRegEx.Checked = data.IsRegEx;
-            chkSkipBinaryFileDetection.Checked = data.SkipBinaryFileDetection;
+			chkIsRegEx.Checked = data.IsRegEx;
+			chkSkipBinaryFileDetection.Checked = data.SkipBinaryFileDetection;
 			chkIncludeFilesWithoutMatches.Checked = data.IncludeFilesWithoutMatches;
-            chkShowEncoding.Checked = data.ShowEncoding;
-            txtReplace.Text = data.ReplaceText;
-        }
+			chkShowEncoding.Checked = data.ShowEncoding;
+			txtReplace.Text = data.ReplaceText;
+		}
 
 		private void btnSelectDir_Click(object sender, EventArgs e)
 		{
