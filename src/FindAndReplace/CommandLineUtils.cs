@@ -9,7 +9,7 @@ namespace FindAndReplace
 			var result = original.Replace(Environment.NewLine, "\\n");
 			
 			if (!isRegularExpression)
-				result = result.Replace("\"", "\\\"");
+				result = result.Replace(@"\", @"\\");
 
 			return result;
 		}
@@ -23,8 +23,8 @@ namespace FindAndReplace
 		    if (!hasRegEx) 
 		        decoded = decoded.Replace("\\n", Environment.NewLine);  
 			
-            decoded =decoded.Replace("\\\"", "\"");
-		    return decoded;
+			decoded = decoded.Replace("\\", @"\");
+			return decoded;
 		}
 	}
 }
