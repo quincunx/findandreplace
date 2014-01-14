@@ -23,14 +23,14 @@ namespace FindAndReplace
 	}
 
 	public delegate void ReplaceFileProcessedEventHandler(object sender, ReplacerEventArgs e);
-	
+
 	public class Replacer
 	{
 		public string Dir { get; set; }
 		public bool IncludeSubDirectories { get; set; }
-        public string FileMask { get; set; }
+		public string FileMask { get; set; }
 		public string ExcludeFileMask { get; set; }
-		
+
 
 		public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
@@ -38,12 +38,12 @@ namespace FindAndReplace
 		public bool SkipBinaryFileDetection { get; set; }
 		public bool IncludeFilesWithoutMatches { get; set; }
 
-        public string ReplaceText { get; set; }
-		
-        public Encoding AlwaysUseEncoding { get; set; }
-        public Encoding DefaultEncodingIfNotDetected { get; set; }
-        
-        public bool IsCancelRequested { get; set; }
+		public string ReplaceText { get; set; }
+
+		public Encoding AlwaysUseEncoding { get; set; }
+		public Encoding DefaultEncodingIfNotDetected { get; set; }
+
+		public bool IsCancelRequested { get; set; }
 		public bool IsSupressOutput { get; set; }
 		public bool IsSilent { get; set; }
 
@@ -76,7 +76,7 @@ namespace FindAndReplace
 			stats.Files.Total = filesInDirectory.Length;
 
 			var startTimeProcessingFiles = DateTime.Now;
-			
+
 			foreach (string filePath in filesInDirectory)
 			{
 				var resultItem = ReplaceTextInFile(filePath);
@@ -99,31 +99,31 @@ namespace FindAndReplace
 				{
 					if (resultItem.FailedToOpen)
 						stats.Files.FailedToRead++;
-		
+
 					if (resultItem.IsBinaryFile)
 						stats.Files.Binary++;
 
 					if (resultItem.FailedToWrite)
 						stats.Files.FailedToWrite++;
 				}
-				
+
 				if (resultItem.IncludeInResultsList)
 					resultItems.Add(resultItem);
 
 				stats.UpdateTime(startTime, startTimeProcessingFiles);
 
-				if (IsCancelRequested) 
+				if (IsCancelRequested)
 					status = Status.Cancelled;
 
 				if (stats.Files.Total == stats.Files.Processed)
 					status = Status.Completed;
-				
+
 				OnFileProcessed(new ReplacerEventArgs(resultItem, stats, status, IsSilent));
 
 				if (status == Status.Cancelled)
 					break;
 			}
-	
+
 			if (filesInDirectory.Length == 0)
 			{
 				status = Status.Completed;
@@ -140,7 +140,7 @@ namespace FindAndReplace
 
 			var resultItem = new ReplaceResultItem();
 			resultItem.IsSuccess = true;
-			resultItem.IncludeFilesWithoutMatches = IncludeFilesWithoutMatches;  //only used internally
+			resultItem.IncludeFilesWithoutMatches = IncludeFilesWithoutMatches; //only used internally
 
 			resultItem.FileName = Path.GetFileName(filePath);
 			resultItem.FilePath = filePath;
@@ -175,17 +175,17 @@ namespace FindAndReplace
 				}
 			}
 
-			if (!resultItem.IsSuccess) 
+			if (!resultItem.IsSuccess)
 				return resultItem;
 
 			Encoding encoding = DetectEncoding(sampleBytes);
-            if (encoding == null)
-            {
-                resultItem.IsSuccess = false;
-                resultItem.FailedToOpen = true;
-                resultItem.ErrorMessage = "Could not detect file encoding.";
-                return resultItem;
-            }
+			if (encoding == null)
+			{
+				resultItem.IsSuccess = false;
+				resultItem.FailedToOpen = true;
+				resultItem.ErrorMessage = "Could not detect file encoding.";
+				return resultItem;
+			}
 
 			resultItem.FileEncoding = encoding;
 
@@ -197,17 +197,17 @@ namespace FindAndReplace
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
 			var matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, regexOptions);
-			
+
 			resultItem.NumMatches = matches.Count;
 			resultItem.Matches = matches;
-		
+
 			if (matches.Count > 0)
 			{
-			    string escapedFindText = FindText;
-			    if (!FindTextHasRegEx)
-                    escapedFindText = Regex.Escape(FindText);
+				string escapedFindText = FindText;
+				if (!FindTextHasRegEx)
+					escapedFindText = Regex.Escape(FindText);
 
-                string newContent = Regex.Replace(fileContent, escapedFindText, ReplaceText, regexOptions);
+				string newContent = Regex.Replace(fileContent, escapedFindText, ReplaceText, regexOptions);
 
 				try
 				{
@@ -228,18 +228,18 @@ namespace FindAndReplace
 		}
 
 
-        private Encoding DetectEncoding(byte[] sampleBytes)
-        {
-            if (AlwaysUseEncoding != null)
-                return AlwaysUseEncoding;
+		private Encoding DetectEncoding(byte[] sampleBytes)
+		{
+			if (AlwaysUseEncoding != null)
+				return AlwaysUseEncoding;
 
-            return EncodingDetector.Detect(sampleBytes, defaultEncoding: DefaultEncodingIfNotDetected);
-        }
+			return EncodingDetector.Detect(sampleBytes, defaultEncoding: DefaultEncodingIfNotDetected);
+		}
 
-        public void CancelReplace()
-        {
-            IsCancelRequested = true;
-        }
+		public void CancelReplace()
+		{
+			IsCancelRequested = true;
+		}
 
 		public event ReplaceFileProcessedEventHandler FileProcessed;
 

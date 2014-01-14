@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace FindAndReplace.Tests
@@ -312,5 +313,6 @@ namespace FindAndReplace.Tests
 					sr.Write(fileContent);
 			}			
 		}
+
 	}
 }
