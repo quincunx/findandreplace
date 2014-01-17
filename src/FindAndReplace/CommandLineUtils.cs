@@ -23,7 +23,7 @@ namespace FindAndReplace
 		    if (!hasRegEx) 
 		        decoded = decoded.Replace("\\n", Environment.NewLine);  
 			
-			decoded = decoded.Replace("\\", @"\");
+			decoded = decoded.Replace(@"\\", @"\");
 			return decoded;
 		}
 	}
