@@ -5,21 +5,22 @@ namespace FindAndReplace.App
 {
 	public class FormData
 	{
-        public bool IsFindOnly { get; set; }
+		public bool IsFindOnly { get; set; }
 
 		public string Dir { get; set; }
-        public bool IncludeSubDirectories { get; set; }
+		public bool IncludeSubDirectories { get; set; }
 		public string FileMask { get; set; }
-        public string ExcludeFileMask { get; set; }
-        public string FindText { get; set; }
+		public string ExcludeFileMask { get; set; }
+		public string FindText { get; set; }
 		public bool IsCaseSensitive { get; set; }
 		public bool IsRegEx { get; set; }
 		public bool SkipBinaryFileDetection { get; set; }
-        public bool ShowEncoding { get; set; }
+		public bool ShowEncoding { get; set; }
 		public bool IncludeFilesWithoutMatches { get; set; }
-        public string ReplaceText { get; set; }
+		public string ReplaceText { get; set; }
 
 		private static readonly string _versionIndependentRegKey;
+
 		static FormData()
 		{
 			_versionIndependentRegKey = GetVersionIndependentRegKey();
@@ -40,14 +41,14 @@ namespace FindAndReplace.App
 		public void SaveToRegistry()
 		{
 			SaveValueToRegistry("Dir", Dir);
-            SaveValueToRegistry("IncludeSubDirectories", IncludeSubDirectories.ToString());
+			SaveValueToRegistry("IncludeSubDirectories", IncludeSubDirectories.ToString());
 			SaveValueToRegistry("FileMask", FileMask);
 			SaveValueToRegistry("ExcludeFileMask", ExcludeFileMask);
 			SaveValueToRegistry("FindText", FindText);
 			SaveValueToRegistry("IsCaseSensitive", IsCaseSensitive.ToString());
 			SaveValueToRegistry("IsRegEx", IsRegEx.ToString());
 			SaveValueToRegistry("SkipBinaryFileDetection", SkipBinaryFileDetection.ToString());
-            SaveValueToRegistry("ShowEncoding", ShowEncoding.ToString());
+			SaveValueToRegistry("ShowEncoding", ShowEncoding.ToString());
 			SaveValueToRegistry("IncludeFilesWithoutMatches", IncludeFilesWithoutMatches.ToString());
 			SaveValueToRegistry("ReplaceText", ReplaceText);
 		}
@@ -62,7 +63,7 @@ namespace FindAndReplace.App
 		public void LoadFromRegistry()
 		{
 			Dir = GetValueFromRegistry("Dir");
-            IncludeSubDirectories = GetValueFromRegistry("IncludeSubDirectories") == "True";
+			IncludeSubDirectories = GetValueFromRegistry("IncludeSubDirectories") == "True";
 			FileMask = GetValueFromRegistry("Filemask");
 			ExcludeFileMask = GetValueFromRegistry("ExcludeFileMask");
 			FindText = GetValueFromRegistry("FindText");
@@ -70,8 +71,8 @@ namespace FindAndReplace.App
 			IsRegEx = GetValueFromRegistry("IsRegEx") == "True";
 			SkipBinaryFileDetection = GetValueFromRegistry("SkipBinaryFileDetection") == "True";
 			IncludeFilesWithoutMatches = GetValueFromRegistry("IncludeFilesWithoutMatches") == "True";
-            ShowEncoding = GetValueFromRegistry("ShowEncoding") == "True";
-		    ReplaceText = GetValueFromRegistry("ReplaceText");
+			ShowEncoding = GetValueFromRegistry("ShowEncoding") == "True";
+			ReplaceText = GetValueFromRegistry("ReplaceText");
 		}
 
 

@@ -341,36 +341,59 @@ namespace FindAndReplace.App
 			}
 		}
 
+
+		private bool _isFormValid = true;
+		private Control _firstInvalidControl = null;
+
 		private bool ValidateForm()
 		{
-			var isFormValid = true;
-			Control firstInvalidControl = null;
+			_isFormValid = true;
+			_firstInvalidControl = null;
 
-			foreach (Control control in Controls)
+			ValidateControls(Controls);
+
+			//Focus on first invalid control
+			if (_firstInvalidControl != null)
 			{
+				if (_firstInvalidControl == pnlFind)  //Handle pnlFind
+					_firstInvalidControl = txtFind;
+
+				_firstInvalidControl.Focus();
+			}
+
+			if (!_isFormValid && this.AutoValidate == AutoValidate.Disable)
+				this.AutoValidate = AutoValidate.EnablePreventFocusChange; //Revalidate on focus change
+
+			return _isFormValid;
+		}
+
+		private void ValidateControls(Control.ControlCollection controls)
+		{
+			foreach (Control control in controls)
+			{
+				if (control is Panel && !control.CausesValidation)  //handle pnlFind which causes validation
+				{
+					ValidateControls(control.Controls);
+					continue;
+				}
+
+				if (!control.CausesValidation)
+					continue;
+
 				control.Focus();
 
 				if (!Validate() || errorProvider1.GetError(control) != "")
 				{
-					if (isFormValid)
-						firstInvalidControl = control;
+					if (_isFormValid)
+						_firstInvalidControl = control;
 
-					isFormValid = false;
+					_isFormValid = false;
 				}
 				else
 				{
 					errorProvider1.SetError(control, "");
 				}
 			}
-
-			//Focus on first invalid control
-			if (firstInvalidControl != null)
-				firstInvalidControl.Focus();
-
-			if (!isFormValid && this.AutoValidate == AutoValidate.Disable)
-				this.AutoValidate = AutoValidate.EnablePreventFocusChange; //Revalidate on focus change
-
-			return isFormValid;
 		}
 
 		private void btnReplace_Click(object sender, EventArgs e)
@@ -612,13 +635,13 @@ namespace FindAndReplace.App
 			errorProvider1.SetError(txtFileMask, "");
 		}
 
-		private void txtFind_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		private void pnlFind_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			var validationResult = ValidationUtils.IsNotEmpty(txtFind.Text, "Find");
 
 			if (!validationResult.IsSuccess)
 			{
-				errorProvider1.SetError(txtFind, validationResult.ErrorMessage);
+				errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
 				return;
 			}
 
@@ -626,11 +649,11 @@ namespace FindAndReplace.App
 
 			if (chkIsRegEx.Checked && !validationResult.IsSuccess)
 			{
-				errorProvider1.SetError(txtFind, validationResult.ErrorMessage);
+				errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
 				return;
 			}
 
-			errorProvider1.SetError(txtFind, "");
+			errorProvider1.SetError(pnlFind, "");
 		}
 
 		private void gvResults_CellClick(object sender, DataGridViewCellEventArgs e)
