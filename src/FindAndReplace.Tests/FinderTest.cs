@@ -196,7 +196,6 @@ namespace FindAndReplace.Tests
 			Assert.IsNotNull(result);
 		}
 
-
 		[Test]
 		public void Find_WhenFindTextIsBinaryNull_FindsNoMatches()
 		{
@@ -213,7 +212,7 @@ namespace FindAndReplace.Tests
 		}
 
 		[Test]
-		public void ind_WhenFindTextIsBinaryNull_And_SkipBinaryFileDetection_FindsMatch()
+		public void Find_WhenFindTextIsBinaryNull_And_SkipBinaryFileDetection_FindsMatch()
 		{
 			Finder finder = new Finder();
 
@@ -243,7 +242,6 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual(0, resultItems.Count);
 		}
 
-
 		[Test]
 		public void Find_WhenSearchTextIsLicense12345_And_IncludeFilesWithoutMatches_Returns4Results()
 		{
@@ -256,7 +254,47 @@ namespace FindAndReplace.Tests
 
 			var resultItems = finder.Find().Items;
 
-			Assert.AreEqual(4, resultItems.Count);
+			Assert.AreEqual(5, resultItems.Count);
+		}
+
+		[Test]
+		public void Find_WheUseEscapeChars_ReturnsResults()
+		{
+			Finder finder = new Finder();
+
+			finder.Dir = _tempDir;
+			finder.FileMask = "test2.txt";
+			finder.FindText = @"\r\n";
+			finder.UseEscapeChars = true;
+
+			var resultItems = finder.Find().Items;
+
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual(4, resultItems[0].Matches.Count);
+
+			finder.FileMask = "test6.txt";
+			finder.FindText = @"\t";
+			finder.UseEscapeChars = true;
+
+			resultItems = finder.Find().Items;
+
+			Assert.AreEqual(1, resultItems.Count);
+			Assert.AreEqual(1, resultItems[0].Matches.Count);
+		}
+
+		[Test]
+		public void Find_WheNotUseEscapeChars_ReturnsEmptyResult()
+		{
+			Finder finder = new Finder();
+
+			finder.Dir = _tempDir;
+			finder.FileMask = "test2.txt";
+			finder.FindText = @"\r\n";
+			finder.UseEscapeChars = false;
+
+			var resultItems = finder.Find().Items;
+
+			Assert.AreEqual(0, resultItems.Count);
 		}
 
 	}
