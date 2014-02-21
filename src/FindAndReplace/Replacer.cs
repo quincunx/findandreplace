@@ -47,6 +47,8 @@ namespace FindAndReplace
 		public bool IsSupressOutput { get; set; }
 		public bool IsSilent { get; set; }
 
+		public bool UseEscapeChars { get; set; }
+
 		public class ReplaceResultItem : ResultItem
 		{
 			public bool FailedToWrite { get; set; }
@@ -196,7 +198,7 @@ namespace FindAndReplace
 
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
-			var matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, regexOptions);
+			var matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, UseEscapeChars, regexOptions);
 
 			resultItem.NumMatches = matches.Count;
 			resultItem.Matches = matches;
@@ -204,10 +206,10 @@ namespace FindAndReplace
 			if (matches.Count > 0)
 			{
 				string escapedFindText = FindText;
-				if (!FindTextHasRegEx)
+				if (!FindTextHasRegEx && !UseEscapeChars)
 					escapedFindText = Regex.Escape(FindText);
 
-				string newContent = Regex.Replace(fileContent, escapedFindText, ReplaceText, regexOptions);
+				string newContent = Regex.Replace(fileContent, escapedFindText, UseEscapeChars ? Regex.Unescape(ReplaceText) : ReplaceText, regexOptions);
 
 				try
 				{
