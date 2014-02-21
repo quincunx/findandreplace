@@ -49,6 +49,8 @@ namespace FindAndReplace
 
 		public bool IsCancelRequested { get; set; }
 
+		public bool UseEscapeChars { get; set; }
+
 
 		public class FindResultItem : ResultItem
 		{
@@ -234,7 +236,7 @@ namespace FindAndReplace
 			StopWatch.Start("FindMatches");
 			RegexOptions regexOptions = Utils.GetRegExOptions(IsCaseSensitive);
 
-			resultItem.Matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, regexOptions);
+			resultItem.Matches = Utils.FindMatches(fileContent, FindText, FindTextHasRegEx, UseEscapeChars, regexOptions);
 
 			StopWatch.Stop("FindMatches");
 

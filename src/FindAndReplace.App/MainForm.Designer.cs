@@ -72,6 +72,7 @@ namespace FindAndReplace.App
 			this.txtFind = new System.Windows.Forms.RichTextBox();
 			this.pnlFind = new System.Windows.Forms.Panel();
 			this.pnlReplace = new System.Windows.Forms.Panel();
+			this.chkUseEscapeChars = new System.Windows.Forms.CheckBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -384,7 +385,7 @@ namespace FindAndReplace.App
 			// chkSkipBinaryFileDetection
 			// 
 			this.chkSkipBinaryFileDetection.AutoSize = true;
-			this.chkSkipBinaryFileDetection.Location = new System.Drawing.Point(346, 185);
+			this.chkSkipBinaryFileDetection.Location = new System.Drawing.Point(361, 185);
 			this.chkSkipBinaryFileDetection.Name = "chkSkipBinaryFileDetection";
 			this.chkSkipBinaryFileDetection.Size = new System.Drawing.Size(141, 17);
 			this.chkSkipBinaryFileDetection.TabIndex = 12;
@@ -446,12 +447,23 @@ namespace FindAndReplace.App
 			this.pnlReplace.Size = new System.Drawing.Size(575, 85);
 			this.pnlReplace.TabIndex = 18;
 			// 
+			// chkUseEscapeChars
+			// 
+			this.chkUseEscapeChars.AutoSize = true;
+			this.chkUseEscapeChars.Location = new System.Drawing.Point(361, 208);
+			this.chkUseEscapeChars.Name = "chkUseEscapeChars";
+			this.chkUseEscapeChars.Size = new System.Drawing.Size(112, 17);
+			this.chkUseEscapeChars.TabIndex = 26;
+			this.chkUseEscapeChars.Text = "Use escape chars";
+			this.chkUseEscapeChars.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
 			this.ClientSize = new System.Drawing.Size(685, 381);
+			this.Controls.Add(this.chkUseEscapeChars);
 			this.Controls.Add(this.chkShowEncoding);
 			this.Controls.Add(this.btnSwap);
 			this.Controls.Add(this.btnSelectDir);
@@ -541,6 +553,7 @@ namespace FindAndReplace.App
 		private System.Windows.Forms.RichTextBox txtFind;
 		private System.Windows.Forms.Panel pnlFind;
 		private System.Windows.Forms.Panel pnlReplace;
+		private System.Windows.Forms.CheckBox chkUseEscapeChars;
 	}
 }
 

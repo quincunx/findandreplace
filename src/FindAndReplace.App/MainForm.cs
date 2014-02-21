@@ -63,6 +63,7 @@ namespace FindAndReplace.App
 			finder.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			finder.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			finder.ExcludeFileMask = txtExcludeFileMask.Text;
+			finder.UseEscapeChars = chkUseEscapeChars.Checked;
 
 			CreateListener(finder);
 
@@ -427,6 +428,7 @@ namespace FindAndReplace.App
 			replacer.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			replacer.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			replacer.ReplaceText = txtReplace.Text;
+			replacer.UseEscapeChars = chkUseEscapeChars.Checked;
 
 			ShowResultPanel();
 

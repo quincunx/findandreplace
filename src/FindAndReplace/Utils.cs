@@ -232,12 +232,12 @@ namespace FindAndReplace
 		}
 
 
-		public static List<LiteMatch> FindMatches(string fileContent, string findText, bool findTextHasRegEx,
+		public static List<LiteMatch> FindMatches(string fileContent, string findText, bool findTextHasRegEx, bool useEscapeChars,
 		                                          RegexOptions regexOptions)
 		{
 			MatchCollection matches;
 
-			if (!findTextHasRegEx)
+			if (!findTextHasRegEx && !useEscapeChars)
 				matches = Regex.Matches(fileContent, Regex.Escape(findText), regexOptions);
 			else
 				matches = Regex.Matches(fileContent, findText, regexOptions);
