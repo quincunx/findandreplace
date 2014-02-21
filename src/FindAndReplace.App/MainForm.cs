@@ -94,6 +94,7 @@ namespace FindAndReplace.App
 			data.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			data.ShowEncoding = chkShowEncoding.Checked;
 			data.ReplaceText = txtReplace.Text;
+			data.UseEscapeChars = chkUseEscapeChars.Checked;
 
 			data.SaveToRegistry();
 
@@ -591,7 +592,7 @@ namespace FindAndReplace.App
 
 			string s =
 				String.Format(
-					"\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9} --find \"{10}\" --replace \"{11}\"",
+					"\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9}{10} --find \"{11}\" --replace \"{12}\"",
 					Application.ExecutablePath,
 					txtDir.Text.TrimEnd('\\'),
 					txtFileMask.Text,
@@ -604,8 +605,9 @@ namespace FindAndReplace.App
 					chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
 					chkShowEncoding.Checked ? " --showEncoding" : "",
 					chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
-					CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked),
-					CommandLineUtils.EncodeText(txtReplace.Text)
+					chkUseEscapeChars.Checked ? " --useEscapeChars" : "",
+					CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked, chkUseEscapeChars.Checked),
+					CommandLineUtils.EncodeText(txtReplace.Text, false, chkUseEscapeChars.Checked)
 					);
 
 			txtCommandLine.Text = s;
@@ -878,6 +880,7 @@ namespace FindAndReplace.App
 			chkIncludeFilesWithoutMatches.Checked = data.IncludeFilesWithoutMatches;
 			chkShowEncoding.Checked = data.ShowEncoding;
 			txtReplace.Text = data.ReplaceText;
+			chkUseEscapeChars.Checked = data.UseEscapeChars;
 		}
 
 		private void btnSelectDir_Click(object sender, EventArgs e)
