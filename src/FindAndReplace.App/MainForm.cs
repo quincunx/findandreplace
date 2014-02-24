@@ -65,6 +65,9 @@ namespace FindAndReplace.App
 			finder.ExcludeFileMask = txtExcludeFileMask.Text;
 			finder.UseEscapeChars = chkUseEscapeChars.Checked;
 
+			if (cmbEncoding.SelectedIndex > 0)
+				finder.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
+
 			CreateListener(finder);
 
 			ShowResultPanel();
@@ -95,6 +98,7 @@ namespace FindAndReplace.App
 			data.ShowEncoding = chkShowEncoding.Checked;
 			data.ReplaceText = txtReplace.Text;
 			data.UseEscapeChars = chkUseEscapeChars.Checked;
+			data.Encoding = cmbEncoding.Text;
 
 			data.SaveToRegistry();
 
@@ -431,6 +435,9 @@ namespace FindAndReplace.App
 			replacer.ReplaceText = txtReplace.Text;
 			replacer.UseEscapeChars = chkUseEscapeChars.Checked;
 
+			if (cmbEncoding.SelectedIndex > 0)
+				replacer.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
+
 			ShowResultPanel();
 
 			lblStats.Text = "";
@@ -746,6 +753,12 @@ namespace FindAndReplace.App
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
+			var encodings = GetEncodings();
+
+			cmbEncoding.Items.AddRange(encodings.ToArray());
+
+			cmbEncoding.SelectedIndex = 0;
+			
 			InitWithRegistryData();
 		}
 
@@ -881,6 +894,9 @@ namespace FindAndReplace.App
 			chkShowEncoding.Checked = data.ShowEncoding;
 			txtReplace.Text = data.ReplaceText;
 			chkUseEscapeChars.Checked = data.UseEscapeChars;
+
+			if (!string.IsNullOrEmpty(data.Encoding))
+				cmbEncoding.SelectedIndex = cmbEncoding.Items.IndexOf(data.Encoding);
 		}
 
 		private void btnSelectDir_Click(object sender, EventArgs e)
@@ -928,6 +944,22 @@ namespace FindAndReplace.App
 
 			txtFind.Text = txtReplace.Text;
 			txtReplace.Text = findText;
+		}
+
+		private List<string> GetEncodings()
+		{
+			var result = new List<string>();
+
+			result.Add("Auto Detect");
+
+			foreach (EncodingInfo ei in Encoding.GetEncodings().OrderBy(ei=>ei.Name))
+			{
+				//Encoding e = ei.GetEncoding();
+
+				result.Add(ei.Name);
+			}
+
+			return result;
 		}
 
 	}

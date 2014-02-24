@@ -19,6 +19,7 @@ namespace FindAndReplace.App
 		public bool IncludeFilesWithoutMatches { get; set; }
 		public string ReplaceText { get; set; }
 		public bool UseEscapeChars { get; set; }
+		public string Encoding { get; set; }
 
 		private static readonly string _versionIndependentRegKey;
 
@@ -53,6 +54,7 @@ namespace FindAndReplace.App
 			SaveValueToRegistry("IncludeFilesWithoutMatches", IncludeFilesWithoutMatches.ToString());
 			SaveValueToRegistry("ReplaceText", ReplaceText);
 			SaveValueToRegistry("UseEscapeChars", UseEscapeChars.ToString());
+			SaveValueToRegistry("Encoding", Encoding);
 		}
 
 		public bool IsEmpty()
@@ -76,6 +78,7 @@ namespace FindAndReplace.App
 			ShowEncoding = GetValueFromRegistry("ShowEncoding") == "True";
 			ReplaceText = GetValueFromRegistry("ReplaceText");
 			UseEscapeChars = GetValueFromRegistry("UseEscapeChars") == "True";
+			Encoding = GetValueFromRegistry("Encoding");
 		}
 
 

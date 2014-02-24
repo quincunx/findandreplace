@@ -250,5 +250,13 @@ namespace FindAndReplace
 
 			return liteMatches;
 		}
+
+		public static Encoding GetEncodingByName(string encodingName)
+		{
+			if (String.IsNullOrEmpty(encodingName))
+				return null;
+
+			return Encoding.GetEncoding(encodingName);
+		}
 	}
 }

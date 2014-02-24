@@ -184,8 +184,8 @@ namespace FindAndReplace.App
 					finder.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
 					finder.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
 
-					finder.AlwaysUseEncoding = GetEncoding(_options.AlwaysUseEncoding);
-					finder.DefaultEncodingIfNotDetected = GetEncoding(_options.DefaultEncodingIfNotDetected);
+					finder.AlwaysUseEncoding = Utils.GetEncodingByName(_options.AlwaysUseEncoding);
+					finder.DefaultEncodingIfNotDetected = Utils.GetEncodingByName(_options.DefaultEncodingIfNotDetected);
 					finder.UseEscapeChars = _options.UseEscapreChars;
 
 					finder.IsSilent = _options.Silent;
@@ -216,8 +216,8 @@ namespace FindAndReplace.App
 
 					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText, false, _options.UseEscapreChars);
 
-					replacer.AlwaysUseEncoding = GetEncoding(_options.AlwaysUseEncoding);
-					replacer.DefaultEncodingIfNotDetected = GetEncoding(_options.DefaultEncodingIfNotDetected);
+					replacer.AlwaysUseEncoding = Utils.GetEncodingByName(_options.AlwaysUseEncoding);
+					replacer.DefaultEncodingIfNotDetected = Utils.GetEncodingByName(_options.DefaultEncodingIfNotDetected);
 					replacer.UseEscapeChars = _options.UseEscapreChars;
 
 					replacer.IsSilent = _options.Silent;
@@ -242,14 +242,6 @@ namespace FindAndReplace.App
 			#endif
 
 			return (int) dosErrorLevel;
-		}
-
-		private Encoding GetEncoding(string encodingName)
-		{
-			if (String.IsNullOrEmpty(encodingName))
-				return null;
-
-			return Encoding.GetEncoding(encodingName);
 		}
 
 		private void OnFinderFileProcessed(object sender, FinderEventArgs e)
