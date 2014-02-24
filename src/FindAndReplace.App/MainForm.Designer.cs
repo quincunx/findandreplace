@@ -73,6 +73,8 @@ namespace FindAndReplace.App
 			this.pnlFind = new System.Windows.Forms.Panel();
 			this.pnlReplace = new System.Windows.Forms.Panel();
 			this.chkUseEscapeChars = new System.Windows.Forms.CheckBox();
+			this.lblEncoding = new System.Windows.Forms.Label();
+			this.cmbEncoding = new System.Windows.Forms.ComboBox();
 			this.pnlCommandLine.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gvResults)).BeginInit();
 			this.pnlGridResults.SuspendLayout();
@@ -93,7 +95,7 @@ namespace FindAndReplace.App
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(12, 234);
+			this.label2.Location = new System.Drawing.Point(12, 256);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(50, 13);
 			this.label2.TabIndex = 17;
@@ -113,7 +115,7 @@ namespace FindAndReplace.App
 			// 
 			// btnReplace
 			// 
-			this.btnReplace.Location = new System.Drawing.Point(583, 326);
+			this.btnReplace.Location = new System.Drawing.Point(583, 348);
 			this.btnReplace.Name = "btnReplace";
 			this.btnReplace.Size = new System.Drawing.Size(75, 23);
 			this.btnReplace.TabIndex = 19;
@@ -191,7 +193,7 @@ namespace FindAndReplace.App
 			// 
 			// btnGenReplaceCommandLine
 			// 
-			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(484, 353);
+			this.btnGenReplaceCommandLine.Location = new System.Drawing.Point(484, 375);
 			this.btnGenReplaceCommandLine.Name = "btnGenReplaceCommandLine";
 			this.btnGenReplaceCommandLine.Size = new System.Drawing.Size(174, 23);
 			this.btnGenReplaceCommandLine.TabIndex = 20;
@@ -221,7 +223,7 @@ namespace FindAndReplace.App
 			// 
 			this.pnlCommandLine.Controls.Add(this.lblCommandLine);
 			this.pnlCommandLine.Controls.Add(this.txtCommandLine);
-			this.pnlCommandLine.Location = new System.Drawing.Point(3, 382);
+			this.pnlCommandLine.Location = new System.Drawing.Point(3, 404);
 			this.pnlCommandLine.Name = "pnlCommandLine";
 			this.pnlCommandLine.Size = new System.Drawing.Size(1012, 100);
 			this.pnlCommandLine.TabIndex = 21;
@@ -275,7 +277,7 @@ namespace FindAndReplace.App
 			this.pnlGridResults.Controls.Add(this.progressBar);
 			this.pnlGridResults.Controls.Add(this.lblResults);
 			this.pnlGridResults.Controls.Add(this.gvResults);
-			this.pnlGridResults.Location = new System.Drawing.Point(10, 383);
+			this.pnlGridResults.Location = new System.Drawing.Point(10, 405);
 			this.pnlGridResults.Name = "pnlGridResults";
 			this.pnlGridResults.Size = new System.Drawing.Size(1013, 196);
 			this.pnlGridResults.TabIndex = 22;
@@ -299,7 +301,7 @@ namespace FindAndReplace.App
 			// txtNoMatches
 			// 
 			this.txtNoMatches.AutoSize = true;
-			this.txtNoMatches.Location = new System.Drawing.Point(80, 363);
+			this.txtNoMatches.Location = new System.Drawing.Point(80, 385);
 			this.txtNoMatches.Name = "txtNoMatches";
 			this.txtNoMatches.Size = new System.Drawing.Size(124, 13);
 			this.txtNoMatches.TabIndex = 21;
@@ -328,7 +330,7 @@ namespace FindAndReplace.App
 			// 
 			this.txtMatchesPreview.BackColor = System.Drawing.SystemColors.Info;
 			this.txtMatchesPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.txtMatchesPreview.Location = new System.Drawing.Point(82, 593);
+			this.txtMatchesPreview.Location = new System.Drawing.Point(82, 615);
 			this.txtMatchesPreview.Name = "txtMatchesPreview";
 			this.txtMatchesPreview.ReadOnly = true;
 			this.txtMatchesPreview.Size = new System.Drawing.Size(930, 166);
@@ -442,7 +444,7 @@ namespace FindAndReplace.App
 			// 
 			this.pnlReplace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pnlReplace.Controls.Add(this.txtReplace);
-			this.pnlReplace.Location = new System.Drawing.Point(83, 234);
+			this.pnlReplace.Location = new System.Drawing.Point(83, 256);
 			this.pnlReplace.Name = "pnlReplace";
 			this.pnlReplace.Size = new System.Drawing.Size(575, 85);
 			this.pnlReplace.TabIndex = 18;
@@ -457,12 +459,32 @@ namespace FindAndReplace.App
 			this.chkUseEscapeChars.Text = "Use escape chars";
 			this.chkUseEscapeChars.UseVisualStyleBackColor = true;
 			// 
+			// lblEncoding
+			// 
+			this.lblEncoding.AutoSize = true;
+			this.lblEncoding.Location = new System.Drawing.Point(79, 229);
+			this.lblEncoding.Name = "lblEncoding";
+			this.lblEncoding.Size = new System.Drawing.Size(52, 13);
+			this.lblEncoding.TabIndex = 27;
+			this.lblEncoding.Text = "Encoding";
+			// 
+			// cmbEncoding
+			// 
+			this.cmbEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cmbEncoding.FormattingEnabled = true;
+			this.cmbEncoding.Location = new System.Drawing.Point(137, 225);
+			this.cmbEncoding.Name = "cmbEncoding";
+			this.cmbEncoding.Size = new System.Drawing.Size(121, 21);
+			this.cmbEncoding.TabIndex = 28;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
-			this.ClientSize = new System.Drawing.Size(685, 381);
+			this.ClientSize = new System.Drawing.Size(685, 403);
+			this.Controls.Add(this.cmbEncoding);
+			this.Controls.Add(this.lblEncoding);
 			this.Controls.Add(this.chkUseEscapeChars);
 			this.Controls.Add(this.chkShowEncoding);
 			this.Controls.Add(this.btnSwap);
@@ -554,6 +576,8 @@ namespace FindAndReplace.App
 		private System.Windows.Forms.Panel pnlFind;
 		private System.Windows.Forms.Panel pnlReplace;
 		private System.Windows.Forms.CheckBox chkUseEscapeChars;
+		private System.Windows.Forms.ComboBox cmbEncoding;
+		private System.Windows.Forms.Label lblEncoding;
 	}
 }
 
