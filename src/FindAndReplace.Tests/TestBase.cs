@@ -120,6 +120,15 @@ free program...";
 			
 			sr.Close();
 			fs.Close();
+
+			fs = new FileStream(_tempDir + "\\test6.txt", FileMode.Create);
+			sr = new StreamWriter(fs);
+
+			sr.WriteLine("This file has special chars");
+			sr.WriteLine("This \t file has special \v chars");
+
+			sr.Close();
+			fs.Close();
 			
 
 			Directory.CreateDirectory(_tempDir + "\\subDir");

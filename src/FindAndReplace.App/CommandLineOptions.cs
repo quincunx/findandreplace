@@ -66,6 +66,9 @@ namespace FindAndReplace.App
 		[Option("logFile", HelpText = "Path to log file where to save command output.")]
 		public string LogFile { get; set; }
 
+		[Option("useEscapeChars", HelpText = "Escape special chars.")]
+		public bool UseEscapreChars { get; set; }
+
 
 		#endregion
 
