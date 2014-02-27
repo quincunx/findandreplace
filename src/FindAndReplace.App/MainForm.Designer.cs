@@ -484,6 +484,7 @@ namespace FindAndReplace.App
 			// 
 			// mnuMain
 			// 
+			this.mnuMain.BackColor = System.Drawing.SystemColors.Control;
 			this.mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.helpToolStripMenuItem});
 			this.mnuMain.Location = new System.Drawing.Point(0, 0);
