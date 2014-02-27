@@ -371,11 +371,12 @@ namespace FindAndReplace.App
 		{
 			foreach (Control control in controls)
 			{
-				if (control is Panel && !control.CausesValidation)  //handle pnlFind which causes validation
-				{
-					ValidateControls(control.Controls);
-					continue;
-				}
+				//Eric - Not needed for now
+				//if (control is Panel && !control.CausesValidation)  //handle pnlFind which causes validation
+				//{
+				//	ValidateControls(control.Controls);
+				//	continue;
+				//}
 
 				if (!control.CausesValidation)
 					continue;
@@ -924,7 +925,6 @@ namespace FindAndReplace.App
 			txtFind.Text = txtReplace.Text;
 			txtReplace.Text = findText;
 		}
-
 	}
 }
  
