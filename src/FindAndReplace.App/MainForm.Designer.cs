@@ -380,7 +380,7 @@ namespace FindAndReplace.App
 			// 
 			this.btnSwap.AccessibleDescription = "";
 			this.btnSwap.CausesValidation = false;
-			this.btnSwap.Location = new System.Drawing.Point(521, 206);
+			this.btnSwap.Location = new System.Drawing.Point(521, 216);
 			this.btnSwap.Name = "btnSwap";
 			this.btnSwap.Size = new System.Drawing.Size(32, 23);
 			this.btnSwap.TabIndex = 15;
@@ -477,7 +477,7 @@ namespace FindAndReplace.App
 			// 
 			this.cmbEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cmbEncoding.FormattingEnabled = true;
-			this.cmbEncoding.Location = new System.Drawing.Point(137, 238);
+			this.cmbEncoding.Location = new System.Drawing.Point(137, 241);
 			this.cmbEncoding.Name = "cmbEncoding";
 			this.cmbEncoding.Size = new System.Drawing.Size(121, 21);
 			this.cmbEncoding.TabIndex = 28;
@@ -505,14 +505,14 @@ namespace FindAndReplace.App
 			// viewOnlineHelpToolStripMenuItem
 			// 
 			this.viewOnlineHelpToolStripMenuItem.Name = "viewOnlineHelpToolStripMenuItem";
-			this.viewOnlineHelpToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-			this.viewOnlineHelpToolStripMenuItem.Text = "View online help";
+			this.viewOnlineHelpToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			this.viewOnlineHelpToolStripMenuItem.Text = "View Online Help";
 			this.viewOnlineHelpToolStripMenuItem.Click += new System.EventHandler(this.viewOnlineHelpToolStripMenuItem_Click_1);
 			// 
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.aboutToolStripMenuItem.Text = "About";
 			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click_1);
 			// 
