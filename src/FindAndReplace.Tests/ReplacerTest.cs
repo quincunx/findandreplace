@@ -234,7 +234,6 @@ namespace FindAndReplace.Tests
 			Assert.IsNotEmpty(resultItems[0].ErrorMessage);
 		}
 
-
 		[Test]
 		public void Replace_WhenSpanish_KeepsEncoding()
 		{
@@ -262,7 +261,6 @@ namespace FindAndReplace.Tests
 			Assert.AreEqual(expectedFileContent, actualFileContent);
 		}
 
-
 		[Test]
 		public void Replace_WhenNonAsciiSymbols_KeepsEncoding()
 		{
@@ -288,6 +286,41 @@ namespace FindAndReplace.Tests
 			string actualFileContent = ReadFile(filePath, Encoding.Default);
 
 			Assert.AreEqual(expectedFileContent, actualFileContent);
+		}
+
+		[Test]
+		public void Replace_WhenUseEscapeCahrs_RepacesTextInOne()
+		{
+			Replacer replacer = new Replacer();
+
+			replacer.Dir = _tempDir;
+			replacer.FileMask = "test6.txt";
+			replacer.FindText = @"\t";
+			replacer.ReplaceText = @"\r\n";
+			replacer.UseEscapeChars = true;
+
+			var resultItems = replacer.Replace().ResultItems;
+
+			if (resultItems == null || resultItems.Count == 0)
+				Assert.Fail("Can't find test files");
+
+			Assert.AreEqual(1, resultItems.Count);
+			
+			Finder finder = new Finder();
+			finder.Dir = _tempDir;
+			finder.FileMask = "test6.txt";
+			finder.FindText = @"\t";
+			finder.UseEscapeChars = true;
+			finder.IncludeFilesWithoutMatches = true;
+
+			var findResultItems = finder.Find().Items;
+			Assert.AreEqual(1, findResultItems.Count);
+			Assert.AreEqual(0, findResultItems[0].Matches.Count);
+
+			finder.FindText = @"\r\n";
+			findResultItems = finder.Find().Items;
+			Assert.AreEqual(1, findResultItems.Count);
+			Assert.AreEqual(3, findResultItems[0].Matches.Count);
 		}
 
 

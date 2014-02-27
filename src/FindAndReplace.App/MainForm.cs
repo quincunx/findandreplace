@@ -63,6 +63,10 @@ namespace FindAndReplace.App
 			finder.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			finder.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			finder.ExcludeFileMask = txtExcludeFileMask.Text;
+			finder.UseEscapeChars = chkUseEscapeChars.Checked;
+
+			if (cmbEncoding.SelectedIndex > 0)
+				finder.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
 
 			CreateListener(finder);
 
@@ -93,6 +97,8 @@ namespace FindAndReplace.App
 			data.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			data.ShowEncoding = chkShowEncoding.Checked;
 			data.ReplaceText = txtReplace.Text;
+			data.UseEscapeChars = chkUseEscapeChars.Checked;
+			data.Encoding = cmbEncoding.Text;
 
 			data.SaveToRegistry();
 
@@ -428,6 +434,10 @@ namespace FindAndReplace.App
 			replacer.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			replacer.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			replacer.ReplaceText = txtReplace.Text;
+			replacer.UseEscapeChars = chkUseEscapeChars.Checked;
+
+			if (cmbEncoding.SelectedIndex > 0)
+				replacer.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
 
 			ShowResultPanel();
 
@@ -590,7 +600,7 @@ namespace FindAndReplace.App
 
 			string s =
 				String.Format(
-					"\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9} --find \"{10}\" --replace \"{11}\"",
+					"\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9}{10} --find \"{11}\" --replace \"{12}\"",
 					Application.ExecutablePath,
 					txtDir.Text.TrimEnd('\\'),
 					txtFileMask.Text,
@@ -603,8 +613,9 @@ namespace FindAndReplace.App
 					chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
 					chkShowEncoding.Checked ? " --showEncoding" : "",
 					chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
-					CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked),
-					CommandLineUtils.EncodeText(txtReplace.Text)
+					chkUseEscapeChars.Checked ? " --useEscapeChars" : "",
+					CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked, chkUseEscapeChars.Checked),
+					CommandLineUtils.EncodeText(txtReplace.Text, false, chkUseEscapeChars.Checked)
 					);
 
 			txtCommandLine.Text = s;
@@ -743,6 +754,12 @@ namespace FindAndReplace.App
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
+			var encodings = GetEncodings();
+
+			cmbEncoding.Items.AddRange(encodings.ToArray());
+
+			cmbEncoding.SelectedIndex = 0;
+			
 			InitWithRegistryData();
 		}
 
@@ -877,6 +894,10 @@ namespace FindAndReplace.App
 			chkIncludeFilesWithoutMatches.Checked = data.IncludeFilesWithoutMatches;
 			chkShowEncoding.Checked = data.ShowEncoding;
 			txtReplace.Text = data.ReplaceText;
+			chkUseEscapeChars.Checked = data.UseEscapeChars;
+
+			if (!string.IsNullOrEmpty(data.Encoding))
+				cmbEncoding.SelectedIndex = cmbEncoding.Items.IndexOf(data.Encoding);
 		}
 
 		private void btnSelectDir_Click(object sender, EventArgs e)
@@ -924,6 +945,22 @@ namespace FindAndReplace.App
 
 			txtFind.Text = txtReplace.Text;
 			txtReplace.Text = findText;
+		}
+
+		private List<string> GetEncodings()
+		{
+			var result = new List<string>();
+
+			result.Add("Auto Detect");
+
+			foreach (EncodingInfo ei in Encoding.GetEncodings().OrderBy(ei=>ei.Name))
+			{
+				//Encoding e = ei.GetEncoding();
+
+				result.Add(ei.Name);
+			}
+
+			return result;
 		}
 	}
 }
