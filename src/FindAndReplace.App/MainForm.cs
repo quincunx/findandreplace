@@ -600,7 +600,7 @@ namespace FindAndReplace.App
 
 			string s =
 				String.Format(
-					"\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9}{10} --find \"{11}\" --replace \"{12}\"",
+					"\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9}{10}{11} --find \"{12}\" --replace \"{13}\"",
 					Application.ExecutablePath,
 					txtDir.Text.TrimEnd('\\'),
 					txtFileMask.Text,
@@ -614,9 +614,10 @@ namespace FindAndReplace.App
 					chkShowEncoding.Checked ? " --showEncoding" : "",
 					chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
 					chkUseEscapeChars.Checked ? " --useEscapeChars" : "",
+					cmbEncoding.SelectedIndex > 0 ? " --alwaysUseEncoding \"" + cmbEncoding.Text + "\"" : "",
 					CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked, chkUseEscapeChars.Checked),
 					CommandLineUtils.EncodeText(txtReplace.Text, false, chkUseEscapeChars.Checked)
-					);
+				);
 
 			txtCommandLine.Text = s;
 		}

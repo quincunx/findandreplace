@@ -37,7 +37,7 @@
 			// lblProductName
 			// 
 			this.lblProductName.AutoSize = true;
-			this.lblProductName.Location = new System.Drawing.Point(35, 17);
+			this.lblProductName.Location = new System.Drawing.Point(22, 17);
 			this.lblProductName.Name = "lblProductName";
 			this.lblProductName.Size = new System.Drawing.Size(75, 13);
 			this.lblProductName.TabIndex = 0;
@@ -46,7 +46,7 @@
 			// lblVersion
 			// 
 			this.lblVersion.AutoSize = true;
-			this.lblVersion.Location = new System.Drawing.Point(35, 40);
+			this.lblVersion.Location = new System.Drawing.Point(22, 40);
 			this.lblVersion.Name = "lblVersion";
 			this.lblVersion.Size = new System.Drawing.Size(42, 13);
 			this.lblVersion.TabIndex = 1;
@@ -55,7 +55,7 @@
 			// lblCopyright
 			// 
 			this.lblCopyright.AutoSize = true;
-			this.lblCopyright.Location = new System.Drawing.Point(35, 96);
+			this.lblCopyright.Location = new System.Drawing.Point(22, 96);
 			this.lblCopyright.Name = "lblCopyright";
 			this.lblCopyright.Size = new System.Drawing.Size(51, 13);
 			this.lblCopyright.TabIndex = 2;
@@ -64,7 +64,7 @@
 			// lnkCompany
 			// 
 			this.lnkCompany.AutoSize = true;
-			this.lnkCompany.Location = new System.Drawing.Point(35, 119);
+			this.lnkCompany.Location = new System.Drawing.Point(22, 119);
 			this.lnkCompany.Name = "lnkCompany";
 			this.lnkCompany.Size = new System.Drawing.Size(51, 13);
 			this.lnkCompany.TabIndex = 3;
@@ -75,7 +75,7 @@
 			// lnkProduct
 			// 
 			this.lnkProduct.AutoSize = true;
-			this.lnkProduct.Location = new System.Drawing.Point(35, 63);
+			this.lnkProduct.Location = new System.Drawing.Point(22, 63);
 			this.lnkProduct.Name = "lnkProduct";
 			this.lnkProduct.Size = new System.Drawing.Size(67, 13);
 			this.lnkProduct.TabIndex = 4;
