@@ -666,6 +666,13 @@ namespace FindAndReplace.App
 				return;
 			}
 
+			validationResult = ValidationUtils.IsValidEscapeSequence(txtFind.Text, "Find");
+			if (chkUseEscapeChars.Checked && !validationResult.IsSuccess)
+			{
+				errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
+				return;
+			}
+
 			errorProvider1.SetError(pnlFind, "");
 		}
 
@@ -973,6 +980,18 @@ namespace FindAndReplace.App
 		private void viewOnlineHelpToolStripMenuItem_Click_1(object sender, EventArgs e)
 		{
 			Process.Start("https://findandreplace.codeplex.com/documentation");
+		}
+
+		private void pnlReplace_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			var validationResult = ValidationUtils.IsValidEscapeSequence(txtReplace.Text, "Replace");
+			if (chkUseEscapeChars.Checked && !validationResult.IsSuccess)
+			{
+				errorProvider1.SetError(pnlReplace, validationResult.ErrorMessage);
+				return;
+			}
+
+			errorProvider1.SetError(pnlReplace, "");
 		}
 	}
 }
