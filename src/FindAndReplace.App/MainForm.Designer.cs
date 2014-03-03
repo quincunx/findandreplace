@@ -467,17 +467,17 @@ namespace FindAndReplace.App
 			// lblEncoding
 			// 
 			this.lblEncoding.AutoSize = true;
-			this.lblEncoding.Location = new System.Drawing.Point(79, 242);
+			this.lblEncoding.Location = new System.Drawing.Point(80, 245);
 			this.lblEncoding.Name = "lblEncoding";
-			this.lblEncoding.Size = new System.Drawing.Size(52, 13);
+			this.lblEncoding.Size = new System.Drawing.Size(55, 13);
 			this.lblEncoding.TabIndex = 27;
-			this.lblEncoding.Text = "Encoding";
+			this.lblEncoding.Text = "Encoding:";
 			// 
 			// cmbEncoding
 			// 
 			this.cmbEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cmbEncoding.FormattingEnabled = true;
-			this.cmbEncoding.Location = new System.Drawing.Point(137, 241);
+			this.cmbEncoding.Location = new System.Drawing.Point(140, 242);
 			this.cmbEncoding.Name = "cmbEncoding";
 			this.cmbEncoding.Size = new System.Drawing.Size(121, 21);
 			this.cmbEncoding.TabIndex = 28;
