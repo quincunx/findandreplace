@@ -614,7 +614,7 @@ namespace FindAndReplace.App
 					chkShowEncoding.Checked ? " --showEncoding" : "",
 					chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
 					chkUseEscapeChars.Checked ? " --useEscapeChars" : "",
-					cmbEncoding.SelectedIndex > 0 ? " --alwaysUseEncoding \"" + cmbEncoding.Text + "\"" : "",
+					cmbEncoding.SelectedIndex != 0 ? String.Format(" --alwaysUseEncoding \"{0}\"", cmbEncoding.Text) : "",
 					CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked, chkUseEscapeChars.Checked),
 					CommandLineUtils.EncodeText(txtReplace.Text, false, chkUseEscapeChars.Checked)
 				);
@@ -661,6 +661,13 @@ namespace FindAndReplace.App
 			validationResult = ValidationUtils.IsValidRegExp(txtFind.Text, "Find");
 
 			if (chkIsRegEx.Checked && !validationResult.IsSuccess)
+			{
+				errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
+				return;
+			}
+
+			validationResult = ValidationUtils.IsValidEscapeSequence(txtFind.Text, "Find");
+			if (chkUseEscapeChars.Checked && !validationResult.IsSuccess)
 			{
 				errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
 				return;
@@ -973,6 +980,18 @@ namespace FindAndReplace.App
 		private void viewOnlineHelpToolStripMenuItem_Click_1(object sender, EventArgs e)
 		{
 			Process.Start("https://findandreplace.codeplex.com/documentation");
+		}
+
+		private void pnlReplace_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			var validationResult = ValidationUtils.IsValidEscapeSequence(txtReplace.Text, "Replace");
+			if (chkUseEscapeChars.Checked && !validationResult.IsSuccess)
+			{
+				errorProvider1.SetError(pnlReplace, validationResult.ErrorMessage);
+				return;
+			}
+
+			errorProvider1.SetError(pnlReplace, "");
 		}
 	}
 }
