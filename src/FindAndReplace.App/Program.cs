@@ -142,6 +142,12 @@ namespace FindAndReplace.App
 			if (!(String.IsNullOrEmpty(_options.DefaultEncodingIfNotDetected)))
 				validationResultList.Add(ValidationUtils.IsValidEncoding(_options.DefaultEncodingIfNotDetected, "alwaysUseEncoding"));
 
+			if (_options.UseEscapreChars)
+			{
+				validationResultList.Add(ValidationUtils.IsValidEscapeSequence(_options.ReplaceText, "replace"));
+				validationResultList.Add(ValidationUtils.IsValidEscapeSequence(_options.FindText, "find"));
+			}
+
 
 			if (!String.IsNullOrEmpty(_options.LogFile))
 			{

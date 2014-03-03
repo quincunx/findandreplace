@@ -95,5 +95,22 @@ namespace FindAndReplace.App
 
 			return result;
 		}
+
+		public static ValidationResult IsValidEscapeSequence(string text, string itemName)
+		{
+			var result = new ValidationResult() { IsSuccess = true, FieldName = itemName };
+
+			try
+			{
+				Regex.Unescape(text);
+			}
+			catch (ArgumentException)
+			{
+				result.IsSuccess = false;
+				result.ErrorMessage = "Unrecognized escape sequence";
+			}
+
+			return result;
+		}
 	}
 }
