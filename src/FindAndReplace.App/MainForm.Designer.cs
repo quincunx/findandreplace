@@ -453,6 +453,7 @@ namespace FindAndReplace.App
 			this.pnlReplace.Name = "pnlReplace";
 			this.pnlReplace.Size = new System.Drawing.Size(575, 85);
 			this.pnlReplace.TabIndex = 18;
+			this.pnlReplace.Validating += new System.ComponentModel.CancelEventHandler(this.pnlReplace_Validating);
 			// 
 			// chkUseEscapeChars
 			// 
