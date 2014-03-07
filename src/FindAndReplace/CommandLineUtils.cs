@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace FindAndReplace
 {
@@ -25,6 +26,25 @@ namespace FindAndReplace
 			
 			decoded = decoded.Replace(@"\\", @"\");
 			return decoded;
+		}
+
+		public static string HandleCommandlineArgs(string argValue)
+		{
+			var regexPattern = @"\\+$";
+
+			var regex = new Regex(regexPattern);
+
+			var matches = regex.Matches(argValue);
+
+			if (matches.Count > 0)
+			{
+				var match = matches[0];
+
+				if ((match.Length%2) != 0)
+					argValue += @"\";
+			}
+
+			return argValue;
 		}
 	}
 }
