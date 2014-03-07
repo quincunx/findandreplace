@@ -115,6 +115,15 @@ namespace FindAndReplace.App
 				result.ErrorMessage = e.Message.Substring(pos);
 			}
 
+			if (result.IsSuccess)
+			{
+				if (text.EndsWith(@"\") && !text.EndsWith(@"\\"))
+				{
+					result.IsSuccess = false;
+					result.ErrorMessage = @"Illegal \ at end of pattern";
+				}
+			}
+
 			return result;
 		}
 	}
