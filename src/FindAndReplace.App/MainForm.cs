@@ -615,8 +615,8 @@ namespace FindAndReplace.App
 					chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
 					chkUseEscapeChars.Checked ? " --useEscapeChars" : "",
 					cmbEncoding.SelectedIndex != 0 ? String.Format(" --alwaysUseEncoding \"{0}\"", cmbEncoding.Text) : "",
-					CommandLineUtils.HandleCommandlineArgs(CommandLineUtils.EncodeText(txtFind.Text, chkIsRegEx.Checked, chkUseEscapeChars.Checked)),
-					CommandLineUtils.HandleCommandlineArgs(CommandLineUtils.EncodeText(txtReplace.Text, false, chkUseEscapeChars.Checked))
+					CommandLineUtils.FormatArg(txtFind.Text, chkIsRegEx.Checked, chkUseEscapeChars.Checked),
+					CommandLineUtils.FormatArg(txtReplace.Text, false, chkUseEscapeChars.Checked)
 				);
 
 			txtCommandLine.Text = s;

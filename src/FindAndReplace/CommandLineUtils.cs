@@ -28,8 +28,13 @@ namespace FindAndReplace
 			return decoded;
 		}
 
-		public static string HandleCommandlineArgs(string argValue)
+		public static string FormatArg(string original, bool isRegularExpression = false, bool useEscapeChars = false)
 		{
+			var argValue = EncodeText(original, isRegularExpression, useEscapeChars);
+			
+			//windows arg can't end with odd count of '\'
+			//args can ends with even count of '\'
+			//if arg ends with odd count of '\' we add one more to the end
 			var regexPattern = @"\\+$";
 
 			var regex = new Regex(regexPattern);
