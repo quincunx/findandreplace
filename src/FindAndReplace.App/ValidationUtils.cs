@@ -104,10 +104,15 @@ namespace FindAndReplace.App
 			{
 				Regex.Unescape(text);
 			}
-			catch (ArgumentException)
+			catch (ArgumentException e)
 			{
+				string msgPart = "Unrecognized escape sequence";
+				int pos = e.Message.IndexOf(msgPart);
+				if (pos == -1)
+					throw;
+
 				result.IsSuccess = false;
-				result.ErrorMessage = "Unrecognized escape sequence";
+				result.ErrorMessage = e.Message.Substring(pos);
 			}
 
 			return result;
