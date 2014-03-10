@@ -52,21 +52,7 @@ namespace FindAndReplace.App
 			lblStats.Text = "";
 			lblStatus.Text = "Getting file list...";
 
-			var finder = new Finder();
-			finder.Dir = txtDir.Text;
-
-			finder.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
-			finder.FileMask = txtFileMask.Text;
-			finder.FindTextHasRegEx = chkIsRegEx.Checked;
-			finder.FindText = txtFind.Text;
-			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
-			finder.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
-			finder.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
-			finder.ExcludeFileMask = txtExcludeFileMask.Text;
-			finder.UseEscapeChars = chkUseEscapeChars.Checked;
-
-			if (cmbEncoding.SelectedIndex > 0)
-				finder.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
+			var finder = GetFinder();
 
 			CreateListener(finder);
 
@@ -420,25 +406,6 @@ namespace FindAndReplace.App
 					return;
 			}
 
-			var replacer = new Replacer();
-
-			replacer.Dir = txtDir.Text;
-			replacer.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
-
-			replacer.FileMask = txtFileMask.Text;
-			replacer.ExcludeFileMask = txtExcludeFileMask.Text;
-
-			replacer.FindText = txtFind.Text;
-			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
-			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
-			replacer.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
-			replacer.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
-			replacer.ReplaceText = txtReplace.Text;
-			replacer.UseEscapeChars = chkUseEscapeChars.Checked;
-
-			if (cmbEncoding.SelectedIndex > 0)
-				replacer.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
-
 			ShowResultPanel();
 
 			lblStats.Text = "";
@@ -446,6 +413,8 @@ namespace FindAndReplace.App
 
 			PrepareReplacerGrid();
 			txtMatchesPreview.Visible = false;
+
+			var replacer = GetReplacer();
 
 			CreateListener(replacer);
 
@@ -598,25 +567,13 @@ namespace FindAndReplace.App
 
 			txtCommandLine.Clear();
 
+			var replacer = GetReplacer();
+
 			string s =
 				String.Format(
-					"\"{0}\" --cl --dir \"{1}\" --fileMask \"{2}\"{3}{4}{5}{6}{7}{8}{9}{10}{11} --find \"{12}\" --replace \"{13}\"",
+					"\"{0}\" {1}",
 					Application.ExecutablePath,
-					txtDir.Text.TrimEnd('\\'),
-					txtFileMask.Text,
-					String.IsNullOrEmpty(txtExcludeFileMask.Text)
-						? ""
-						: String.Format(" --excludeFileMask \"{0}\"", CommandLineUtils.EncodeText(txtExcludeFileMask.Text)),
-					chkIncludeSubDirectories.Checked ? " --includeSubDirectories" : "",
-					chkIsCaseSensitive.Checked ? " --caseSensitive" : "",
-					chkIsRegEx.Checked ? " --useRegEx" : "",
-					chkSkipBinaryFileDetection.Checked ? " --skipBinaryFileDetection" : "",
-					chkShowEncoding.Checked ? " --showEncoding" : "",
-					chkIncludeFilesWithoutMatches.Checked ? " --includeFilesWithoutMatches" : "",
-					chkUseEscapeChars.Checked ? " --useEscapeChars" : "",
-					cmbEncoding.SelectedIndex != 0 ? String.Format(" --alwaysUseEncoding \"{0}\"", cmbEncoding.Text) : "",
-					CommandLineUtils.FormatArg(txtFind.Text, chkIsRegEx.Checked, chkUseEscapeChars.Checked),
-					CommandLineUtils.FormatArg(txtReplace.Text, false, chkUseEscapeChars.Checked)
+					replacer.GenCommandLine(chkShowEncoding.Checked)
 				);
 
 			txtCommandLine.Text = s;
@@ -992,6 +949,51 @@ namespace FindAndReplace.App
 			}
 
 			errorProvider1.SetError(pnlReplace, "");
+		}
+
+		private Finder GetFinder()
+		{
+			var finder = new Finder();
+			finder.Dir = txtDir.Text;
+
+			finder.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
+			finder.FileMask = txtFileMask.Text;
+			finder.FindTextHasRegEx = chkIsRegEx.Checked;
+			finder.FindText = txtFind.Text;
+			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
+			finder.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
+			finder.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
+			finder.ExcludeFileMask = txtExcludeFileMask.Text;
+			finder.UseEscapeChars = chkUseEscapeChars.Checked;
+
+			if (cmbEncoding.SelectedIndex > 0)
+				finder.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
+
+			return finder;
+		}
+
+		private Replacer GetReplacer()
+		{
+			var replacer = new Replacer();
+
+			replacer.Dir = txtDir.Text;
+			replacer.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
+
+			replacer.FileMask = txtFileMask.Text;
+			replacer.ExcludeFileMask = txtExcludeFileMask.Text;
+
+			replacer.FindText = txtFind.Text;
+			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
+			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
+			replacer.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
+			replacer.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
+			replacer.ReplaceText = txtReplace.Text;
+			replacer.UseEscapeChars = chkUseEscapeChars.Checked;
+
+			if (cmbEncoding.SelectedIndex > 0)
+				replacer.AlwaysUseEncoding = Utils.GetEncodingByName(cmbEncoding.Text);
+
+			return replacer;
 		}
 	}
 }

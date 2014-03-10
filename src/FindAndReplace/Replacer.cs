@@ -250,5 +250,13 @@ namespace FindAndReplace
 			if (FileProcessed != null)
 				FileProcessed(this, e);
 		}
+
+		public string GenCommandLine(bool showEncoding)
+		{
+			return CommandLineUtils.GenerateCommandLine(Dir, FileMask, ExcludeFileMask, IncludeSubDirectories, IsCaseSensitive,
+														FindTextHasRegEx, SkipBinaryFileDetection, showEncoding,
+														IncludeFilesWithoutMatches, UseEscapeChars, AlwaysUseEncoding, FindText,
+														ReplaceText);
+		}
 	}
 }
