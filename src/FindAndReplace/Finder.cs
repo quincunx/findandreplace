@@ -267,6 +267,12 @@ namespace FindAndReplace
 				FileProcessed(this, e);
 		}
 
-
+		public string GenCommandLine(bool showEncoding)
+		{
+			return CommandLineUtils.GenerateCommandLine(Dir, FileMask, ExcludeFileMask, IncludeSubDirectories, IsCaseSensitive,
+			                                            FindTextHasRegEx, SkipBinaryFileDetection, showEncoding,
+			                                            IncludeFilesWithoutMatches, UseEscapeChars, AlwaysUseEncoding, FindText,
+			                                            null);
+		}
 	}
 }
