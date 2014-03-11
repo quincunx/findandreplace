@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CommandLine;
+using FindAndReplace;
 
 namespace FindAndReplace.Tests.CommandLine
 {
@@ -17,12 +19,12 @@ namespace FindAndReplace.Tests.CommandLine
 			var result = "not decoded";
 			if (Parser.Default.ParseArguments(args, options))
 			{
-				result = options.TestValue;
+				result = CommandLineUtils.DecodeText(options.TestValue, false, options.IsRegex, options.UseEscape);
 			}
 
 			using (var outfile = new StreamWriter("output.log"))
 			{
-				outfile.WriteLine(result);
+				outfile.WriteLine(Regex.Escape(result));
 			} 
 		}
 	}
