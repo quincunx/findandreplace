@@ -15,11 +15,14 @@ namespace FindAndReplace.Tests
 		private string _applicationExePath = @"FindAndReplace.Tests.CommandLine.exe";
 
 		[Test]
-		public void TryDecodeTwoBackslahes_ReturnCorrectvalue()
+		public void TryDecode2Backslahes_UseEscapeChars_Return4Backslashes()
 		{
 			var argValue = @"\\";
-			
-			var cmdText = String.Format("--testVal {0}", argValue);
+			var isRegex = false;
+			var useChars = true;
+
+			var cmdText = GenCommandLine(argValue, isRegex, useChars);
+
 			System.Diagnostics.Process.Start(_applicationExePath, cmdText);
 
 			//wait for FindAndReplace.Tests.CommandLine.exe finish
@@ -27,7 +30,64 @@ namespace FindAndReplace.Tests
 			
 			var decodedValue = GetValueFromOutput();
 
-			Assert.AreEqual(decodedValue, argValue);
+			Assert.AreEqual(@"\\\\", decodedValue);
+		}
+
+		[Test]
+		public void TryDecode2Backslahes_Return2Backslashes()
+		{
+			var argValue = @"\\";
+			var isRegex = false;
+			var useChars = false;
+
+			var cmdText = GenCommandLine(argValue, isRegex, useChars);
+
+			System.Diagnostics.Process.Start(_applicationExePath, cmdText);
+
+			//wait for FindAndReplace.Tests.CommandLine.exe finish
+			Thread.Sleep(1000);
+
+			var decodedValue = GetValueFromOutput();
+
+			Assert.AreEqual(@"\\", decodedValue);
+		}
+
+		[Test]
+		public void TryDecodeTwoBackslahes_IsRegex_Return4Backslashes()
+		{
+			var argValue = @"\\";
+			var isRegex = true;
+			var useChars = false;
+
+			var cmdText = GenCommandLine(argValue, isRegex, useChars);
+
+			System.Diagnostics.Process.Start(_applicationExePath, cmdText);
+
+			//wait for FindAndReplace.Tests.CommandLine.exe finish
+			Thread.Sleep(1000);
+
+			var decodedValue = GetValueFromOutput();
+
+			Assert.AreEqual(@"\\\\", decodedValue);
+		}
+
+		[Test]
+		public void TryDecode4Backslahes_UseEscapeChars_Return8Backslashes()
+		{
+			var argValue = @"\\\\";
+			var isRegex = false;
+			var useChars = true;
+
+			var cmdText = GenCommandLine(argValue, isRegex, useChars);
+
+			System.Diagnostics.Process.Start(_applicationExePath, cmdText);
+
+			//wait for FindAndReplace.Tests.CommandLine.exe finish
+			Thread.Sleep(1000);
+
+			var decodedValue = GetValueFromOutput();
+
+			Assert.AreEqual(@"\\\\\\\\", decodedValue);
 		}
 
 		private string GetValueFromOutput()
@@ -45,6 +105,14 @@ namespace FindAndReplace.Tests
 			}
 
 			return result;
+		}
+
+		private string GenCommandLine(string value, bool isRegex, bool useChars)
+		{
+			return String.Format("--testVal \"{0}\"{1}{2}",
+			                     value,
+			                     isRegex ? " --isRegex" : "",
+			                     useChars ? " --useEscapeChars" : "");
 		}
 	}
 }
