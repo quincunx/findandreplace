@@ -16,7 +16,7 @@ namespace FindAndReplace
 			return result;
 		}
 
-		public static string DecodeText(string original, bool hasRegEx = false, bool useEscapeChars = false)
+		public static string DecodeText(string original, bool isReplace, bool hasRegEx = false, bool useEscapeChars = false)
 		{
 			string decoded = original;
 
@@ -25,7 +25,14 @@ namespace FindAndReplace
 			if (!hasRegEx && !useEscapeChars)
 				decoded = decoded.Replace("\\n", Environment.NewLine);
 
-			decoded = decoded.Replace(@"\\", @"\");
+			if (!hasRegEx && !useEscapeChars)
+				decoded = decoded.Replace(@"\\", @"\");
+			else if (!isReplace || (hasRegEx && useEscapeChars))
+			{
+				decoded = EscapeBackSlashes(decoded);
+			}
+			else decoded = Regex.Escape(decoded);
+			
 			return decoded;
 		}
 
@@ -33,22 +40,8 @@ namespace FindAndReplace
 		{
 			var argValue = EncodeText(original, isRegularExpression, useEscapeChars);
 
-			//windows arg can't end with odd count of '\'
-			//args can ends with even count of '\'
-			//if arg ends with odd count of '\' we add one more to the end
-			var regexPattern = @"\\+$";
-
-			var regex = new Regex(regexPattern);
-
-			var matches = regex.Matches(argValue);
-
-			if (matches.Count > 0)
-			{
-				var match = matches[0];
-
-				if ((match.Length % 2) != 0)
-					argValue += @"\";
-			}
+			if (!IsValidCommandLineArg(argValue))
+				argValue += @"\";
 
 			return argValue;
 		}
@@ -87,6 +80,51 @@ namespace FindAndReplace
 					CommandLineUtils.FormatArg(find, isRegEx, useEscapeChars),
 					(replace != null) ? String.Format("--replace \"{0}\"", CommandLineUtils.FormatArg(replace, false, useEscapeChars)) : ""
 				);
+		}
+
+		//windows arg can't end with odd count of '\'
+		//args can ends with even count of '\'
+		//if arg ends with odd count of '\' we add one more to the end
+		public static bool IsValidCommandLineArg(string text)
+		{
+			var regexPattern = @"\\+$";
+
+			var regex = new Regex(regexPattern);
+
+			var matches = regex.Matches(text);
+
+			if (matches.Count > 0)
+			{
+				var match = matches[0];
+
+				if ((match.Length % 2) != 0)
+					return false;
+			}
+
+			return true;
+		}
+
+		public static string EscapeBackSlashes(string text)
+		{
+			var regexPattern = "\\\\";
+
+			var result = text;
+
+			var regex = new Regex(regexPattern);
+
+			var matches = regex.Matches(text);
+
+			for (int i = matches.Count - 1; i>= 0; i--)
+			{
+				var match = matches[i];
+				
+				var index = match.Index + match.Length;
+
+				if (index >= text.Length || text[index] == '\\')
+					result = result.Insert(match.Index, "\\");
+			}
+
+			return result;
 		}
 	}
 }
