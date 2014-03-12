@@ -12,7 +12,7 @@ namespace FindAndReplace.Tests
 		public void Encode_Decode_FromWorkItem17_ReturnsSameValue()
 		{
 			string original = "\\r(?!\\n)";
-			string encoded = CommandLineUtils.EncodeText(original);
+			string encoded = CommandLineUtils.EncodeText(original, true);
 			string decoded = CommandLineUtils.DecodeText(encoded, false, true);
 
 			Assert.AreEqual(original, decoded);
