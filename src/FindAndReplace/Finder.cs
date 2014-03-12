@@ -41,6 +41,8 @@ namespace FindAndReplace
 		public bool FindTextHasRegEx { get; set; }
 		public bool SkipBinaryFileDetection { get; set; }
 
+		public bool UseEscapeChars { get; set; }
+
 		public Encoding AlwaysUseEncoding { get; set; }
 		public Encoding DefaultEncodingIfNotDetected { get; set; }
 
@@ -48,9 +50,6 @@ namespace FindAndReplace
 		public bool IsSilent { get; set; }
 
 		public bool IsCancelRequested { get; set; }
-
-		public bool UseEscapeChars { get; set; }
-
 
 		public class FindResultItem : ResultItem
 		{

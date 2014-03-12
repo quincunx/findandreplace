@@ -40,6 +40,8 @@ namespace FindAndReplace
 
 		public string ReplaceText { get; set; }
 
+		public bool UseEscapeChars { get; set; }
+
 		public Encoding AlwaysUseEncoding { get; set; }
 		public Encoding DefaultEncodingIfNotDetected { get; set; }
 
@@ -47,8 +49,7 @@ namespace FindAndReplace
 		public bool IsSupressOutput { get; set; }
 		public bool IsSilent { get; set; }
 
-		public bool UseEscapeChars { get; set; }
-
+		
 		public class ReplaceResultItem : ResultItem
 		{
 			public bool FailedToWrite { get; set; }
