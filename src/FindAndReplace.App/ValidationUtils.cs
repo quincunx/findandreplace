@@ -118,7 +118,7 @@ namespace FindAndReplace.App
 			if (result.IsSuccess)
 			{
 
-				if (!IsValidCommandLineArg(text))
+				if (!CommandLineUtils.IsValidCommandLineArg(text))
 				{
 					result.IsSuccess = false;
 					result.ErrorMessage = @"Illegal \ at end of pattern";
@@ -126,22 +126,6 @@ namespace FindAndReplace.App
 			}
 
 			return result;
-		}
-
-		public static bool IsValidCommandLineArg(string text)
-		{
-			var regexPattern = @"\\+$";
-
-			var regex = new Regex(regexPattern);
-
-			var matches = regex.Matches(text);
-
-			if (matches.Count > 0)
-				return true;
-
-			if (text.EndsWith(@"\")) return false;
-
-			return true;
 		}
 	}
 }
