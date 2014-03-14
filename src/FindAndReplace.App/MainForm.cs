@@ -34,6 +34,16 @@ namespace FindAndReplace.App
 			InitializeComponent();
 		}
 
+
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+
+			//Fix from: http://stackoverflow.com/questions/3421453/c-why-is-text-in-textbox-highlighted-selected-when-form-is-displayed
+			this.txtDir.SelectionStart = this.txtDir.Text.Length;
+			this.txtDir.DeselectAll();
+		}
+
 		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			if (_currentThread != null && _currentThread.IsAlive)

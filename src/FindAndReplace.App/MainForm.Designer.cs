@@ -110,6 +110,7 @@ namespace FindAndReplace.App
 			// 
 			this.txtReplace.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.txtReplace.CausesValidation = false;
+			this.txtReplace.DetectUrls = false;
 			this.txtReplace.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.txtReplace.Location = new System.Drawing.Point(0, 0);
 			this.txtReplace.Name = "txtReplace";
@@ -335,6 +336,7 @@ namespace FindAndReplace.App
 			// 
 			this.txtMatchesPreview.BackColor = System.Drawing.SystemColors.Info;
 			this.txtMatchesPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.txtMatchesPreview.DetectUrls = false;
 			this.txtMatchesPreview.Location = new System.Drawing.Point(82, 628);
 			this.txtMatchesPreview.Name = "txtMatchesPreview";
 			this.txtMatchesPreview.ReadOnly = true;
@@ -426,6 +428,7 @@ namespace FindAndReplace.App
 			// txtFind
 			// 
 			this.txtFind.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.txtFind.DetectUrls = false;
 			this.txtFind.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.txtFind.Location = new System.Drawing.Point(0, 0);
 			this.txtFind.Name = "txtFind";
@@ -490,7 +493,7 @@ namespace FindAndReplace.App
             this.helpToolStripMenuItem});
 			this.mnuMain.Location = new System.Drawing.Point(0, 0);
 			this.mnuMain.Name = "mnuMain";
-			this.mnuMain.Size = new System.Drawing.Size(685, 24);
+			this.mnuMain.Size = new System.Drawing.Size(689, 24);
 			this.mnuMain.TabIndex = 29;
 			this.mnuMain.Text = "menuStrip1";
 			// 
@@ -522,7 +525,7 @@ namespace FindAndReplace.App
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
-			this.ClientSize = new System.Drawing.Size(685, 415);
+			this.ClientSize = new System.Drawing.Size(689, 416);
 			this.Controls.Add(this.cmbEncoding);
 			this.Controls.Add(this.lblEncoding);
 			this.Controls.Add(this.chkUseEscapeChars);
