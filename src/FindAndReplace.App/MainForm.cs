@@ -625,22 +625,46 @@ namespace FindAndReplace.App
 				return;
 			}
 
-			validationResult = ValidationUtils.IsValidRegExp(txtFind.Text, "Find");
-
-			if (chkIsRegEx.Checked && !validationResult.IsSuccess)
+			
+			if (chkIsRegEx.Checked)
 			{
-				errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
-				return;
+				validationResult = ValidationUtils.IsValidRegExp(txtFind.Text, "Find");
+
+				if (!validationResult.IsSuccess)
+				{
+					errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
+					return;
+				}
 			}
 
-			validationResult = ValidationUtils.IsValidEscapeSequence(txtFind.Text, "Find");
-			if (chkUseEscapeChars.Checked && !validationResult.IsSuccess)
+			if (chkUseEscapeChars.Checked)
 			{
-				errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
-				return;
+				validationResult = ValidationUtils.IsValidEscapeSequence(txtFind.Text, "Find");
+
+				if (!validationResult.IsSuccess)
+				{
+					errorProvider1.SetError(pnlFind, validationResult.ErrorMessage);
+					return;
+				}
 			}
 
 			errorProvider1.SetError(pnlFind, "");
+		}
+
+		private void pnlReplace_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (chkUseEscapeChars.Checked)
+			{
+				var validationResult = ValidationUtils.IsValidEscapeSequence(txtReplace.Text, "Replace");
+
+				if (!validationResult.IsSuccess)
+				{
+					errorProvider1.SetError(pnlReplace, validationResult.ErrorMessage);
+					return;
+				}
+			}
+
+			errorProvider1.SetError(pnlReplace, "");
 		}
 
 		private void gvResults_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -949,17 +973,7 @@ namespace FindAndReplace.App
 			Process.Start("https://findandreplace.codeplex.com/documentation");
 		}
 
-		private void pnlReplace_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			var validationResult = ValidationUtils.IsValidEscapeSequence(txtReplace.Text, "Replace");
-			if (chkUseEscapeChars.Checked && !validationResult.IsSuccess)
-			{
-				errorProvider1.SetError(pnlReplace, validationResult.ErrorMessage);
-				return;
-			}
-
-			errorProvider1.SetError(pnlReplace, "");
-		}
+		
 
 		private Finder GetFinder()
 		{
