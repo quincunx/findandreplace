@@ -76,7 +76,7 @@ namespace FindAndReplace
 					showEncoding ? " --showEncoding" : "",
 					includeFilesWithoutMatches ? " --includeFilesWithoutMatches" : "",
 					useEscapeChars ? " --useEscapeChars" : "",
-					(encoding != null) ? String.Format(" --alwaysUseEncoding \"{0}\"", encoding.BodyName) : "",
+					(encoding != null) ? String.Format(" --alwaysUseEncoding \"{0}\"", encoding.HeaderName) : "",
 					CommandLineUtils.FormatArg(find, isRegEx, useEscapeChars),
 					(replace != null) ? String.Format("--replace \"{0}\"", CommandLineUtils.FormatArg(replace, false, useEscapeChars)) : ""
 				);
