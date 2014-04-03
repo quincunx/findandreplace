@@ -31,8 +31,7 @@ namespace FindAndReplace
 			{
 				decoded = EscapeBackSlashes(decoded);
 			}
-			else decoded = Regex.Escape(decoded);
-			
+
 			return decoded;
 		}
 
