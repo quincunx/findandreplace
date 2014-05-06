@@ -19,5 +19,16 @@ namespace FindAndReplace.Tests
 		}
 
 
+
+		[Test]
+		public void Encode_Decode_FromDiscussions541024_ReturnsSameValue()
+		{
+			string original = "<TargetFrameworkVersion>v[24].0</TargetFrameworkVersion>";
+			string encoded = CommandLineUtils.EncodeText(original, true);
+			string decoded = CommandLineUtils.DecodeText(encoded, true, true);
+
+			Assert.AreEqual(original, decoded);
+		}
+
 	}
 }

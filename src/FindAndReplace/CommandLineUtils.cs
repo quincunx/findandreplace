@@ -26,10 +26,15 @@ namespace FindAndReplace
 				decoded = decoded.Replace("\\n", Environment.NewLine);
 
 			if (!hasRegEx && !useEscapeChars)
-				decoded = decoded.Replace(@"\\", @"\");
-			else if (!isReplace || (hasRegEx && useEscapeChars))
 			{
-				decoded = EscapeBackSlashes(decoded);
+				decoded = decoded.Replace(@"\\", @"\");
+			}
+			else
+			{
+				if (!isReplace || (hasRegEx && useEscapeChars))
+				{
+					decoded = EscapeBackSlashes(decoded);
+				}
 			}
 
 			return decoded;
