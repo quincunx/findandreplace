@@ -86,13 +86,13 @@ namespace FindAndReplace.App
 			data.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			data.FileMask = txtFileMask.Text;
 			data.ExcludeFileMask = txtExcludeFileMask.Text;
-			data.FindText = txtFind.Text;
+			data.FindText = CleanRichBoxText(txtFind.Text);
 			data.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			data.IsRegEx = chkIsRegEx.Checked;
 			data.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			data.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
 			data.ShowEncoding = chkShowEncoding.Checked;
-			data.ReplaceText = txtReplace.Text;
+			data.ReplaceText = CleanRichBoxText(txtReplace.Text);
 			data.UseEscapeChars = chkUseEscapeChars.Checked;
 			data.Encoding = cmbEncoding.Text;
 
@@ -983,7 +983,7 @@ namespace FindAndReplace.App
 			finder.IncludeSubDirectories = chkIncludeSubDirectories.Checked;
 			finder.FileMask = txtFileMask.Text;
 			finder.FindTextHasRegEx = chkIsRegEx.Checked;
-			finder.FindText = txtFind.Text;
+			finder.FindText = CleanRichBoxText(txtFind.Text);
 			finder.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			finder.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			finder.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
@@ -996,6 +996,14 @@ namespace FindAndReplace.App
 			return finder;
 		}
 
+
+
+		private string CleanRichBoxText(string text)
+		{
+			return text.Replace("\n", Environment.NewLine);
+		}
+
+
 		private Replacer GetReplacer()
 		{
 			var replacer = new Replacer();
@@ -1006,12 +1014,12 @@ namespace FindAndReplace.App
 			replacer.FileMask = txtFileMask.Text;
 			replacer.ExcludeFileMask = txtExcludeFileMask.Text;
 
-			replacer.FindText = txtFind.Text;
+			replacer.FindText = CleanRichBoxText(txtFind.Text);
 			replacer.IsCaseSensitive = chkIsCaseSensitive.Checked;
 			replacer.FindTextHasRegEx = chkIsRegEx.Checked;
 			replacer.SkipBinaryFileDetection = chkSkipBinaryFileDetection.Checked;
 			replacer.IncludeFilesWithoutMatches = chkIncludeFilesWithoutMatches.Checked;
-			replacer.ReplaceText = txtReplace.Text;
+			replacer.ReplaceText =  CleanRichBoxText(txtReplace.Text);
 			replacer.UseEscapeChars = chkUseEscapeChars.Checked;
 
 			if (cmbEncoding.SelectedIndex > 0)
