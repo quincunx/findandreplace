@@ -94,16 +94,6 @@ namespace FindAndReplace
 		}
 
 
-		public static string FormatArg(string original, bool isRegularExpression = false, bool useEscapeChars = false)
-		{
-			var argValue = EncodeText(original, isRegularExpression, useEscapeChars);
-
-			if (!IsValidCommandLineArg(argValue))
-				argValue += @"\";
-
-			return argValue;
-		}
-
 		public static string GenerateCommandLine(
 												string dir,
 												string fileMask,
@@ -135,8 +125,8 @@ namespace FindAndReplace
 					includeFilesWithoutMatches ? " --includeFilesWithoutMatches" : "",
 					useEscapeChars ? " --useEscapeChars" : "",
 					(encoding != null) ? String.Format(" --alwaysUseEncoding \"{0}\"", encoding.HeaderName) : "",
-					CommandLineUtils.FormatArg(find, isRegEx, useEscapeChars),
-					(replace != null) ? String.Format("--replace \"{0}\"", CommandLineUtils.FormatArg(replace, false, useEscapeChars)) : ""
+					CommandLineUtils.EncodeText(find, isRegEx, useEscapeChars),
+					(replace != null) ? String.Format("--replace \"{0}\"", CommandLineUtils.EncodeText(replace, false, useEscapeChars)) : ""
 				);
 		}
 
