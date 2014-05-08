@@ -117,8 +117,7 @@ namespace FindAndReplace.App
 
 			if (result.IsSuccess)
 			{
-
-				if (!CommandLineUtils.IsValidCommandLineArg(text))
+				if (EndsWithSingleSlash(text))
 				{
 					result.IsSuccess = false;
 					result.ErrorMessage = @"Illegal \ at end of pattern";
@@ -126,6 +125,25 @@ namespace FindAndReplace.App
 			}
 
 			return result;
+		}
+
+		private static bool EndsWithSingleSlash(string text)
+		{
+			var regexPattern = @"\\+$";
+
+			var regex = new Regex(regexPattern);
+
+			var matches = regex.Matches(text);
+
+			if (matches.Count > 0)
+			{
+				var match = matches[0];
+
+				if ((match.Length % 2) != 0)
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

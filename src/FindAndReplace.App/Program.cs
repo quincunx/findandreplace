@@ -134,7 +134,7 @@ namespace FindAndReplace.App
 			validationResultList.Add(ValidationUtils.IsNotEmpty(_options.FindText, "find"));
 
 			if (_options.IsFindTextHasRegEx)
-				validationResultList.Add(ValidationUtils.IsValidRegExp(CommandLineUtils.EscapeBackSlashes(_options.FindText), "find"));
+				validationResultList.Add(ValidationUtils.IsValidRegExp(_options.FindText, "find"));
 
 			if (!(String.IsNullOrEmpty(_options.AlwaysUseEncoding)))
 				validationResultList.Add(ValidationUtils.IsValidEncoding(_options.AlwaysUseEncoding, "alwaysUseEncoding"));
@@ -142,11 +142,12 @@ namespace FindAndReplace.App
 			if (!(String.IsNullOrEmpty(_options.DefaultEncodingIfNotDetected)))
 				validationResultList.Add(ValidationUtils.IsValidEncoding(_options.DefaultEncodingIfNotDetected, "alwaysUseEncoding"));
 
-			if (_options.UseEscapreChars)
+			if (_options.UseEscapeChars)
 			{
+				validationResultList.Add(ValidationUtils.IsValidEscapeSequence(_options.FindText, "find"));
+				
 				if (!String.IsNullOrEmpty(_options.ReplaceText))
 					validationResultList.Add(ValidationUtils.IsValidEscapeSequence(_options.ReplaceText, "replace"));
-				validationResultList.Add(ValidationUtils.IsValidEscapeSequence(_options.FindText, "find"));
 			}
 
 
@@ -185,7 +186,7 @@ namespace FindAndReplace.App
 					finder.FileMask = _options.FileMask;
 					finder.ExcludeFileMask = _options.ExcludeFileMask;
 
-					finder.FindText = CommandLineUtils.DecodeText(_options.FindText, false, hasRegEx, _options.UseEscapreChars);
+					finder.FindText = CommandLineUtils.DecodeText(_options.FindText, false, hasRegEx, _options.UseEscapeChars);
 					finder.IsCaseSensitive = _options.IsCaseSensitive;
 					finder.FindTextHasRegEx = hasRegEx;
 					finder.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
@@ -193,7 +194,7 @@ namespace FindAndReplace.App
 
 					finder.AlwaysUseEncoding = Utils.GetEncodingByName(_options.AlwaysUseEncoding);
 					finder.DefaultEncodingIfNotDetected = Utils.GetEncodingByName(_options.DefaultEncodingIfNotDetected);
-					finder.UseEscapeChars = _options.UseEscapreChars;
+					finder.UseEscapeChars = _options.UseEscapeChars;
 
 					finder.IsSilent = _options.Silent;
 
@@ -216,17 +217,17 @@ namespace FindAndReplace.App
 					replacer.FileMask = _options.FileMask;
 					replacer.ExcludeFileMask = _options.ExcludeFileMask;
 
-					replacer.FindText = CommandLineUtils.DecodeText(_options.FindText, false, hasRegEx, _options.UseEscapreChars);
+					replacer.FindText = CommandLineUtils.DecodeText(_options.FindText, false, hasRegEx, _options.UseEscapeChars);
 					replacer.IsCaseSensitive = _options.IsCaseSensitive;
 					replacer.FindTextHasRegEx = _options.IsFindTextHasRegEx;
 					replacer.SkipBinaryFileDetection = _options.SkipBinaryFileDetection;
 					replacer.IncludeFilesWithoutMatches = _options.IncludeFilesWithoutMatches;
 
-					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText, true, _options.IsFindTextHasRegEx, _options.UseEscapreChars);
+					replacer.ReplaceText = CommandLineUtils.DecodeText(_options.ReplaceText, true, _options.IsFindTextHasRegEx, _options.UseEscapeChars);
 
 					replacer.AlwaysUseEncoding = Utils.GetEncodingByName(_options.AlwaysUseEncoding);
 					replacer.DefaultEncodingIfNotDetected = Utils.GetEncodingByName(_options.DefaultEncodingIfNotDetected);
-					replacer.UseEscapeChars = _options.UseEscapreChars;
+					replacer.UseEscapeChars = _options.UseEscapeChars;
 
 					replacer.IsSilent = _options.Silent;
 

@@ -67,7 +67,7 @@ namespace FindAndReplace.App
 		public string LogFile { get; set; }
 
 		[Option("useEscapeChars", HelpText = "Escape special chars.")]
-		public bool UseEscapreChars { get; set; }
+		public bool UseEscapeChars { get; set; }
 
 
 		#endregion
