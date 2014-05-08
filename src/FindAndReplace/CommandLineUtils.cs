@@ -4,14 +4,70 @@ using System.Text.RegularExpressions;
 
 namespace FindAndReplace
 {
+	//Various command line issues are described here
+	//http://weblogs.asp.net/jgalloway/archive/2006/10/05/_5B002E00_NET-Gotcha_5D00_-Commandline-args-ending-in-_5C002200_-are-subject-to-CommandLineToArgvW-whackiness.aspx
+	//Rules are: Backslash is the escape character; always escape quotes; only escape backslashes if they precede a quote.
+
 	public static class CommandLineUtils
 	{
-		public static string EncodeText(string original, bool isRegularExpression = false, bool useEscapeChars = false)
-		{
-			var result = original.Replace(Environment.NewLine, "\\n");
+		private const string EscapedSlashN = "[SlashN]"; 
 
-			if (!isRegularExpression && !useEscapeChars)
-				result = result.Replace(@"\", @"\\");
+		public static string EncodeText(string original, bool hasRegEx = false, bool useEscapeChars = false)
+		{
+			var result = original;
+
+			//new line
+			if (!hasRegEx && !useEscapeChars)
+				result = TryEncodeNewLine(result);
+
+			result = TryEncodeSlashesFollowedByQuotes(result);
+
+			result = TryEncodeQuotes(result);
+			
+			result = TryEncodeLastSlash(result);
+
+			return result;
+		}
+
+		private static string TryEncodeNewLine(string original)
+		{
+			var result = original.Replace("\\n", EscapedSlashN);
+			
+			result = result.Replace(Environment.NewLine, "\\n");
+			return result;
+		}
+		
+		private static string TryEncodeSlashesFollowedByQuotes(string original)
+		{
+			var regexPattern = @"\\+""";
+
+			string result = Regex.Replace(original, regexPattern, 
+				delegate(Match match)
+				{
+					string matchText = match.ToString();
+					string justSlashes = matchText.Remove(matchText.Length - 1);
+					return justSlashes + justSlashes + "\"";  //double up the slashes
+				});
+				
+			return result;
+		}
+
+		private static string TryEncodeQuotes(string original)
+		{
+			var result = original.Replace("\"", "\"\"");
+			return result;
+		}
+
+		private static string TryEncodeLastSlash(string original)
+		{
+			var regexPattern = @"\\+$";
+
+			string result = Regex.Replace(original, regexPattern,
+				delegate(Match match)
+				{
+					string matchText = match.ToString();
+					return matchText + matchText;  //double up the slashes
+				});
 
 			return result;
 		}
@@ -20,25 +76,23 @@ namespace FindAndReplace
 		{
 			string decoded = original;
 
-			//For RegEx there is no new lines, so we don't want to replace \\n
 			//See case https://findandreplace.codeplex.com/workitem/17
 			if (!hasRegEx && !useEscapeChars)
-				decoded = decoded.Replace("\\n", Environment.NewLine);
-
-			if (!hasRegEx && !useEscapeChars)
-			{
-				decoded = decoded.Replace(@"\\", @"\");
-			}
-			else
-			{
-				if (!isReplace || (hasRegEx && useEscapeChars))
-				{
-					decoded = EscapeBackSlashes(decoded);
-				}
-			}
+				decoded = TryDecodeNewLine(decoded);
 
 			return decoded;
 		}
+
+
+		private static string TryDecodeNewLine(string original)
+		{
+			var result = original.Replace("\\n", Environment.NewLine);
+
+			result = result.Replace(EscapedSlashN, "\\n");
+
+			return result;
+		}
+
 
 		public static string FormatArg(string original, bool isRegularExpression = false, bool useEscapeChars = false)
 		{
@@ -91,19 +145,7 @@ namespace FindAndReplace
 		//if arg ends with odd count of '\' we add one more to the end
 		public static bool IsValidCommandLineArg(string text)
 		{
-			var regexPattern = @"\\+$";
-
-			var regex = new Regex(regexPattern);
-
-			var matches = regex.Matches(text);
-
-			if (matches.Count > 0)
-			{
-				var match = matches[0];
-
-				if ((match.Length % 2) != 0)
-					return false;
-			}
+			
 
 			return true;
 		}

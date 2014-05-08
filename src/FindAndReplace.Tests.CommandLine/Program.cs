@@ -16,15 +16,27 @@ namespace FindAndReplace.Tests.CommandLine
 		{
 			var options = new CommandLineOptions();
 
-			var result = "not decoded";
+			string result;
 			if (Parser.Default.ParseArguments(args, options))
 			{
-				result = CommandLineUtils.DecodeText(options.TestValue, false, options.IsRegex, options.UseEscape);
+				if (options.SkipDecoding)
+					result = options.TestValue;
+				else
+					result = CommandLineUtils.DecodeText(options.TestValue, false, options.HasRegEx, options.UseEscapeChars);
+			}
+			else
+			{
+				result = "Errors in ParseArguments: " + Environment.NewLine;
+				if (options.LastParserState.Errors.Count > 0)
+				{
+					foreach (var error in options.LastParserState.Errors)
+						result += error.BadOption.ShortName + ": " + error.ToString() + Environment.NewLine;
+				}	
 			}
 
 			using (var outfile = new StreamWriter("output.log"))
 			{
-				outfile.WriteLine(Regex.Escape(result));
+				outfile.Write(result);
 			} 
 		}
 	}
