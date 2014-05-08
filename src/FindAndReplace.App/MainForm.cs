@@ -697,7 +697,7 @@ namespace FindAndReplace.App
 				               : _lastOperationFormData.ReplaceText;
 			findText = findText.Replace("\r\n", "\n");
 
-			findText = (_lastOperationFormData.IsRegEx && _lastOperationFormData.IsFindOnly) ? findText : Regex.Escape(findText);
+			findText = ((_lastOperationFormData.IsRegEx || _lastOperationFormData.UseEscapeChars) && _lastOperationFormData.IsFindOnly) ? findText : Regex.Escape(findText);
 			var mathches = Regex.Matches(txtMatchesPreview.Text, findText,
 			                             Utils.GetRegExOptions(_lastOperationFormData.IsCaseSensitive));
 
